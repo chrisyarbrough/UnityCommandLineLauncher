@@ -1,5 +1,4 @@
 # Unity Command Line Launcher
-
 A lightweight command-line script designed to speedup opening Unity projects. With a single command, this script launches a Unity project directly from within the project's directory tree, bypassing the Unity Hub for enhanced speed and convenience. It's tailored for developers who prefer the efficiency of a terminal-based approach.
 
 Recommended workflow:
@@ -13,7 +12,6 @@ This approach is much quicker than:
 3) Double-clicking a script or selecting _Assets > Open C# Project_ in Unity to open the IDE
 
 # Support
-
 The script currently only supports macOS and was tested on Ventura 13.4.
 
 # Setup
@@ -44,3 +42,8 @@ Pass additional arguments via the command:
 ```bash
 unity -force-metal
 ```
+
+Find the available Unity editor command line arguments in the [official documentation](https://docs.unity3d.com/Manual/EditorCommandLineArguments.html).
+
+# Customization
+The script is intended to be used in source form so that it can be easily customized, e.g. update the directories that are searched for the Unity project or change the command line arguments passed to Unity by default.
