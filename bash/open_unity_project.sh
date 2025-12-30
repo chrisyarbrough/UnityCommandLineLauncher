@@ -26,4 +26,5 @@ sh "$SCRIPT_DIR/ensure_unity_editor_install.sh" "$VERSION" "$CHANGESET"
 UNITY_PATH=$(sh "$SCRIPT_DIR/get_unity_editor.sh" "$VERSION")
 echo "Editor: $UNITY_PATH"
 
-$"$UNITY_PATH"/Contents/MacOS/Unity -projectPath "$PROJECT_DIR"
+# Start Unity in background (don't block shell).
+"$UNITY_PATH"/Contents/MacOS/Unity -projectPath "$PROJECT_DIR" &

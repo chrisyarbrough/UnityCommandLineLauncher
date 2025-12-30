@@ -9,7 +9,9 @@ if [ $# -lt 1 ]; then
 fi
 
 VERSION="$1"
-UNITY_HUB="$(mdfind "kMDItemCFBundleIdentifier == 'com.unity3d.unityhub'" | head -n 1)/Contents/MacOS/Unity Hub"
+source "$(dirname "$0")/shared.sh"
+UNITY_HUB=$(get_unity_hub)
+
 INSTALLED_EDITORS="$("$UNITY_HUB" -- --headless editors --installed 2>/dev/null)"
 if echo "$INSTALLED_EDITORS" | grep -q "$VERSION"; then
     exit 0
