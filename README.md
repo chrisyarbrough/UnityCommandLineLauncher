@@ -14,13 +14,47 @@ This approach is much quicker than:
 2) Selecting the Unity project in the list and waiting for it to open
 3) Double-clicking a script or selecting _Assets > Open C# Project_ in Unity to open the IDE
 
-# Support
-The script currently only supports macOS and was tested on Ventura 13.4.
+# Implementations
+
+This repository provides three implementations of the Unity launcher:
+
+- **Go** (`go/`) - Recommended: Fast, single binary with no dependencies
+- **Bash** (`bash/`) - Lightweight shell scripts for macOS
+- **Python** (`python/`) - Cross-platform Python implementation
+
+All implementations provide the same core functionality. Choose based on your preferences:
+- **Go**: Best performance, no runtime dependencies, single ~8MB binary
+- **Bash**: Minimal, script-based, requires bash/jq/curl
+- **Python**: Requires Python 3, more portable to other platforms
+
+## Support
+
+All implementations currently only support macOS and were tested on Ventura 13.4+.
 
 # Setup
+
+## Go Implementation (Recommended)
+
+```bash
+cd go
+make install
+```
+
+This installs the `unity` binary to `~/bin/`. Ensure `~/bin` is in your PATH.
+
+See [go/README.md](go/README.md) for detailed documentation.
+
+## Bash Implementation
+
+```bash
+# Create alias in your shell config (.zshrc, .bashrc, etc.)
+echo 'alias unity="~/path/to/UnityCommandLineLauncher/bash/open-unity.sh"' >> ~/.zshrc
+```
+
+## Python Implementation
+
 - Install Python 3
-- Place the launcher script anywhere on your machine
-- Create a globally available command alias that points to the script. For example, for the ZSH shell, add `alias unity="~/bin/open-unity.py"` to the `.zshrc` file.
+- Create a globally available command alias that points to the script:
 
 ```bash
 echo 'alias unity="~/bin/open-unity.py"' >> ~/.zshrc
