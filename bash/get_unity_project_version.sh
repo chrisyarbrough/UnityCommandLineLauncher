@@ -32,6 +32,6 @@ elif [[ "$CONTENT" =~ m_EditorVersion:[[:space:]]+(.+) ]]; then
     echo "${BASH_REMATCH[1]}"
 
 else
-    echo "Error: Could not find Unity version in $PROJECT_VERSION_FILE" >&2
+    echo "Error: Could not find Unity version in file." >&2
     exit 3
 fi
