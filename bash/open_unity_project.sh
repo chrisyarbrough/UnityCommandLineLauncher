@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Opens a Unity project in the specified directory using the correct Unity Editor version.
-# Usage: ./open_unity_project.sh [<project_directory>]
+# Usage: ./open_unity_project.sh [<project_directory>] [<additional_args>]
+# If you pass additional args, you must provide the project_directory, 
+# Example: ./open_unity_project.sh . -batchmode -quit
 
 set -euo pipefail
 
@@ -26,5 +28,5 @@ sh "$SCRIPT_DIR/ensure_unity_editor_install.sh" "$VERSION" "$CHANGESET"
 UNITY_PATH=$(sh "$SCRIPT_DIR/get_unity_editor.sh" "$VERSION")
 echo "Editor: $UNITY_PATH"
 
-# Start Unity in background (don't block shell).
-"$UNITY_PATH"/Contents/MacOS/Unity -projectPath "$PROJECT_DIR" &
+# Start Unity in background (don't block shell) and forward all arguments.
+"$UNITY_PATH"/Contents/MacOS/Unity -projectPath "$PROJECT_DIR" "$@" &
