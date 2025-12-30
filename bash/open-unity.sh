@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Opens a Unity project in the specified directory using the correct Unity Editor version.
-# Usage: ./open_unity_project.sh [<project_directory>] [<additional_args>]
+# Usage: ./open-unity.sh [<project_directory>] [<additional_args>]
 # If you pass additional args, you must provide the project_directory, 
-# Example: ./open_unity_project.sh . -batchmode -quit
+# Example: ./open-unity.sh . -batchmode -quit
 
 set -euo pipefail
 
@@ -16,16 +16,16 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-PROJECT_VERSION_FILE=$(sh "$SCRIPT_DIR/get_unity_project_version_file.sh" "$PROJECT_DIR")
+PROJECT_VERSION_FILE=$(sh "$SCRIPT_DIR/get-unity-project-version-file.sh" "$PROJECT_DIR")
 echo "File: $PROJECT_VERSION_FILE"
 
-VERSION_AND_CHANGESET=$(sh "$SCRIPT_DIR/get_unity_project_version.sh" "$PROJECT_VERSION_FILE")
+VERSION_AND_CHANGESET=$(sh "$SCRIPT_DIR/get-unity-project-version.sh" "$PROJECT_VERSION_FILE")
 VERSION=${VERSION_AND_CHANGESET% *}
 CHANGESET=${VERSION_AND_CHANGESET#* }
 echo "Version: $VERSION ($CHANGESET)"
 
-sh "$SCRIPT_DIR/ensure_unity_editor_install.sh" "$VERSION" "$CHANGESET"
-UNITY_PATH=$(sh "$SCRIPT_DIR/get_unity_editor.sh" "$VERSION")
+sh "$SCRIPT_DIR/ensure-unity-editor-install.sh" "$VERSION" "$CHANGESET"
+UNITY_PATH=$(sh "$SCRIPT_DIR/get-unity-editor.sh" "$VERSION")
 echo "Editor: $UNITY_PATH"
 
 # Start Unity in background (don't block shell) and forward all arguments.
