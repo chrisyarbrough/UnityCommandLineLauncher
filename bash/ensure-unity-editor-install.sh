@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Installs a specific Unity Editor version via Unity Hub if not already installed.
-# Usage: ./ensure_unity_editor_install.sh <version> [<changeset>]
+# Usage: ./ensure-unity-editor-install.sh <version> [<changeset>]
 
 if [ $# -lt 1 ]; then
     echo "Usage: $0 <version> [<changeset>]" >&2

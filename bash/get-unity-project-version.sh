@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Extracts Unity version and changeset from ProjectVersion.txt
-# Usage: ./get_unity_project_version.sh /path/to/ProjectVersion.txt
+# Usage: ./get-unity-project-version.sh /path/to/ProjectVersion.txt
 # Output: "2021.3.45f1 (0da89fac8e79)" or "2021.3.45f1"
 
 set -euo pipefail
