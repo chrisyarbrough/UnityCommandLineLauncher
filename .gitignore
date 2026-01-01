@@ -1,4 +1,6 @@
 .idea/
 go/unity
+dotnet/bin/
+dotnet/obj/
 
 .DS_STORE
