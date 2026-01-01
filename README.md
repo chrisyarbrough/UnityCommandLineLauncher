@@ -1,86 +1,62 @@
 # Unity Command Line Launcher
 
-<img width="1502" alt="image" src="https://github.com/chrisyarbrough/UnityCommandLineLauncher/assets/17833862/f07c7396-b0da-4ce4-bfef-e9103de8c976">
+A terminal command designed to open Unity projects faster and more convenient than with the Unity Hub.
 
-A lightweight command-line script designed to speedup opening Unity projects. With a single command, this script launches a Unity project directly from within the project's directory tree, bypassing the Unity Hub for enhanced speed and convenience. It's tailored for developers who prefer the efficiency of a terminal-based approach.
-
-Recommended workflow:
-1) Open your Unity project in your IDE from the recent projects list
-2) Use a keyboard shortcut to open the command line window in the open Unity project working directory
-3) Use the launcher command to open the Unity project
-
-This approach is much quicker than:
-1) Waiting for the slow Unity Hub to start
-2) Selecting the Unity project in the list and waiting for it to open
-3) Double-clicking a script or selecting _Assets > Open C# Project_ in Unity to open the IDE
-
-# Implementations
-
-This repository provides three implementations of the Unity launcher:
-
-- **Go** (`go/`) - Recommended: Fast, single binary with no dependencies
-- **Bash** (`bash/`) - Lightweight shell scripts for macOS
-- **Python** (`python/`) - Cross-platform Python implementation
-
-All implementations provide the same core functionality. Choose based on your preferences:
-- **Go**: Best performance, no runtime dependencies, single ~8MB binary
-- **Bash**: Minimal, script-based, requires bash/jq/curl
-- **Python**: Requires Python 3, more portable to other platforms
-
-## Support
-
-All implementations currently only support macOS and were tested on Ventura 13.4+.
-
-# Setup
-
-## Go Implementation (Recommended)
+## Example
 
 ```bash
-cd go
-make install
+unity MyProject
 ```
 
-This installs the `unity` binary to `~/bin/`. Ensure `~/bin` is in your PATH.
-
-See [go/README.md](go/README.md) for detailed documentation.
-
-## Bash Implementation
+or
 
 ```bash
-# Create alias in your shell config (.zshrc, .bashrc, etc.)
-echo 'alias unity="~/path/to/UnityCommandLineLauncher/bash/open-unity.sh"' >> ~/.zshrc
-```
-
-## Python Implementation
-
-- Install Python 3
-- Create a globally available command alias that points to the script:
-
-```bash
-echo 'alias unity="~/bin/open-unity.py"' >> ~/.zshrc
-```
-
-Alternatively, rename the script to _unity_ and place it in a directory that is part of the PATH shell variable.
-
-# Usage
-Open your IDE (e.g. Rider or Visual Studio) with the desired Unity project or any command line session in one of the following directories:
-- The Unity project root directory (which contains Assets, Library and ProjectSettings)
-- Any direct child directory (e.g. Assets, Library, ProjectSettings)
-- A directory which contains the directory "frontend" which is the Unity project root
-
-Invoke the `unity` command alias to start Unity and open the current project:
-
-```bash
+cd MyProject
 unity
 ```
 
-Pass additional arguments via the command:
+![](docs/Screenshot.png)
+
+## Features
+
+- Opens Unity projects directly from the terminal without Unity Hub
+- Automatically detects the correct Unity Editor version from the project
+- Automatically installs missing Unity Editor versions via Unity Hub
+- Fetches changesets from Unity API when not available locally
+- Supports opening projects from current directory or by specifying a path
+- Forwards additional Unity command line arguments (e.g., `-batchmode`, `-quit`)
+
+## Support
+
+Currently, only macOS is supported (tested with Sequoia 15.7.1).
+
+## Setup
+
+Create an alias in your shell config (.zshrc, .bashrc, etc.):
 
 ```bash
-unity -force-metal
+echo 'alias unity="~/path/to/UnityCommandLineLauncher/bash/open-unity.sh"' >> ~/.zshrc
 ```
 
-Find the available Unity editor command line arguments in the [official documentation](https://docs.unity3d.com/Manual/EditorCommandLineArguments.html).
+## Design Background
 
-# Customization
-The script is intended to be used in source form so that it can be easily customized, e.g. update the directories that are searched for the Unity project or change the command line arguments passed to Unity by default.
+### Problems
+
+- Unity Hub is slow to open.
+- Projects must be added to the Hub manually.
+- Managing a large amount of projects can be cumbersome in a GUI workflow.
+- Opening multiple test projects (e.g. when developing Unity packages) can be cumbersome.
+
+### Solutions
+
+- Developers have quick access to the Terminal:
+    - Global hotkey in iTerm2.
+    - Terminal window in IDE.
+    - Context menu on directories in macOS Finder.
+- Opening multiple projects can be automated with a helper script.
+
+## Development
+
+This repository provides multiple experimental implementations of the launcher tool.
+All implementations are meant to provide the same functionality, and they are currently being evaluated.
+In the end, a single implementation will be distributed as a package.

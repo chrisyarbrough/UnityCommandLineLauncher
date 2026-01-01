@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>unity</AssemblyName>
+
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net9.0</TargetFramework>
+		<SelfContained>true</SelfContained>
+		<PublishSingleFile>true</PublishSingleFile>
+		<PublishTrimmed>true</PublishTrimmed>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<InvariantGlobalization>true</InvariantGlobalization>
+
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<WarningLevel>2</WarningLevel> <!-- 0 (none) - 4 (all) -->
+		<Optimize>false</Optimize> <!-- Show line numbers in stack traces. -->
+
+		<DebugType>embedded</DebugType>
+		<Deterministic>true</Deterministic>
+
+		<!-- Suppress trim warnings from third-party dependencies -->
+		<NoWarn>IL2026;IL2104</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Spectre.Console.Cli" Version="0.53.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<TrimmerRootAssembly Include="Spectre.Console" />
+		<TrimmerRootAssembly Include="Spectre.Console.Cli" />
+		<TrimmerRootAssembly Include="unity" />
+	</ItemGroup>
+
+</Project>
