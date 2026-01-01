@@ -1,7 +1,7 @@
-class GetRevisionCommand : AsyncCommand<GetRevisionSettings>
+class EditorRevisionCommand : AsyncCommand<EditorRevisionSettings>
 {
 	public override async Task<int> ExecuteAsync(CommandContext context,
-		GetRevisionSettings settings,
+		EditorRevisionSettings settings,
 		CancellationToken cancellationToken)
 	{
 		try

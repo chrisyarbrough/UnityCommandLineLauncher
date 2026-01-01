@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<AssemblyName>unity</AssemblyName>
+		<AssemblyName>unity-launcher</AssemblyName>
 
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net9.0</TargetFramework>
@@ -26,6 +26,7 @@
 
 		<DebugType>embedded</DebugType>
 		<Deterministic>true</Deterministic>
+		<RootNamespace>Launcher</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -34,7 +35,7 @@
 
 	<ItemGroup>
 		<TrimmerRootAssembly Include="Spectre.Console.Cli" />
-		<TrimmerRootAssembly Include="unity" />
+		<TrimmerRootAssembly Include="unity-launcher" />
 	</ItemGroup>
 
 	<ItemGroup>

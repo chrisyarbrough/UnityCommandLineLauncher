@@ -1,13 +1,13 @@
-class GetProjectVersionCommand : Command<GetProjectVersionSettings>
+class ProjectVersionCommand : Command<ProjectVersionSettings>
 {
 	public override int Execute(
 		CommandContext context,
-		GetProjectVersionSettings settings,
+		ProjectVersionSettings settings,
 		CancellationToken cancellationToken)
 	{
 		try
 		{
-			var versionInfo = ProjectVersionFile.Parse(settings.ProjectVersionFilePath);
+			var versionInfo = ProjectVersionFile.Parse(settings.SearchDirectory);
 			string output = versionInfo.Version;
 
 			if (versionInfo.Changeset != null)

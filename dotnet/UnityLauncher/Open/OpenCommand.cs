@@ -13,10 +13,7 @@ class OpenCommand : Command<OpenSettings>
 				return 1;
 			}
 
-			var versionFile = FindProjectVersionFile(projectDir);
-			AnsiConsole.MarkupLine($"[cyan]File: {versionFile}[/]");
-
-			var version = ProjectVersionFile.Parse(versionFile);
+			var version = ProjectVersionFile.Parse(projectDir);
 			AnsiConsole.MarkupLine($"[cyan]Version: {version.Version}[/]");
 
 			UnityHub.EnsureEditorInstalledAsync(version.Version, version.Changeset)
@@ -46,24 +43,5 @@ class OpenCommand : Command<OpenSettings>
 			AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
 			return 1;
 		}
-	}
-
-	private static string FindProjectVersionFile(string searchDir)
-	{
-		var foundFiles = Directory.EnumerateFiles(
-				searchDir, "ProjectVersion.txt", SearchOption.AllDirectories)
-			.Where(file => Path.GetFileName(Path.GetDirectoryName(file)) == "ProjectSettings").ToArray();
-
-		if (foundFiles.Length == 0)
-			throw new Exception($"No ProjectSettings/ProjectVersion.txt found in {searchDir}");
-
-		if (foundFiles.Length > 1)
-		{
-			throw new Exception(
-				$"Found multiple ProjectVersion.txt files:\n{string.Join("\n", foundFiles)}\n" +
-				"Please run in a directory with only one Unity project");
-		}
-
-		return foundFiles[0];
 	}
 }
