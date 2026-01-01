@@ -1,5 +1,3 @@
-using Spectre.Console.Cli;
-
 var app = new CommandApp();
 app.Configure(config =>
 {
@@ -12,12 +10,12 @@ app.Configure(config =>
 		.WithExample("open", "/path/to/project")
 		.WithExample("open", "/path/to/project", "-batchmode", "-quit");
 
-	// Get revision subcommand
+	// Get revision
 	config.AddCommand<GetRevisionCommand>("get-revision")
 		.WithDescription("Get the revision/changeset for a Unity version")
 		.WithExample("get-revision", "2022.3.10f1");
 
-	// Get project version subcommand
+	// Get project version
 	config.AddCommand<GetProjectVersionCommand>("get-project-version")
 		.WithDescription("Extract Unity version from ProjectVersion.txt file")
 		.WithExample("get-project-version", "/path/to/ProjectSettings/ProjectVersion.txt");

@@ -1,7 +1,5 @@
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using Spectre.Console;
 
 record EditorInfo(string Version, string Path);
 
@@ -9,60 +7,31 @@ static partial class UnityHub
 {
 	private static string? _hubPathCache;
 
-	[GeneratedRegex(@"([0-9]+\.[0-9]+\.[0-9]+[a-z0-9]*)\s+\(.*\)\s+installed\s+at\s+(.+)")]
-	private static partial Regex EditorLineRegex();
-
-	public static string GetUnityHubPath()
+	public static string? GetEditorPath(string version)
 	{
-		if (_hubPathCache != null)
-			return _hubPathCache;
-
-		var process = new Process
-		{
-			StartInfo = new ProcessStartInfo
-			{
-				FileName = "mdfind",
-				Arguments = "kMDItemCFBundleIdentifier == 'com.unity3d.unityhub'",
-				RedirectStandardOutput = true,
-				RedirectStandardError = true,
-				UseShellExecute = false,
-				CreateNoWindow = true,
-			},
-		};
-
-		process.Start();
-		var output = process.StandardOutput.ReadToEnd();
-		process.WaitForExit();
-
-		if (process.ExitCode != 0 || string.IsNullOrWhiteSpace(output))
-			throw new Exception("Unity Hub not found on this system");
-
-		var lines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-		if (lines.Length == 0)
-			throw new Exception("Unity Hub not found on this system");
-
-		var hubPath = Path.Combine(lines[0], "Contents", "MacOS", "Unity Hub");
-		_hubPathCache = hubPath;
-		return hubPath;
+		var editors = ListInstalledEditors();
+		return editors.FirstOrDefault(e => e.Version == version)?.Path;
 	}
 
-	public static List<EditorInfo> ListInstalledEditors()
+	public static async Task EnsureEditorInstalledAsync(string version, string? changeset)
+	{
+		if (IsEditorInstalled(version))
+			return;
+
+		if (changeset == null)
+		{
+			AnsiConsole.MarkupLine("[cyan]Changeset not provided, fetching from Unity API...[/]");
+			changeset = await UnityReleaseApi.FetchChangesetAsync(version);
+		}
+
+		InstallEditor(version, changeset);
+	}
+
+	private static List<EditorInfo> ListInstalledEditors()
 	{
 		var hubPath = GetUnityHubPath();
-		var process = new Process
-		{
-			StartInfo = new ProcessStartInfo
-			{
-				FileName = hubPath,
-				Arguments = "-- --headless editors --installed",
-				RedirectStandardOutput = true,
-				RedirectStandardError = true,
-				UseShellExecute = false,
-				CreateNoWindow = true,
-			},
-		};
 
-		process.Start();
+		var process = ProcessHelper.Run(hubPath, redirectOutput: true, "-- --headless editors --installed");
 		var output = process.StandardOutput.ReadToEnd();
 		process.WaitForExit();
 
@@ -71,6 +40,9 @@ static partial class UnityHub
 
 		return ParseEditorsOutput(output);
 	}
+
+	[GeneratedRegex(@"([0-9]+\.[0-9]+\.[0-9]+[a-z0-9]*)\s+\(.*\)\s+installed\s+at\s+(.+)")]
+	private static partial Regex EditorLineRegex();
 
 	private static List<EditorInfo> ParseEditorsOutput(string output)
 	{
@@ -92,13 +64,32 @@ static partial class UnityHub
 		return editors;
 	}
 
-	public static string? GetEditorPath(string version)
+	private static string GetUnityHubPath()
 	{
-		var editors = ListInstalledEditors();
-		return editors.FirstOrDefault(e => e.Version == version)?.Path;
+		if (_hubPathCache != null)
+			return _hubPathCache;
+
+		var process = ProcessHelper.Run(
+			"mdfind",
+			redirectOutput: true,
+			"kMDItemCFBundleIdentifier == 'com.unity3d.unityhub'");
+
+		var output = process.StandardOutput.ReadToEnd();
+		process.WaitForExit();
+
+		if (process.ExitCode != 0 || string.IsNullOrWhiteSpace(output))
+			throw new Exception("Unity Hub not found on this system");
+
+		var lines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+		if (lines.Length == 0)
+			throw new Exception("Unity Hub not found on this system");
+
+		var hubPath = Path.Combine(lines[0], "Contents", "MacOS", "Unity Hub");
+		_hubPathCache = hubPath;
+		return hubPath;
 	}
 
-	public static bool IsEditorInstalled(string version)
+	private static bool IsEditorInstalled(string version)
 	{
 		try
 		{
@@ -111,7 +102,7 @@ static partial class UnityHub
 		}
 	}
 
-	public static void InstallEditor(string version, string changeset)
+	private static void InstallEditor(string version, string changeset)
 	{
 		var hubPath = GetUnityHubPath();
 
@@ -126,20 +117,10 @@ static partial class UnityHub
 
 		AnsiConsole.MarkupLine($"[cyan]Installing Unity version {version} {changeset}...[/]");
 
-		var process = new Process
-		{
-			StartInfo = new ProcessStartInfo
-			{
-				FileName = hubPath,
-				Arguments = $"-- --headless install --version {version} --changeset {changeset} --architecture {arch}",
-				RedirectStandardOutput = true,
-				RedirectStandardError = true,
-				UseShellExecute = false,
-				CreateNoWindow = true,
-			},
-		};
-
-		process.Start();
+		var process = ProcessHelper.Run(
+			hubPath,
+			redirectOutput: true,
+			$"-- --headless install --version {version} --changeset {changeset} --architecture {arch}");
 		process.WaitForExit();
 
 		if (process.ExitCode != 0)
@@ -147,19 +128,5 @@ static partial class UnityHub
 			var error = process.StandardError.ReadToEnd();
 			throw new Exception($"Failed to install Unity {version}: {error}");
 		}
-	}
-
-	public static async Task EnsureEditorInstalledAsync(string version, string? changeset)
-	{
-		if (IsEditorInstalled(version))
-			return;
-
-		if (string.IsNullOrEmpty(changeset))
-		{
-			AnsiConsole.MarkupLine("[cyan]Changeset not provided, fetching from Unity API...[/]");
-			changeset = await UnityReleaseApi.FetchChangesetAsync(version);
-		}
-
-		InstallEditor(version, changeset);
 	}
 }

@@ -1,9 +1,3 @@
-using Spectre.Console;
-using Spectre.Console.Cli;
-using System.Diagnostics.CodeAnalysis;
-
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors |
-                            DynamicallyAccessedMemberTypes.PublicMethods)]
 class OpenCommand : Command<OpenSettings>
 {
 	public override int Execute(CommandContext context, OpenSettings settings, CancellationToken cancellationToken)
@@ -19,22 +13,15 @@ class OpenCommand : Command<OpenSettings>
 				return 1;
 			}
 
-			// Find and parse project version
 			var versionFile = FindProjectVersionFile(projectDir);
 			AnsiConsole.MarkupLine($"[cyan]File: {versionFile}[/]");
 
 			var version = ProjectVersionFile.Parse(versionFile);
+			AnsiConsole.MarkupLine($"[cyan]Version: {version.Version}[/]");
 
-			var changesetInfo = !string.IsNullOrEmpty(version.Changeset)
-				? $" ({version.Changeset})"
-				: string.Empty;
-			AnsiConsole.MarkupLine($"[cyan]Version: {version.Version}{changesetInfo}[/]");
-
-			// Ensure Unity Editor is installed
 			UnityHub.EnsureEditorInstalledAsync(version.Version, version.Changeset)
 				.Wait(cancellationToken);
 
-			// Get editor path
 			var editorPath = UnityHub.GetEditorPath(version.Version);
 			if (editorPath == null)
 			{
@@ -44,7 +31,13 @@ class OpenCommand : Command<OpenSettings>
 
 			AnsiConsole.MarkupLine($"[cyan]Editor: {editorPath}[/]");
 
-			UnityLauncherHelper.LaunchUnity(editorPath, projectDir, settings.UnityArgs ?? []);
+			string[] additionalArgs = settings.UnityArgs ?? [];
+			var args = new List<string> { "-projectPath", projectDir };
+			args.AddRange(additionalArgs);
+
+			ProcessHelper.Run(Path.Combine(editorPath, "Contents/MacOS/Unity"), redirectOutput: false, args);
+
+			AnsiConsole.MarkupLine("[green]Unity Editor launched successfully[/]");
 
 			return 0;
 		}
@@ -57,21 +50,14 @@ class OpenCommand : Command<OpenSettings>
 
 	private static string FindProjectVersionFile(string searchDir)
 	{
-		var foundFiles = new List<string>();
+		var foundFiles = Directory.EnumerateFiles(
+				searchDir, "ProjectVersion.txt", SearchOption.AllDirectories)
+			.Where(file => Path.GetFileName(Path.GetDirectoryName(file)) == "ProjectSettings").ToArray();
 
-		foreach (var file in Directory.EnumerateFiles(searchDir, "ProjectVersion.txt", SearchOption.AllDirectories))
-		{
-			// Ensure it's in a ProjectSettings directory
-			if (Path.GetFileName(Path.GetDirectoryName(file)) == "ProjectSettings")
-			{
-				foundFiles.Add(Path.GetFullPath(file));
-			}
-		}
-
-		if (foundFiles.Count == 0)
+		if (foundFiles.Length == 0)
 			throw new Exception($"No ProjectSettings/ProjectVersion.txt found in {searchDir}");
 
-		if (foundFiles.Count > 1)
+		if (foundFiles.Length > 1)
 		{
 			throw new Exception(
 				$"Found multiple ProjectVersion.txt files:\n{string.Join("\n", foundFiles)}\n" +
