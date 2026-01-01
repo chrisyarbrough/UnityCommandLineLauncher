@@ -1,4 +1,4 @@
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 // https://services.docs.unity.com/release/v1/
 static class UnityReleaseApi
@@ -12,16 +12,16 @@ static class UnityReleaseApi
 		response.EnsureSuccessStatusCode();
 
 		var content = await response.Content.ReadAsStringAsync();
-		var apiResponse = JObject.Parse(content);
+		var apiResponse = JsonNode.Parse(content);
 
-		var results = apiResponse["results"] as JArray;
+		var results = apiResponse?["results"]?.AsArray();
 
-		if (results?.Count == 0)
+		if (results == null || results.Count == 0)
 			throw new Exception($"No results found for Unity version '{version}'.");
-		if (results?.Count > 1)
+		if (results.Count > 1)
 			throw new Exception($"More than one result found for Unity version '{version}'.");
 
-		string? changeset = results?[0]["shortRevision"]?.Value<string>();
+		string? changeset = results[0]?["shortRevision"]?.GetValue<string>();
 
 		if (string.IsNullOrEmpty(changeset))
 			throw new Exception("Changeset not found in API response.");

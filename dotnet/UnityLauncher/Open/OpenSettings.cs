@@ -1,8 +1,5 @@
-using Spectre.Console.Cli;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicProperties)]
 class OpenSettings : CommandSettings
 {
 	[CommandArgument(0, "<projectPath>")]

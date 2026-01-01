@@ -1,9 +1,3 @@
-using Spectre.Console;
-using Spectre.Console.Cli;
-using System.Diagnostics.CodeAnalysis;
-
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors |
-                            DynamicallyAccessedMemberTypes.PublicMethods)]
 class GetProjectVersionCommand : Command<GetProjectVersionSettings>
 {
 	public override int Execute(

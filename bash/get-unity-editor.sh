@@ -13,7 +13,7 @@ while IFS= read -r line; do
     if [[ "$line" =~ ([0-9]+\.[0-9]+\.[0-9]+[a-z0-9]*)[[:space:]]+\(.*\)[[:space:]]+installed[[:space:]]+at[[:space:]]+(.+) ]]; then
         LINE_VERSION="${BASH_REMATCH[1]}"
         LINE_PATH="${BASH_REMATCH[2]}"
-      
+
         if [[ "$LINE_VERSION" == "$VERSION" ]]; then
             echo "$LINE_PATH"
             exit 0
