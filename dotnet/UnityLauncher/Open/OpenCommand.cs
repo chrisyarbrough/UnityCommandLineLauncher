@@ -33,7 +33,7 @@ class OpenCommand : BaseCommand<OpenSettings>
 			redirectOutput: false,
 			args: string.Join(" ", args.Select(a => a.Contains(' ') ? $"\"{a}\"" : a)));
 
-		// Sadly, Unity doesn't report an exit code if the editor fails to open a project.
+		// Unity doesn't report an exit code if the editor fails to open a project.
 		// Instead, it prints error into the log. So, for now, we just assume it succeeded.
 		return 0;
 	}

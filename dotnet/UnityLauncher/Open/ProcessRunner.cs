@@ -9,6 +9,7 @@ class ProcessRunner : IProcessRunner
 {
 	public Process Run(string fileName, bool redirectOutput = false, string? args = null)
 	{
+		var timer = new ProfilingTimer($"{fileName} {args?[..Math.Max(20, args.Length)]}");
 		var process = new Process
 		{
 			StartInfo = new ProcessStartInfo
@@ -18,7 +19,9 @@ class ProcessRunner : IProcessRunner
 				RedirectStandardOutput = redirectOutput,
 				RedirectStandardError = redirectOutput,
 			},
+			EnableRaisingEvents = true,
 		};
+		process.Exited += (_, _) => timer.Stop();
 
 		if (!process.Start())
 			throw new Exception("Failed to launch Unity");
