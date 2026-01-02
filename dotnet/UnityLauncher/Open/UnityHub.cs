@@ -11,6 +11,12 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 
 	public static string GetEditorPath(string version)
 	{
+		// Fast path: check default install location first
+		var fastPath = TryGetEditorPathFromDefaultLocation(version);
+		if (fastPath != null)
+			return fastPath;
+
+		// Fallback: query Unity Hub for custom installation locations
 		var editors = ListInstalledEditors();
 		string? path = editors.FirstOrDefault(e => e.Version == version)?.Path;
 
@@ -102,6 +108,11 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 
 	private static bool IsEditorInstalled(string version)
 	{
+		// Fast path: check default install location first
+		if (TryGetEditorPathFromDefaultLocation(version) != null)
+			return true;
+
+		// Fallback: query Unity Hub for custom installation locations
 		try
 		{
 			var editors = ListInstalledEditors();
@@ -111,6 +122,12 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 		{
 			return false;
 		}
+	}
+
+	private static string? TryGetEditorPathFromDefaultLocation(string version)
+	{
+		var defaultPath = Path.Combine("/Applications/Unity/Hub/Editor", version, "Unity.app");
+		return Directory.Exists(defaultPath) ? defaultPath : null;
 	}
 
 	private void InstallEditor(string version, string changeset)

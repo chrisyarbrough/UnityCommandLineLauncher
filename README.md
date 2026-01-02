@@ -19,7 +19,7 @@ unity --help
 
 ## Main Features
 
-- Opens Unity projects from the terminal
+- Opens Unity projects from the terminal (faster than using the Unity Hub GUI)
 - Detects the correct Unity Editor version from the project
 - Installs missing Unity Editor versions via Unity Hub
 - Fetches changesets from Unity API when not available in ProjectVersion.txt (legacy projects)
