@@ -6,18 +6,19 @@ class OpenCommand : BaseCommand<OpenSettings>
 
 		if (!Directory.Exists(searchPath))
 		{
-			ConsoleHelper.WriteError($"Project directory '{settings.SearchPath}' is not a valid directory.");
+			WriteError($"Project directory '{settings.SearchPath}' is not a valid directory.");
 			return 1;
 		}
 
 		var version = ProjectVersionFile.Parse(searchPath, out string filePath);
-		AnsiConsole.MarkupLine($"[cyan]File: {filePath}[/]");
+		AnsiConsole.MarkupLine($"File: {filePath}");
 		string logString = $"Version: {version.Version}";
 		if (version.Changeset != null)
 			logString += $" ({version.Changeset})";
 		AnsiConsole.MarkupLine(logString);
 
-		UnityHub.EnsureEditorInstalledAsync(version.Version, version.Changeset).Wait();
+		new UnityHub(settings.MutatingProcess)
+			.EnsureEditorInstalledAsync(version.Version, version.Changeset).Wait();
 
 		var editorPath = UnityHub.GetEditorPath(version.Version);
 		AnsiConsole.MarkupLine($"Editor: {editorPath}");
@@ -27,7 +28,7 @@ class OpenCommand : BaseCommand<OpenSettings>
 		var args = new List<string> { "-projectPath", projectDir };
 		args.AddRange(additionalArgs);
 
-		ProcessHelper.Run(
+		settings.MutatingProcess.Run(
 			fileName: Path.Combine(editorPath, "Contents/MacOS/Unity"),
 			redirectOutput: false,
 			args: string.Join(" ", args.Select(a => a.Contains(' ') ? $"\"{a}\"" : a)));

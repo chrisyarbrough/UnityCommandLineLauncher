@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-class OpenSettings : CommandSettings
+class OpenSettings : MutatingCommand
 {
 	[CommandArgument(0, "<searchPath>")]
 	[Description("Directory to be searched for a Unity project")]

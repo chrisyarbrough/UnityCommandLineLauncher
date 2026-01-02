@@ -3,9 +3,10 @@ using System.Text.RegularExpressions;
 
 record EditorInfo(string Version, string Path);
 
-static partial class UnityHub
+partial class UnityHub(IProcessRunner modifyingProcessRunner)
 {
 	private static string? _hubPathCache;
+	private static IProcessRunner readOnlyProcessRunner = new ProcessRunner();
 
 	public static string GetEditorPath(string version)
 	{
@@ -18,7 +19,7 @@ static partial class UnityHub
 		return path;
 	}
 
-	public static async Task EnsureEditorInstalledAsync(string version, string? changeset)
+	public async Task EnsureEditorInstalledAsync(string version, string? changeset)
 	{
 		if (IsEditorInstalled(version))
 			return;
@@ -36,7 +37,7 @@ static partial class UnityHub
 	{
 		var hubPath = GetUnityHubPath();
 
-		var process = ProcessHelper.Run(hubPath, redirectOutput: true, "-- --headless editors --installed");
+		var process = readOnlyProcessRunner.Run(hubPath, redirectOutput: true, "-- --headless editors --installed");
 		var output = process.StandardOutput.ReadToEnd();
 		process.WaitForExit();
 
@@ -74,7 +75,7 @@ static partial class UnityHub
 		if (_hubPathCache != null)
 			return _hubPathCache;
 
-		var process = ProcessHelper.Run(
+		var process = readOnlyProcessRunner.Run(
 			"mdfind",
 			redirectOutput: true,
 			"kMDItemCFBundleIdentifier == 'com.unity3d.unityhub'");
@@ -107,7 +108,7 @@ static partial class UnityHub
 		}
 	}
 
-	private static void InstallEditor(string version, string changeset)
+	private void InstallEditor(string version, string changeset)
 	{
 		var hubPath = GetUnityHubPath();
 
@@ -122,7 +123,7 @@ static partial class UnityHub
 
 		AnsiConsole.MarkupLine($"Installing Unity version {version} {changeset}...");
 
-		var process = ProcessHelper.Run(
+		var process = modifyingProcessRunner.Run(
 			hubPath,
 			redirectOutput: true,
 			$"-- --headless install --version {version} --changeset {changeset} --architecture {arch}");
