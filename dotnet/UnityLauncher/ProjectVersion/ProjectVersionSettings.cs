@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 class ProjectVersionSettings : CommandSettings
 {
-	[CommandArgument(0, "[searchDirectory]")]
-	[Description("Directory to search for ProjectVersion.txt (default: current directory)")]
-	public string SearchDirectory { get; init; } = ".";
+	[CommandArgument(0, "<searchPath>")]
+	[Description("Directory to be searched for a Unity project")]
+	public required string SearchPath { get; init; }
 }

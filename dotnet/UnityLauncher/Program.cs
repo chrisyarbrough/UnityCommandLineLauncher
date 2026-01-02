@@ -1,14 +1,15 @@
 var app = new CommandApp();
 app.Configure(config =>
 {
+	config.SetApplicationName("unity-launcher");
 	config.SetApplicationVersion("1.0.0");
 
 	// Open command
 	config.AddCommand<OpenCommand>("open")
 		.WithDescription("Open Unity Editor for a project")
 		.WithExample("open", ".")
-		.WithExample("open", "/path/to/project")
-		.WithExample("open", "/path/to/project", "-batchmode", "-quit");
+		.WithExample("open", "path/to/project")
+		.WithExample("open", "path/to/project", "-batchmode", "-quit");
 
 	// Install editor
 	config.AddCommand<InstallCommand>("install")
@@ -19,7 +20,7 @@ app.Configure(config =>
 	// Get revision
 	config.AddCommand<EditorRevisionCommand>("editor-revision")
 		.WithDescription("Get revision for Unity version")
-		.WithExample("revision", "2022.3.10f1");
+		.WithExample("editor-revision", "2022.3.10f1");
 
 	// Get editor path
 	config.AddCommand<EditorPathCommand>("editor-path")
@@ -29,7 +30,7 @@ app.Configure(config =>
 	// Get project version
 	config.AddCommand<ProjectVersionCommand>("project-version")
 		.WithDescription("Extract Unity version from project (search directory or path to ProjectVersion.txt)")
-		.WithExample("project-version", "/path/to/UnityProjectSearchDirectory");
+		.WithExample("project-version", "path");
 });
 
 return app.Run(args);

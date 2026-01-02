@@ -7,7 +7,7 @@ public static class ProjectVersionFileTests
 	{
 		var testFilePath = Path.Combine("TestData", filePath);
 
-		var result = ProjectVersionFile.Parse(testFilePath);
+		var result = ProjectVersionFile.Parse(testFilePath, out string _);
 
 		Assert.Equal(expectedVersion, result.Version);
 		Assert.Equal(expectedChangeset, result.Changeset);

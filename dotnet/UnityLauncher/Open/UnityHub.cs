@@ -7,10 +7,15 @@ static partial class UnityHub
 {
 	private static string? _hubPathCache;
 
-	public static string? GetEditorPath(string version)
+	public static string GetEditorPath(string version)
 	{
 		var editors = ListInstalledEditors();
-		return editors.FirstOrDefault(e => e.Version == version)?.Path;
+		string? path = editors.FirstOrDefault(e => e.Version == version)?.Path;
+
+		if (path == null)
+			throw new Exception($"Unity version {version} is not installed.");
+
+		return path;
 	}
 
 	public static async Task EnsureEditorInstalledAsync(string version, string? changeset)
@@ -20,7 +25,7 @@ static partial class UnityHub
 
 		if (changeset == null)
 		{
-			AnsiConsole.MarkupLine("[cyan]Changeset not provided, fetching from Unity API...[/]");
+			AnsiConsole.MarkupLine("Changeset not provided, fetching from Unity API...");
 			changeset = await UnityReleaseApi.FetchChangesetAsync(version);
 		}
 
@@ -115,7 +120,7 @@ static partial class UnityHub
 				$"Unsupported architecture: {RuntimeInformation.ProcessArchitecture}"),
 		};
 
-		AnsiConsole.MarkupLine($"[cyan]Installing Unity version {version} {changeset}...[/]");
+		AnsiConsole.MarkupLine($"Installing Unity version {version} {changeset}...");
 
 		var process = ProcessHelper.Run(
 			hubPath,
