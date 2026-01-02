@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Installs a specific Unity Editor version via Unity Hub if not already installed.
-# Usage: ./ensure-unity-editor-install.sh <version> [<changeset>]
+# Usage: ./unity-launcher-install.sh <version> [<changeset>]
 
 if [ $# -lt 1 ]; then
     echo "Usage: $0 <version> [<changeset>]" >&2
@@ -9,7 +9,8 @@ if [ $# -lt 1 ]; then
 fi
 
 VERSION="$1"
-source "$(dirname "$0")/shared.sh"
+SCRIPT_DIR="$(dirname "$0")"
+source "$SCRIPT_DIR/utility.sh"
 UNITY_HUB=$(get_unity_hub)
 
 INSTALLED_EDITORS="$("$UNITY_HUB" -- --headless editors --installed 2>/dev/null)"
@@ -20,7 +21,7 @@ fi
 CHANGESET="$2"
 if [ -z "$CHANGESET" ]; then
   echo "Changeset was not provided. Fetching from Unity API..."
-  CHANGESET=$(curl -s "https://services.api.unity.com/unity/editor/release/v1/releases?version=$VERSION" | jq -r '.results[0].shortRevision')
+  CHANGESET=$(sh "$SCRIPT_DIR/unity-launcher-editor-revision.sh" "$VERSION")
 fi
 
 echo "Installing Unity version $VERSION $CHANGESET..."
