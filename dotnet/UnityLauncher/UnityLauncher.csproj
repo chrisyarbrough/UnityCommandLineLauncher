@@ -16,7 +16,7 @@
 		<NoWarn>IL2026;IL2104</NoWarn>
 
 		<WarningLevel>4</WarningLevel> <!-- 0 (none) - 4 (all) -->
-		<Optimize>true</Optimize> <!-- Disable to show line numbers in stack traces. -->
+		<Optimize>false</Optimize> <!-- Show line numbers in stack traces and allow debugging. -->
 
 		<DebugType>embedded</DebugType>
 		<Deterministic>true</Deterministic>
