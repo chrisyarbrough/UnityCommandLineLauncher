@@ -9,10 +9,13 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 	private static List<EditorInfo>? _editorsCache;
 	private static IProcessRunner readOnlyProcessRunner = new ProcessRunner();
 
+	/// <summary>
+	/// Returns the path to the editor executable on the current platform.
+	/// </summary>
 	public static string GetEditorPath(string version)
 	{
 		// Fast path: check default install location first
-		var fastPath = TryGetEditorPathFromDefaultLocation(version);
+		var fastPath = PlatformHelper.FindDefaultEditorInstallPath(version);
 		if (fastPath != null)
 			return fastPath;
 
@@ -47,7 +50,10 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 
 		var hubPath = GetUnityHubPath();
 
-		var process = readOnlyProcessRunner.Run(hubPath, redirectOutput: true, "-- --headless editors --installed");
+		var process = readOnlyProcessRunner.Run(
+			hubPath,
+			redirectOutput: true,
+			PlatformHelper.FormatHubArgs("--headless editors --installed"));
 		var output = process.StandardOutput.ReadToEnd();
 		process.WaitForExit();
 
@@ -86,30 +92,18 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 		if (_hubPathCache != null)
 			return _hubPathCache;
 
-		var process = readOnlyProcessRunner.Run(
-			"mdfind",
-			redirectOutput: true,
-			"kMDItemCFBundleIdentifier == 'com.unity3d.unityhub'");
+		_hubPathCache = PlatformHelper.FindDefaultHubInstallPath();
 
-		var output = process.StandardOutput.ReadToEnd();
-		process.WaitForExit();
+		if (_hubPathCache == null)
+			throw new Exception("Unity Hub not found.");
 
-		if (process.ExitCode != 0 || string.IsNullOrWhiteSpace(output))
-			throw new Exception("Unity Hub not found on this system");
-
-		var lines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-		if (lines.Length == 0)
-			throw new Exception("Unity Hub not found on this system");
-
-		var hubPath = Path.Combine(lines[0], "Contents", "MacOS", "Unity Hub");
-		_hubPathCache = hubPath;
-		return hubPath;
+		return _hubPathCache;
 	}
 
 	private static bool IsEditorInstalled(string version)
 	{
 		// Fast path: check default install location first
-		if (TryGetEditorPathFromDefaultLocation(version) != null)
+		if (PlatformHelper.FindDefaultEditorInstallPath(version) != null)
 			return true;
 
 		// Fallback: query Unity Hub for custom installation locations
@@ -122,12 +116,6 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 		{
 			return false;
 		}
-	}
-
-	private static string? TryGetEditorPathFromDefaultLocation(string version)
-	{
-		var defaultPath = Path.Combine("/Applications/Unity/Hub/Editor", version, "Unity.app");
-		return Directory.Exists(defaultPath) ? defaultPath : null;
 	}
 
 	private void InstallEditor(string version, string changeset)
@@ -148,7 +136,8 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 		var process = modifyingProcessRunner.Run(
 			hubPath,
 			redirectOutput: true,
-			$"-- --headless install --version {version} --changeset {changeset} --architecture {arch}");
+			PlatformHelper.FormatHubArgs(
+				$"--headless install --version {version} --changeset {changeset} --architecture {arch}"));
 		process.WaitForExit();
 
 		if (process.ExitCode != 0)

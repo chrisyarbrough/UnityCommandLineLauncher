@@ -10,17 +10,14 @@ class OpenCommand : BaseCommand<OpenSettings>
 			return 1;
 		}
 
-		var version = ProjectVersionFile.Parse(searchPath, out string filePath);
+		UnityVersion unityVersion = ProjectVersionFile.Parse(searchPath, out string filePath);
 		AnsiConsole.MarkupLine($"File: {filePath}");
-		string logString = $"Version: {version.Version}";
-		if (version.Changeset != null)
-			logString += $" ({version.Changeset})";
-		AnsiConsole.MarkupLine(logString);
+		AnsiConsole.MarkupLine($"Version: {unityVersion}");
 
 		new UnityHub(settings.MutatingProcess)
-			.EnsureEditorInstalledAsync(version.Version, version.Changeset).Wait();
+			.EnsureEditorInstalledAsync(unityVersion.Version, unityVersion.Changeset).Wait();
 
-		var editorPath = UnityHub.GetEditorPath(version.Version);
+		var editorPath = UnityHub.GetEditorPath(unityVersion.Version);
 		AnsiConsole.MarkupLine($"Editor: {editorPath}");
 
 		string projectDir = new FileInfo(filePath).Directory!.Parent!.FullName;
@@ -29,7 +26,7 @@ class OpenCommand : BaseCommand<OpenSettings>
 		args.AddRange(additionalArgs);
 
 		settings.MutatingProcess.Run(
-			fileName: Path.Combine(editorPath, "Contents/MacOS/Unity"),
+			fileName: editorPath,
 			redirectOutput: false,
 			args: string.Join(" ", args.Select(a => a.Contains(' ') ? $"\"{a}\"" : a)));
 

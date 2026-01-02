@@ -9,7 +9,7 @@ class ProcessRunner : IProcessRunner
 {
 	public Process Run(string fileName, bool redirectOutput = false, string? args = null)
 	{
-		var timer = new ProfilingTimer($"{fileName} {args?[..Math.Max(20, args.Length)]}");
+		var timer = new ProfilingTimer($"{fileName} {args?[..Math.Min(42, args.Length)]}");
 		var process = new Process
 		{
 			StartInfo = new ProcessStartInfo

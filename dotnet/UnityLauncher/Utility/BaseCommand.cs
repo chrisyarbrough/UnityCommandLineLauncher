@@ -24,6 +24,6 @@ abstract class BaseCommand<TSettings> : Command<TSettings>
 
 	protected abstract int ExecuteImpl(TSettings settings);
 
-	protected static void WriteError(string message) => AnsiConsole.MarkupLine($"[red]Error: {message}[/]");
-	protected static void WriteSuccess(string message) => AnsiConsole.MarkupLine($"[green]{message}[/]");
+	protected static void WriteError(string message) => AnsiConsole.MarkupLine($"[red]Error: {Markup.Escape(message)}[/]");
+	protected static void WriteSuccess(string message) => AnsiConsole.MarkupLine($"[green]{Markup.Escape(message)}[/]");
 }

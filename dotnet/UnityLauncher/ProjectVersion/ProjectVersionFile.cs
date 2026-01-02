@@ -1,6 +1,15 @@
 using System.Text.RegularExpressions;
 
-record UnityVersion(string Version, string? Changeset);
+record UnityVersion(string Version, string? Changeset)
+{
+	public override string ToString()
+	{
+		string s = $"Version: {Version}";
+		if (Changeset != null)
+			s += $" ({Changeset})";
+		return s;
+	}
+}
 
 static partial class ProjectVersionFile
 {
@@ -81,8 +90,8 @@ static partial class ProjectVersionFile
 		if (foundFiles.Length > 1)
 		{
 			throw new Exception(
-				$"Found multiple ProjectVersion.txt files (showing just a few):\n{string.Join("\n", foundFiles)}\n" +
-				"Run with a directory that contains only one Unity project.");
+				$"Found multiple ProjectVersion.txt files (showing partial results):\n{string.Join("\n", foundFiles)}\n" +
+				"Specify a directory containing a single Unity project.");
 		}
 		else if (foundFiles.Length == 1)
 		{
