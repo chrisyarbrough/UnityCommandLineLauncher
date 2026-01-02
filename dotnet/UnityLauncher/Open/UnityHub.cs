@@ -6,6 +6,7 @@ record EditorInfo(string Version, string Path);
 partial class UnityHub(IProcessRunner modifyingProcessRunner)
 {
 	private static string? _hubPathCache;
+	private static List<EditorInfo>? _editorsCache;
 	private static IProcessRunner readOnlyProcessRunner = new ProcessRunner();
 
 	public static string GetEditorPath(string version)
@@ -35,6 +36,9 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 
 	private static List<EditorInfo> ListInstalledEditors()
 	{
+		if (_editorsCache != null)
+			return _editorsCache;
+
 		var hubPath = GetUnityHubPath();
 
 		var process = readOnlyProcessRunner.Run(hubPath, redirectOutput: true, "-- --headless editors --installed");
@@ -44,7 +48,8 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 		if (process.ExitCode != 0)
 			throw new Exception($"Failed to list installed editors: {process.StandardError.ReadToEnd()}");
 
-		return ParseEditorsOutput(output);
+		_editorsCache = ParseEditorsOutput(output);
+		return _editorsCache;
 	}
 
 	[GeneratedRegex(@"([0-9]+\.[0-9]+\.[0-9]+[a-z0-9]*)\s+\(.*\)\s+installed\s+at\s+(.+)")]
@@ -134,5 +139,8 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 			var error = process.StandardError.ReadToEnd();
 			throw new Exception($"Failed to install Unity {version}: {error}");
 		}
+
+		// Invalidate the cache after installing a new editor
+		_editorsCache = null;
 	}
 }
