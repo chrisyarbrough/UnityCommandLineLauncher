@@ -10,4 +10,4 @@ dotnet publish --runtime linux-x64
 dotnet publish --runtime win-x64
 ```
 
-Note: Non-macOS platforms will require platform-specific code changes (Unity Hub lookup, etc.)
+This project uses only a single _Release_ configuration with debugging enabled.
