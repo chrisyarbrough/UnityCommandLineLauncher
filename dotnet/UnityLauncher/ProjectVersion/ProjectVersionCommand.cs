@@ -1,25 +1,14 @@
-class ProjectVersionCommand : Command<ProjectVersionSettings>
+class ProjectVersionCommand : BaseCommand<ProjectVersionSettings>
 {
-	public override int Execute(
-		CommandContext context,
-		ProjectVersionSettings settings,
-		CancellationToken cancellationToken)
+	protected override int ExecuteImpl(ProjectVersionSettings settings)
 	{
-		try
-		{
-			var versionInfo = ProjectVersionFile.Parse(settings.SearchDirectory);
-			string output = versionInfo.Version;
+		var versionInfo = ProjectVersionFile.Parse(settings.SearchPath, out string _);
+		string output = versionInfo.Version;
 
-			if (versionInfo.Changeset != null)
-				output += " " + versionInfo.Changeset;
+		if (versionInfo.Changeset != null)
+			output += " " + versionInfo.Changeset;
 
-			Console.WriteLine(output);
-			return 0;
-		}
-		catch (Exception ex)
-		{
-			AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-			return 1;
-		}
+		AnsiConsole.WriteLine(output);
+		return 0;
 	}
 }

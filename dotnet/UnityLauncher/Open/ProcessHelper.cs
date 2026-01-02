@@ -2,14 +2,14 @@ using System.Diagnostics;
 
 static class ProcessHelper
 {
-	public static Process Run(string fileName, bool redirectOutput = false, params IList<string> args)
+	public static Process Run(string fileName, bool redirectOutput = false, string? args = null)
 	{
 		var process = new Process
 		{
 			StartInfo = new ProcessStartInfo
 			{
 				FileName = fileName,
-				Arguments = string.Join(" ", args.Select(a => a.Contains(' ') ? $"\"{a}\"" : a)),
+				Arguments = args,
 				RedirectStandardOutput = redirectOutput,
 				RedirectStandardError = redirectOutput,
 			},

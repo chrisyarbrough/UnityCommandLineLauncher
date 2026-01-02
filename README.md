@@ -1,41 +1,40 @@
 # Unity Command Line Launcher
 
-A terminal command designed to open Unity projects faster and more convenient than with the Unity Hub.
+A terminal command designed to open Unity projects quickly and with convenience.
+Builds on the Unity Hub CLI.
 
-## Example
+## Examples
 
 ```bash
-unity MyProject
+unity open path/to/project
 ```
 
-or
+To see all commands:
 
 ```bash
-cd MyProject
-unity
+unity --help
 ```
 
 ![](docs/Screenshot.png)
 
-## Features
+## Main Features
 
-- Opens Unity projects directly from the terminal without Unity Hub
-- Automatically detects the correct Unity Editor version from the project
-- Automatically installs missing Unity Editor versions via Unity Hub
-- Fetches changesets from Unity API when not available locally
-- Supports opening projects from current directory or by specifying a path
+- Opens Unity projects from the terminal
+- Detects the correct Unity Editor version from the project
+- Installs missing Unity Editor versions via Unity Hub
+- Fetches changesets from Unity API when not available in ProjectVersion.txt (legacy projects)
 - Forwards additional Unity command line arguments (e.g., `-batchmode`, `-quit`)
 
-## Support
+## Supported Platforms
 
-Currently, only macOS is supported (tested with Sequoia 15.7.1).
+- macOS (tested with Sequoia 15.7.1)
 
 ## Setup
 
 Create an alias in your shell config (.zshrc, .bashrc, etc.):
 
 ```bash
-echo 'alias unity="~/path/to/UnityCommandLineLauncher/bash/open-unity.sh"' >> ~/.zshrc
+echo 'alias unity="~/UnityCommandLineLauncher/dotnet/UnityLauncher/bin/Release/osx-arm64/publish/unity-launcher"' >> ~/.zshrc
 ```
 
 ## Design Background
@@ -46,6 +45,11 @@ echo 'alias unity="~/path/to/UnityCommandLineLauncher/bash/open-unity.sh"' >> ~/
 - Projects must be added to the Hub manually.
 - Managing a large amount of projects can be cumbersome in a GUI workflow.
 - Opening multiple test projects (e.g. when developing Unity packages) can be cumbersome.
+- The Unity Hub CLI can be cumbersome:
+    - Hub path must be hardcoded or searched for with extra code.
+    - Installing an editor requires passing the changeset in many cases, but the changeset is not always available in
+      the ProjectVersion.txt file.
+    - Installing an editor requires passing the architecture on macOS, which requires extra code to query this info.
 
 ### Solutions
 
@@ -54,9 +58,12 @@ echo 'alias unity="~/path/to/UnityCommandLineLauncher/bash/open-unity.sh"' >> ~/
     - Terminal window in IDE.
     - Context menu on directories in macOS Finder.
 - Opening multiple projects can be automated with a helper script.
+- Additional commands extend the Unity Hub CLI API.
 
 ## Development
 
 This repository provides multiple experimental implementations of the launcher tool.
 All implementations are meant to provide the same functionality, and they are currently being evaluated.
 In the end, a single implementation will be distributed as a package.
+
+Currently, the dotnet implementation is favored (and the most complete).

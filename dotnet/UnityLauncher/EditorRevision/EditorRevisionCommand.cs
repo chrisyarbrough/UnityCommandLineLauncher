@@ -1,19 +1,9 @@
-class EditorRevisionCommand : AsyncCommand<EditorRevisionSettings>
+class EditorRevisionCommand : BaseCommand<EditorRevisionSettings>
 {
-	public override async Task<int> ExecuteAsync(CommandContext context,
-		EditorRevisionSettings settings,
-		CancellationToken cancellationToken)
+	protected override int ExecuteImpl(EditorRevisionSettings settings)
 	{
-		try
-		{
-			var changeset = await UnityReleaseApi.FetchChangesetAsync(settings.Version);
-			Console.WriteLine(changeset);
-			return 0;
-		}
-		catch (Exception ex)
-		{
-			AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-			return 1;
-		}
+		var changeset = UnityReleaseApi.FetchChangesetAsync(settings.Version).Result;
+		AnsiConsole.WriteLine(changeset);
+		return 0;
 	}
 }

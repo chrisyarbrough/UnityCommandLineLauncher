@@ -1,27 +1,9 @@
-class EditorPathCommand : Command<EditorPathSettings>
+class EditorPathCommand : BaseCommand<EditorPathSettings>
 {
-	public override int Execute(
-		CommandContext context,
-		EditorPathSettings settings,
-		CancellationToken cancellationToken)
+	protected override int ExecuteImpl(EditorPathSettings settings)
 	{
-		try
-		{
-			var path = UnityHub.GetEditorPath(settings.Version);
-
-			if (path == null)
-			{
-				AnsiConsole.MarkupLine($"[red]Unity {settings.Version} is not installed[/]");
-				return 1;
-			}
-
-			Console.WriteLine(path);
-			return 0;
-		}
-		catch (Exception ex)
-		{
-			AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-			return 1;
-		}
+		var path = UnityHub.GetEditorPath(settings.Version);
+		AnsiConsole.WriteLine(path);
+		return 0;
 	}
 }

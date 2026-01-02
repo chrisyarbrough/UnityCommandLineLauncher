@@ -4,17 +4,14 @@ record UnityVersion(string Version, string? Changeset);
 
 static partial class ProjectVersionFile
 {
-	public static UnityVersion Parse(string directoryOrFile)
+	public static UnityVersion Parse(string directoryOrFile, out string filePath)
 	{
-		string filePath;
 		if (File.Exists(directoryOrFile))
 			filePath = directoryOrFile;
 		else if (Directory.Exists(directoryOrFile))
 			filePath = Find(directoryOrFile);
 		else
-			throw new FileNotFoundException("Argument must be a valid directory or ProjectSettings.txt file path.");
-
-		AnsiConsole.MarkupLine($"[cyan]File: {filePath}[/]");
+			throw new FileNotFoundException("Argument must be a valid directory or ProjectVersion.txt file path.");
 
 		var content = File.ReadAllText(filePath);
 
