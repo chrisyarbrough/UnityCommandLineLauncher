@@ -6,6 +6,7 @@ abstract class BaseCommand<TSettings> : Command<TSettings>
 		TSettings settings,
 		CancellationToken cancellationToken)
 	{
+		var timer = new ProfilingTimer(GetType().Name);
 		try
 		{
 			return ExecuteImpl(settings);
@@ -14,6 +15,10 @@ abstract class BaseCommand<TSettings> : Command<TSettings>
 		{
 			WriteError(ex.Message);
 			return 1;
+		}
+		finally
+		{
+			timer.Stop();
 		}
 	}
 
