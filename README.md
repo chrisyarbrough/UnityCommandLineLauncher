@@ -37,6 +37,22 @@ Create an alias in your shell config (.zshrc, .bashrc, etc.):
 echo 'alias unity="~/UnityCommandLineLauncher/dotnet/UnityLauncher/bin/Release/osx-arm64/publish/unity-launcher"' >> ~/.zshrc
 ```
 
+## Configuration
+
+The tool queries the default installation locations for the Unity Hub and editors
+and attempts to discover it via OS tools.
+If this fails, or you want to speed up the process, override the paths using environment variables:
+
+```bash
+export UNITY_EDITOR_PATH="/Applications/Unity/Hub/Editor"     # macOS
+export UNITY_EDITOR_PATH="C:\Program Files\Unity\Hub\Editor"  # Windows
+export UNITY_EDITOR_PATH="/home/<user>/Unity/Hub/Editor"      # Linux
+
+export UNITY_HUB_PATH="/Applications/Unity Hub.app"           # macOS
+export UNITY_HUB_PATH="C:\Program Files\Unity Hub"            # Windows
+export UNITY_HUB_PATH="~/Applications/Unity\ Hub.AppImage"    # Linux
+```
+
 ## Design Background
 
 ### Problems
