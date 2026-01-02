@@ -12,10 +12,13 @@ abstract class BaseCommand<TSettings> : Command<TSettings>
 		}
 		catch (Exception ex)
 		{
-			ConsoleHelper.WriteError(ex.Message);
+			WriteError(ex.Message);
 			return 1;
 		}
 	}
 
 	protected abstract int ExecuteImpl(TSettings settings);
+
+	protected static void WriteError(string message) => AnsiConsole.MarkupLine($"[red]Error: {message}[/]");
+	protected static void WriteSuccess(string message) => AnsiConsole.MarkupLine($"[green]{message}[/]");
 }

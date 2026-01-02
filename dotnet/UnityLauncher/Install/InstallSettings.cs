@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-class InstallSettings : CommandSettings
+class InstallSettings : MutatingCommand
 {
 	[CommandArgument(0, "<version>")]
 	[Description("Unity version to install (e.g., 2022.3.10f1)")]

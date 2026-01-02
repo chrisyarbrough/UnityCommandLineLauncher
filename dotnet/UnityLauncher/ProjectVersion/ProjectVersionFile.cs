@@ -40,20 +40,20 @@ static partial class ProjectVersionFile
 
 	private static string Find(string searchDir)
 	{
-		// Try upward search first (find closest containing project)
 		var upwardResult = FindUpward(searchDir);
 		if (upwardResult != null)
 			return upwardResult;
 
-		// Fall back to downward search if upward didn't find anything
-		return FindDownward(searchDir);
+		var downwardResult = FindDownward(searchDir);
+		if (downwardResult == null)
+			throw new Exception($"No ProjectSettings/ProjectVersion.txt found in {searchDir}");
+		return downwardResult;
 	}
 
 	private static string? FindUpward(string startDir)
 	{
 		var current = new DirectoryInfo(startDir);
 
-		// Search upward until we reach the filesystem root
 		while (current != null)
 		{
 			var projectSettingsDir = Path.Combine(current.FullName, "ProjectSettings");
@@ -62,48 +62,34 @@ static partial class ProjectVersionFile
 			{
 				var versionFilePath = Path.Combine(projectSettingsDir, "ProjectVersion.txt");
 
-				// If ProjectSettings exists and contains ProjectVersion.txt, we found it
 				if (File.Exists(versionFilePath))
 					return versionFilePath;
-
-				// If ProjectSettings exists but no ProjectVersion.txt, continue searching
-				// (could be a user's custom ProjectSettings folder, not Unity's)
 			}
 
-			// Move to parent directory
 			current = current.Parent;
 		}
 
-		// Reached filesystem root without finding anything
 		return null;
 	}
 
-	private static string FindDownward(string searchDir)
+	private static string? FindDownward(string searchDir)
 	{
-		var foundFiles = new List<string>();
+		var foundFiles = Directory.EnumerateFiles(
+				searchDir, "ProjectVersion.txt", SearchOption.AllDirectories)
+			.Where(file => Path.GetFileName(Path.GetDirectoryName(file)) == "ProjectSettings").Take(8).ToArray();
 
-		// Enumerate files and abort early if we find more than one
-		foreach (var file in Directory.EnumerateFiles(searchDir, "ProjectVersion.txt", SearchOption.AllDirectories))
+		if (foundFiles.Length > 1)
 		{
-			// Only consider files in ProjectSettings folders
-			if (Path.GetFileName(Path.GetDirectoryName(file)) == "ProjectSettings")
-			{
-				foundFiles.Add(file);
-
-				// Abort enumeration as soon as we find multiple projects
-				if (foundFiles.Count > 1)
-				{
-					throw new Exception(
-						$"Found multiple ProjectVersion.txt files:\n{string.Join("\n", foundFiles)}\n" +
-						"Please run in a directory with only one Unity project");
-				}
-			}
+			throw new Exception(
+				$"Found multiple ProjectVersion.txt files (showing just a few):\n{string.Join("\n", foundFiles)}\n" +
+				"Run with a directory that contains only one Unity project.");
+		}
+		else if (foundFiles.Length == 1)
+		{
+			return foundFiles[0];
 		}
 
-		if (foundFiles.Count == 0)
-			throw new Exception($"No ProjectSettings/ProjectVersion.txt found in {searchDir}");
-
-		return foundFiles[0];
+		return null;
 	}
 
 	[GeneratedRegex(@"m_EditorVersionWithRevision:\s+(.+)\s+\((.+)\)")]
