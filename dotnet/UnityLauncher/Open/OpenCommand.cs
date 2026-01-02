@@ -2,15 +2,15 @@ class OpenCommand : BaseCommand<OpenSettings>
 {
 	protected override int ExecuteImpl(OpenSettings settings)
 	{
-		var projectDir = Path.GetFullPath(settings.SearchPath);
+		var searchPath = Path.GetFullPath(settings.SearchPath);
 
-		if (!Directory.Exists(projectDir))
+		if (!Directory.Exists(searchPath))
 		{
 			ConsoleHelper.WriteError($"Project directory '{settings.SearchPath}' is not a valid directory.");
 			return 1;
 		}
 
-		var version = ProjectVersionFile.Parse(projectDir, out string filePath);
+		var version = ProjectVersionFile.Parse(searchPath, out string filePath);
 		AnsiConsole.MarkupLine($"[cyan]File: {filePath}[/]");
 		string logString = $"Version: {version.Version}";
 		if (version.Changeset != null)
@@ -22,6 +22,7 @@ class OpenCommand : BaseCommand<OpenSettings>
 		var editorPath = UnityHub.GetEditorPath(version.Version);
 		AnsiConsole.MarkupLine($"Editor: {editorPath}");
 
+		string projectDir = new FileInfo(filePath).Directory!.Parent!.FullName;
 		string[] additionalArgs = settings.UnityArgs ?? [];
 		var args = new List<string> { "-projectPath", projectDir };
 		args.AddRange(additionalArgs);
@@ -31,7 +32,8 @@ class OpenCommand : BaseCommand<OpenSettings>
 			redirectOutput: false,
 			args: string.Join(" ", args.Select(a => a.Contains(' ') ? $"\"{a}\"" : a)));
 
-		ConsoleHelper.WriteSuccess("Unity Editor launched successfully.");
+		// Sadly, Unity doesn't report an exit code if the editor fails to open a project.
+		// Instead, it prints error into the log. So, for now, we just assume it succeeded.
 		return 0;
 	}
 }
