@@ -6,7 +6,7 @@ if [ $# -lt 1 ]; then
 fi
 
 VERSION="$1"
-source "$(dirname "$0")/shared.sh"
+source "$(dirname "$0")/utility.sh"
 UNITY_HUB=$(get_unity_hub)
 
 while IFS= read -r line; do
