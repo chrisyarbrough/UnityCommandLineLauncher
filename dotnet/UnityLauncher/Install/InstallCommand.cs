@@ -5,7 +5,7 @@ class InstallCommand : BaseCommand<InstallSettings>
 		new UnityHub(settings.MutatingProcess)
 			.EnsureEditorInstalledAsync(settings.Version, settings.Changeset).Wait();
 
-		WriteSuccess($"Unity {settings.Version} is installed and ready to use.");
+		WriteSuccess($"Unity {settings.Version} is installed.");
 		return 0;
 	}
 }

@@ -1,99 +1,65 @@
 using System.Runtime.InteropServices;
-using InstallInfo =
-	(System.Collections.Generic.IEnumerable<string> editorDefaultLocations, string pathToEditor, string
-	hubDefaultLocation);
 
 static class PlatformHelper
 {
+	// https://docs.unity3d.com/6000.3/Documentation/Manual/EditorCommandLineArguments.html
 	// https://docs.unity3d.com/hub/manual/HubCLI.html
-	private static readonly Dictionary<OSPlatform, InstallInfo>
-		defaultEditorLocations =
-			new()
-			{
-				{
-					OSPlatform.OSX, (
-						[
-							"/Applications/Unity/Hub/Editor/",
-						],
-						"Unity.app/Contents/MacOS/Unity",
-						@"/Applications/Unity\ Hub.app/Contents/MacOS/Unity\ Hub")
-				},
-				{
-					OSPlatform.Windows, (
-						[
-							@"C:\Program Files\Unity\Hub\Editor\",
-						],
-						@"Editor\Unity.exe",
-						@"C:\Program Files\Unity Hub\Unity Hub.exe")
-				},
-				{
-					OSPlatform.Linux, (
-						[
-							$"{UserHome}/Unity/Hub/Editor",
-							"opt/unity/editors/",
-						],
-						"Editor/Unity",
-						@"~/Applications/Unity\ Hub.AppImage")
-				},
-			};
+	private static readonly Dictionary<OSPlatform, (string editor, string hub)> installInfo = new()
+	{
+		{
+			OSPlatform.OSX, (
+				editor: "/Applications/Unity/Hub/Editor/{0}/Unity.app/Contents/MacOS/Unity",
+				hub: "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub")
+		},
+		{
+			OSPlatform.Windows, (
+				editor: @"C:\Program Files\Unity\Hub\Editor\{0}\Editor\Unity.exe",
+				hub: @"C:\Program Files\Unity Hub\Unity Hub.exe")
+		},
+		{
+			OSPlatform.Linux, (
+				editor: Path.Combine(UserHome, "/Unity/Hub/Editor/{0}/Editor/Unity"),
+				hub: Path.Combine(UserHome, "/Applications/Unity Hub.AppImage"))
+		},
+	};
 
 	public static string? FindDefaultEditorInstallPath(string version)
+		=> FindFirstValidPath(GetEditorPathCandidatePatterns(), pattern => string.Format(pattern, version));
+
+	private static IEnumerable<string?> GetEditorPathCandidatePatterns()
 	{
-		var platformInfo = defaultEditorLocations[GetCurrentOS()];
-
-		// Check for environment variable override first (highest priority)
-		var envPath = Environment.GetEnvironmentVariable("UNITY_EDITOR_PATH");
-		if (!string.IsNullOrWhiteSpace(envPath))
-		{
-			string installPath = Path.Combine(envPath, version, platformInfo.pathToEditor);
-			if (File.Exists(installPath))
-				return installPath;
-		}
-
-		// Fall back to default locations
-		foreach (string path in platformInfo.editorDefaultLocations)
-		{
-			string installPath = Path.Combine(path, version, platformInfo.pathToEditor);
-			if (File.Exists(installPath))
-				return installPath;
-		}
-		return null;
+		yield return Environment.GetEnvironmentVariable("UNITY_EDITOR_PATH");
+		yield return installInfo[GetCurrentOS()].editor;
 	}
 
 	public static string? FindDefaultHubInstallPath()
+		=> FindFirstValidPath(GetHubPathCandidates());
+
+	private static IEnumerable<string?> GetHubPathCandidates()
 	{
-		// Check for environment variable override first (highest priority)
-		var envPath = Environment.GetEnvironmentVariable("UNITY_HUB_PATH");
-		if (!string.IsNullOrWhiteSpace(envPath))
-		{
-			var os = GetCurrentOS();
-			var hubSubPath = os switch
-			{
-				_ when os == OSPlatform.OSX => "Contents/MacOS/Unity Hub",
-				_ when os == OSPlatform.Windows => "Unity Hub.exe",
-				_ when os == OSPlatform.Linux => "Unity Hub.AppImage",
-				_ => throw new PlatformNotSupportedException(),
-			};
-
-			string hubExecutablePath = Path.Combine(envPath, hubSubPath);
-			if (File.Exists(hubExecutablePath))
-				return hubExecutablePath;
-		}
-
-		// Fall back to default locations
-		var platformInfo = defaultEditorLocations[GetCurrentOS()];
-		if (File.Exists(platformInfo.hubDefaultLocation))
-			return platformInfo.hubDefaultLocation;
+		yield return Environment.GetEnvironmentVariable("UNITY_HUB_PATH");
+		yield return installInfo[GetCurrentOS()].hub;
 
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			yield return FindUnityHubPathMacOS();
+	}
+
+	private static string? FindFirstValidPath(IEnumerable<string?> paths, Func<string, string>? processor = null)
+	{
+		foreach (string? path in paths)
 		{
-			return GetUnityHubPathMacOS();
+			if (string.IsNullOrWhiteSpace(path))
+				continue;
+
+			string processedPath = processor?.Invoke(path) ?? path;
+			if (File.Exists(processedPath))
+				return processedPath;
 		}
 
 		return null;
 	}
 
-	private static string GetUnityHubPathMacOS()
+	private static string FindUnityHubPathMacOS()
 	{
 		var process = new ProcessRunner().Run(
 			"mdfind",
@@ -113,16 +79,14 @@ static class PlatformHelper
 		return Path.Combine(lines[0], "Contents", "MacOS", "Unity Hub");
 	}
 
-	private static OSPlatform GetCurrentOS()
-	{
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-			return OSPlatform.OSX;
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			return OSPlatform.Windows;
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-			return OSPlatform.Linux;
-		throw new PlatformNotSupportedException();
-	}
+	private static readonly OSPlatform[] supportedPlatforms =
+	[
+		OSPlatform.OSX,
+		OSPlatform.Windows,
+		OSPlatform.Linux,
+	];
+
+	private static OSPlatform GetCurrentOS() => supportedPlatforms.First(RuntimeInformation.IsOSPlatform);
 
 	private static string UserHome => Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 

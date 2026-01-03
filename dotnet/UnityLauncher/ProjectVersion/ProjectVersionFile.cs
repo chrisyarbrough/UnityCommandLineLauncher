@@ -90,7 +90,7 @@ static partial class ProjectVersionFile
 		if (foundFiles.Length > 1)
 		{
 			throw new Exception(
-				$"Found multiple ProjectVersion.txt files (showing partial results):\n{string.Join("\n", foundFiles)}\n" +
+				$"Found multiple ProjectVersion.txt files (may not show all results):\n{string.Join("\n", foundFiles)}\n" +
 				"Specify a directory containing a single Unity project.");
 		}
 		else if (foundFiles.Length == 1)
