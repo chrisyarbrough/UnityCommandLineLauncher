@@ -12,6 +12,9 @@ dotnet publish --runtime win-x64
 
 This project uses only a single _Release_ configuration with debugging enabled.
 
+Add the `--profile` flag to enable timers.
+Add the `--dry-run` flag to run mutating commands without applying changes (e.g. open or install).
+
 ## Dockerized Testing
 
 There's no pipeline set up yet, but we can do some manually testing like this:

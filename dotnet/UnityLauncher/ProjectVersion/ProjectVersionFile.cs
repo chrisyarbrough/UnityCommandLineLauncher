@@ -85,13 +85,21 @@ static partial class ProjectVersionFile
 	{
 		var foundFiles = Directory.EnumerateFiles(
 				searchDir, "ProjectVersion.txt", SearchOption.AllDirectories)
-			.Where(file => Path.GetFileName(Path.GetDirectoryName(file)) == "ProjectSettings").Take(8).ToArray();
+			.Where(file => Path.GetFileName(Path.GetDirectoryName(file)) == "ProjectSettings")
+			.OrderBy(x => x)
+			.ToArray();
 
 		if (foundFiles.Length > 1)
 		{
-			throw new Exception(
-				$"Found multiple ProjectVersion.txt files (may not show all results):\n{string.Join("\n", foundFiles)}\n" +
-				"Specify a directory containing a single Unity project.");
+			var selection = AnsiConsole.Prompt(
+				new SelectionPrompt<string>()
+					.Title($"{foundFiles.Length} Unity projects found. [green]Select one[/]:")
+					.PageSize(10)
+					.EnableSearch()
+					.AddChoices(foundFiles));
+
+			return selection;
+
 		}
 		else if (foundFiles.Length == 1)
 		{
