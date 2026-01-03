@@ -6,7 +6,7 @@ class OpenCommand : BaseCommand<OpenSettings>
 
 		if (!Directory.Exists(searchPath))
 		{
-			WriteError($"Project directory '{settings.SearchPath}' is not a valid directory.");
+			WriteError($"Directory '{settings.SearchPath}' does not exist..");
 			return 1;
 		}
 

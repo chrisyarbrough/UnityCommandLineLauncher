@@ -61,6 +61,7 @@ static partial class ProjectVersionFile
 
 	private static string? FindUpward(string startDir)
 	{
+		using var _ = new ProfilingTimer("Find Upward");
 		var current = new DirectoryInfo(startDir);
 
 		while (current != null)
@@ -83,30 +84,62 @@ static partial class ProjectVersionFile
 
 	private static string? FindDownward(string searchDir)
 	{
-		var foundFiles = Directory.EnumerateFiles(
-				searchDir, "ProjectVersion.txt", SearchOption.AllDirectories)
-			.Where(file => Path.GetFileName(Path.GetDirectoryName(file)) == "ProjectSettings")
-			.OrderBy(x => x)
-			.ToArray();
+		var ignoredFolders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		{
+			".git", "Library", "Temp", "Logs", "obj", "bin",
+			"Packages", "UserSettings", "Build", "Builds", "node_modules",
+		};
 
-		if (foundFiles.Length > 1)
+		var foundFiles = new List<string>();
+		using (new ProfilingTimer("Find Downward"))
+		{
+			SearchRecursive(new DirectoryInfo(searchDir), ignoredFolders, foundFiles);
+		}
+
+		if (foundFiles.Count > 1)
 		{
 			var selection = AnsiConsole.Prompt(
 				new SelectionPrompt<string>()
-					.Title($"{foundFiles.Length} Unity projects found. [green]Select one[/]:")
+					.Title($"Found {foundFiles.Count} Unity projects. [green]Select one[/]:")
 					.PageSize(10)
 					.EnableSearch()
-					.AddChoices(foundFiles));
+					.AddChoices(foundFiles.OrderBy(x => x)));
 
 			return selection;
-
 		}
-		else if (foundFiles.Length == 1)
+		else if (foundFiles.Count == 1)
 		{
 			return foundFiles[0];
 		}
 
 		return null;
+	}
+
+	private static void SearchRecursive(DirectoryInfo currentDir, HashSet<string> ignoredFolders, List<string> results)
+	{
+		try
+		{
+			var versionFile = Path.Combine(currentDir.FullName, "ProjectSettings", "ProjectVersion.txt");
+			if (File.Exists(versionFile))
+			{
+				results.Add(versionFile);
+
+				// Unity projects cannot be nested - no need to search deeper
+				return;
+			}
+
+			foreach (var subDir in currentDir.EnumerateDirectories())
+			{
+				if (ignoredFolders.Contains(subDir.Name))
+					continue;
+
+				SearchRecursive(subDir, ignoredFolders, results);
+			}
+		}
+		catch (Exception)
+		{
+			// Skip directories we don't have permission to access or that were deleted while searching.
+		}
 	}
 
 	[GeneratedRegex(@"m_EditorVersionWithRevision:\s+(.+)\s+\((.+)\)")]

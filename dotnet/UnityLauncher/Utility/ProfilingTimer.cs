@@ -1,13 +1,15 @@
 using System.Diagnostics;
 
-readonly struct ProfilingTimer
+readonly struct ProfilingTimer : IDisposable
 {
+	private static readonly bool isEnabled = Environment.CommandLine.Contains("--profile");
+
 	private readonly string? label;
 	private readonly Stopwatch? watch;
 
 	public ProfilingTimer(string label)
 	{
-		if (IsProfilingRun)
+		if (isEnabled)
 		{
 			this.label = label;
 			this.watch = Stopwatch.StartNew();
@@ -16,12 +18,15 @@ readonly struct ProfilingTimer
 
 	public void Stop()
 	{
-		if (IsProfilingRun)
+		if (isEnabled)
 		{
 			watch!.Stop();
 			AnsiConsole.WriteLine($"[Timing] {label}: {watch.ElapsedMilliseconds}ms");
 		}
 	}
 
-	private static bool IsProfilingRun => Environment.CommandLine.Contains("--profile");
+	public void Dispose()
+	{
+		Stop();
+	}
 }
