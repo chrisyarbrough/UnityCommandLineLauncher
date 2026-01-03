@@ -13,7 +13,7 @@ This document contains all test cases that need to be verified before releasing 
 |                     |  5 | Project missing ProjectVersion.txt       | `unity-launcher open /path/to/project/without/version`            | Error parsing ProjectVersion.txt (exception caught)            |  [ ]  |
 |                     |  6 | Project with Unity version not installed | `unity-launcher open /path/to/project` (with uninstalled version) | Attempts to install version, then launches editor              |  [ ]  |
 | **install**         |  7 | Valid Unity version                      | `unity-launcher install 2022.3.10f1`                              | Unity version is installed successfully, changeset was fetched |  [ ]  |
-|                     |  8 | Valid version with changeset             | `unity-launcher install 2022.3.10f1 abcd1234efgh`                 | Unity version is installed successfully                        |  [ ]  |
+|                     |  8 | Valid version with changeset             | `unity-launcher install 2022.3.10f1 ff3792e53c62`                 | Unity version is installed successfully                        |  [ ]  |
 |                     |  9 | Invalid Unity version format             | `unity-launcher install invalid.version`                          | Error during installation (API fetch or Hub operation fails)   |  [ ]  |
 |                     | 10 | Non-existent Unity version               | `unity-launcher install 9999.9.9f1`                               | Error during installation (API fetch fails)                    |  [ ]  |
 |                     | 11 | Already installed version                | `unity-launcher install 2022.3.10f1` (already installed)          | Success message shown (idempotent operation)                   |  [ ]  |
@@ -39,4 +39,8 @@ This document contains all test cases that need to be verified before releasing 
 - Spectre.Console should handle basic command validation (missing or invalid arguments).
 - All `projectPath` arguments can also be search directories outside or inside of Unity projects.
 
+Manually check installed editors:
 
+```bash
+'/Applications/Unity Hub.app/Contents/MacOS/Unity Hub' -- --headless editors --installed
+```
