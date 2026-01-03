@@ -4,32 +4,28 @@ app.Configure(config =>
 	config.SetApplicationName("unity-launcher");
 	config.SetApplicationVersion("1.0.0");
 
-	// Open command
 	config.AddCommand<OpenCommand>("open")
-		.WithDescription("Open Unity Editor for a project")
+		.WithDescription("Open Unity Editor for a project search path or via recent projects prompt")
+		.WithExample("open")
 		.WithExample("open", ".")
 		.WithExample("open", "path/to/project")
 		.WithExample("open", "path/to/project", "-batchmode", "-quit");
 
-	// Install editor
 	config.AddCommand<InstallCommand>("install")
 		.WithDescription("Install Unity Editor version")
 		.WithExample("install", "2022.3.10f1")
 		.WithExample("install", "2022.3.10f1", "ff3792e53c62");
 
-	// Get revision
 	config.AddCommand<EditorRevisionCommand>("editor-revision")
 		.WithDescription("Get revision for Unity version")
 		.WithExample("editor-revision", "2022.3.10f1");
 
-	// Get editor path
 	config.AddCommand<EditorPathCommand>("editor-path")
 		.WithDescription("Get installation path for Unity version")
 		.WithExample("editor-path", "2022.3.10f1");
 
-	// Get project version
 	config.AddCommand<ProjectVersionCommand>("project-version")
-		.WithDescription("Extract Unity version from project (search directory or path to ProjectVersion.txt)")
+		.WithDescription("Get Unity version from project search directory or ProjectVersion.txt")
 		.WithExample("project-version", "path");
 });
 

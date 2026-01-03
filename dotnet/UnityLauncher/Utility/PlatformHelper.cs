@@ -4,22 +4,25 @@ static class PlatformHelper
 {
 	// https://docs.unity3d.com/6000.3/Documentation/Manual/EditorCommandLineArguments.html
 	// https://docs.unity3d.com/hub/manual/HubCLI.html
-	private static readonly Dictionary<OSPlatform, (string editor, string hub)> installInfo = new()
+	private static readonly Dictionary<OSPlatform, (string editor, string hub, string config)> installInfo = new()
 	{
 		{
 			OSPlatform.OSX, (
 				editor: "/Applications/Unity/Hub/Editor/{0}/Unity.app/Contents/MacOS/Unity",
-				hub: "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub")
+				hub: "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+				config: Path.Combine(UserHome, "Library/Application Support/UnityHub"))
 		},
 		{
 			OSPlatform.Windows, (
 				editor: @"C:\Program Files\Unity\Hub\Editor\{0}\Editor\Unity.exe",
-				hub: @"C:\Program Files\Unity Hub\Unity Hub.exe")
+				hub: @"C:\Program Files\Unity Hub\Unity Hub.exe",
+				config: Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "UnityHub"))
 		},
 		{
 			OSPlatform.Linux, (
 				editor: Path.Combine(UserHome, "/Unity/Hub/Editor/{0}/Editor/Unity"),
-				hub: Path.Combine(UserHome, "/Applications/Unity Hub.AppImage"))
+				hub: Path.Combine(UserHome, "/Applications/Unity Hub.AppImage"),
+				config: Path.Combine(UserHome, ".config/UnityHub"))
 		},
 	};
 
@@ -34,6 +37,9 @@ static class PlatformHelper
 
 	public static string? FindDefaultHubInstallPath()
 		=> FindFirstValidPath(GetHubPathCandidates());
+
+	public static string GetUnityHubConfigDirectory()
+		=> installInfo[GetCurrentOS()].config;
 
 	private static IEnumerable<string?> GetHubPathCandidates()
 	{

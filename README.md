@@ -5,8 +5,16 @@ Builds on the Unity Hub CLI.
 
 ## Examples
 
+Open a project by path:
+
 ```bash
 unity open path/to/project
+```
+
+Open a project interactively from your recent Unity Hub projects:
+
+```bash
+unity open
 ```
 
 To see all commands:
@@ -20,6 +28,7 @@ unity --help
 ## Main Features
 
 - Opens Unity projects from the terminal (faster than using the Unity Hub GUI)
+- Interactive project selection from Unity Hub's recent projects
 - Detects the correct Unity Editor version from the project
 - Installs missing Unity Editor versions via Unity Hub
 - Fetches changeset info from Unity API when missing in ProjectVersion.txt (e.g. legacy projects)
@@ -27,10 +36,10 @@ unity --help
 
 ## Commands
 
-    open <searchPath>               Open Unity Editor for a project                                                    
-    install <version>               Install Unity Editor version                                                       
-    editor-revision <version>       Get revision for Unity version                                                     
-    editor-path <version>           Get installation path for Unity version                                            
+    open [searchPath]               Open Unity Editor for a project (interactive if no path provided)
+    install <version>               Install Unity Editor version
+    editor-revision <version>       Get revision for Unity version
+    editor-path <version>           Get installation path for Unity version
     project-version <searchPath>    Extract Unity version from project (search directory or path to ProjectVersion.txt)
 
 ## Supported Platforms

@@ -1,4 +1,6 @@
 using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 
 record EditorInfo(string Version, string Path);
@@ -27,6 +29,37 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 			throw new Exception($"Unity version {version} is not installed.");
 
 		return path;
+	}
+
+	public static IEnumerable<string> GetRecentProjects()
+	{
+		var configDir = PlatformHelper.GetUnityHubConfigDirectory();
+		var projectsFile = Path.Combine(configDir, "projects-v1.json");
+
+		try
+		{
+			var json = File.ReadAllText(projectsFile);
+			var root = JsonNode.Parse(json);
+			var data = root?["data"]?.AsObject()!;
+
+			var projects = new List<(string path, long lastModified)>();
+
+			foreach ((string projectPath, JsonNode? value) in data)
+			{
+				var project = value?.AsObject()!;
+				var lastModified = project["lastModified"]?.GetValue<long>();
+				if (lastModified.HasValue)
+					projects.Add((projectPath, lastModified.Value));
+			}
+
+			return projects
+				.OrderByDescending(p => p.lastModified)
+				.Select(p => p.path);
+		}
+		catch
+		{
+			return [];
+		}
 	}
 
 	public async Task EnsureEditorInstalledAsync(string version, string? changeset)

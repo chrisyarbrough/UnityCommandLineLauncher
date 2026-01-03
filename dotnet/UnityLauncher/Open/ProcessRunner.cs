@@ -36,7 +36,7 @@ class DryRunProcessRunner : IProcessRunner
 
 	public Process Run(string fileName, bool redirectOutput = false, string? args = null)
 	{
-		AnsiConsole.WriteLine("[DryRun] " + fileName + " " + args);
+		AnsiConsole.MarkupLine($"[dim][[DryRun]] {fileName} {args}[/]");
 		return dummyProcess.Run("true", redirectOutput, args);
 	}
 }

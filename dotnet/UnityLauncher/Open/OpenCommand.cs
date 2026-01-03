@@ -2,11 +2,12 @@ class OpenCommand : BaseCommand<OpenSettings>
 {
 	protected override int ExecuteImpl(OpenSettings settings)
 	{
-		var searchPath = Path.GetFullPath(settings.SearchPath);
+		var searchPath = settings.SearchPath ?? PromptForRecentProject();
+		searchPath = Path.GetFullPath(searchPath);
 
 		if (!Directory.Exists(searchPath))
 		{
-			WriteError($"Directory '{settings.SearchPath}' does not exist..");
+			WriteError($"Directory '{searchPath}' does not exist.");
 			return 1;
 		}
 
@@ -33,5 +34,19 @@ class OpenCommand : BaseCommand<OpenSettings>
 		// Unity doesn't report an exit code if the editor fails to open a project.
 		// Instead, it prints error into the log. So, for now, we just assume it succeeded.
 		return 0;
+	}
+
+	private static string PromptForRecentProject()
+	{
+		var recentProjects = UnityHub.GetRecentProjects().ToList();
+
+		if (recentProjects.Count == 0)
+			throw new Exception("No recent Unity projects found in Unity Hub.");
+
+		return AnsiConsole.Prompt(
+			new SelectionPrompt<string>()
+				.Title("Select a [green]recent project[/]:")
+				.EnableSearch()
+				.AddChoices(recentProjects));
 	}
 }

@@ -44,3 +44,10 @@ Manually check installed editors:
 ```bash
 '/Applications/Unity Hub.app/Contents/MacOS/Unity Hub' -- --headless editors --installed
 ```
+
+## Known Issues
+
+Opening a project via the launcher might not update the Unity Hub recent projects list immediately; 
+a Hub restart is required.
+
+Exiting the Spectre.Console SelectionPrompt via CTRL + C leaves the cursor in a hidden state.
