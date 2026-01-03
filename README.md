@@ -17,6 +17,12 @@ Open a project interactively from your recent Unity Hub projects:
 unity open
 ```
 
+Show only favorite projects:
+
+```bash
+unity open --favorites
+```
+
 To see all commands:
 
 ```bash

@@ -2,7 +2,7 @@ class OpenCommand : BaseCommand<OpenSettings>
 {
 	protected override int ExecuteImpl(OpenSettings settings)
 	{
-		var searchPath = settings.SearchPath ?? PromptForRecentProject();
+		var searchPath = settings.SearchPath ?? PromptForRecentProject(settings.Favorites);
 		searchPath = Path.GetFullPath(searchPath);
 
 		if (!Directory.Exists(searchPath))
@@ -36,16 +36,16 @@ class OpenCommand : BaseCommand<OpenSettings>
 		return 0;
 	}
 
-	private static string PromptForRecentProject()
+	private static string PromptForRecentProject(bool favoritesOnly)
 	{
-		var recentProjects = UnityHub.GetRecentProjects().ToList();
+		var recentProjects = UnityHub.GetRecentProjects(favoritesOnly).ToList();
 
 		if (recentProjects.Count == 0)
-			throw new Exception("No recent Unity projects found in Unity Hub.");
+			throw new Exception("No projects found in Unity Hub.");
 
 		return AnsiConsole.Prompt(
 			new SelectionPrompt<string>()
-				.Title("Select a [green]recent project[/]:")
+				.Title($"Select a [green]{(favoritesOnly ? "favorite" : "recent")} project[/]:")
 				.EnableSearch()
 				.AddChoices(recentProjects));
 	}
