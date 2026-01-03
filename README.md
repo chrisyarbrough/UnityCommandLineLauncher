@@ -22,8 +22,16 @@ unity --help
 - Opens Unity projects from the terminal (faster than using the Unity Hub GUI)
 - Detects the correct Unity Editor version from the project
 - Installs missing Unity Editor versions via Unity Hub
-- Fetches changesets from Unity API when not available in ProjectVersion.txt (legacy projects)
-- Forwards additional Unity command line arguments (e.g., `-batchmode`, `-quit`)
+- Fetches changeset info from Unity API when missing in ProjectVersion.txt (e.g. legacy projects)
+- Forwards additional Unity command line arguments (e.g. `-batchmode -quit`)
+
+## Commands
+
+    open <searchPath>               Open Unity Editor for a project                                                    
+    install <version>               Install Unity Editor version                                                       
+    editor-revision <version>       Get revision for Unity version                                                     
+    editor-path <version>           Get installation path for Unity version                                            
+    project-version <searchPath>    Extract Unity version from project (search directory or path to ProjectVersion.txt)
 
 ## Supported Platforms
 
@@ -37,21 +45,32 @@ Create an alias in your shell config (.zshrc, .bashrc, etc.):
 echo 'alias unity="~/UnityCommandLineLauncher/dotnet/UnityLauncher/bin/Release/osx-arm64/publish/unity-launcher"' >> ~/.zshrc
 ```
 
-## Configuration
-
-The tool queries the default installation locations for the Unity Hub and editors
-and attempts to discover it via OS tools.
-If this fails, or you want to speed up the process, override the paths using environment variables:
+Or add the binary location to your PATH variable.
 
 ```bash
-export UNITY_EDITOR_PATH="/Applications/Unity/Hub/Editor"     # macOS
-export UNITY_EDITOR_PATH="C:\Program Files\Unity\Hub\Editor"  # Windows
-export UNITY_EDITOR_PATH="/home/<user>/Unity/Hub/Editor"      # Linux
-
-export UNITY_HUB_PATH="/Applications/Unity Hub.app"           # macOS
-export UNITY_HUB_PATH="C:\Program Files\Unity Hub"            # Windows
-export UNITY_HUB_PATH="~/Applications/Unity\ Hub.AppImage"    # Linux
+export PATH=$PATH:UnityLauncher/bin/Release/osx-arm64/publish/
 ```
+
+## Configuration
+
+The tool discovers Unity Hub and editor installations in the following order:
+
+1. Environment variables (optional, see table below)
+2. Default paths on platform
+3. Search utility or similar heuristic to guess the paths
+
+Setting the environment variables should not be necessary in most cases, but it will make tool execution quicker.
+
+| Platform | Variable Example                                                                        |
+|----------|-----------------------------------------------------------------------------------------|
+| macOS    | `UNITY_EDITOR_PATH="/Applications/Unity/Hub/Editor/{0}/Unity.app/Contents/MacOS/Unity"` |
+|          | `UNITY_HUB_PATH="/Applications/Unity Hub.app/Contents/MacOS/Unity Hub"`                 |
+| Windows  | `UNITY_EDITOR_PATH="C:\Program Files\Unity\Hub\Editor\{0}\Editor\Unity.exe"`            |
+|          | `UNITY_HUB_PATH="C:\Program Files\Unity Hub\Unity Hub.exe"`                             |
+| Linux    | `UNITY_EDITOR_PATH="/home/<user>/Unity/Hub/Editor/{0}/Editor/Unity"`                    |
+|          | `UNITY_HUB_PATH="/home/<user>/Applications/Unity Hub.AppImage"`                         |
+
+The placeholder `{0}` is meant to be part of the path pattern and will be replaced with the editor version at runtime.
 
 ## Design Background
 
