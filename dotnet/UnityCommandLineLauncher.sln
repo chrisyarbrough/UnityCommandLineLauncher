@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityLauncher", "UnityLauncher\UnityLauncher.csproj", "{696F005F-6F0D-42C2-8311-21A7DEC97955}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ucll", "ucll\ucll.csproj", "{696F005F-6F0D-42C2-8311-21A7DEC97955}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityLauncher.Tests", "UnityLauncher.Tests\UnityLauncher.Tests.csproj", "{A3A22E5B-E242-4B0B-B8AA-6595526E1806}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ucll.tests", "ucll.tests\ucll.tests.csproj", "{A3A22E5B-E242-4B0B-B8AA-6595526E1806}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{B468F921-1B0D-40AD-B1F4-817FECA38C9C}"
 	ProjectSection(SolutionItems) = preProject

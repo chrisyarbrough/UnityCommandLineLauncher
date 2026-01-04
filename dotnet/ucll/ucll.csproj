@@ -1,7 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<AssemblyName>unity-launcher</AssemblyName>
-
 		<OutputType>Exe</OutputType>
 		<SelfContained>true</SelfContained>
 		<PublishSingleFile>true</PublishSingleFile>
@@ -20,6 +18,7 @@
 
 		<DebugType>embedded</DebugType>
 		<Deterministic>true</Deterministic>
+		<RootNamespace>uccl</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -28,7 +27,7 @@
 
 	<ItemGroup>
 		<TrimmerRootAssembly Include="Spectre.Console.Cli" />
-		<TrimmerRootAssembly Include="unity-launcher" />
+		<TrimmerRootAssembly Include="ucll" />
 	</ItemGroup>
 
 	<ItemGroup>

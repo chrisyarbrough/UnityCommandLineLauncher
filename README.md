@@ -1,63 +1,38 @@
 # Unity Command Line Launcher
 
 A terminal command designed to open Unity projects quickly and with convenience.
-Builds on the Unity Hub CLI.
 
-## Examples
-
-Open a project by path:
-
-```bash
-unity open path/to/project
-```
-
-Open a project interactively from your recent Unity Hub projects:
-
-```bash
-unity open
-```
-
-Show only favorite projects:
-
-```bash
-unity open --favorites
-```
-
-To see all commands:
-
-```bash
-unity --help
-```
-
-![](docs/Screenshot.png)
-
-## Main Features
-
-- Opens Unity projects from the terminal (faster than using the Unity Hub GUI)
-- Interactive project selection from Unity Hub's recent projects
-- Detects the correct Unity Editor version from the project
-- Installs missing Unity Editor versions via Unity Hub
-- Fetches changeset info from Unity API when missing in ProjectVersion.txt (e.g. legacy projects)
-- Forwards additional Unity command line arguments (e.g. `-batchmode -quit`)
-
-## Commands
-
-    open [searchPath]               Open Unity Editor for a project (interactive if no path provided)
-    install <version>               Install Unity Editor version
-    editor-revision <version>       Get revision for Unity version
-    editor-path <version>           Get installation path for Unity version
-    project-version <searchPath>    Extract Unity version from project (search directory or path to ProjectVersion.txt)
+![](docs/Screenshot_Open_Path.png)
 
 ## Supported Platforms
 
 - macOS (tested with Sequoia 15.7.1)
 
+## Commands
+
+| Name                        | Description                                                          |
+|-----------------------------|----------------------------------------------------------------------|
+| `open [path]`               | Opens the Unity project.                                             |
+| `open`                      | Shows a selection prompt of recent projects from the Unity Hub.      |
+| `install <version>`         | Installs the editor by version, fetching the revision, if necessary. |
+| `editor-revision <version>` | Fetches the revision from Unity's API.                               |
+| `editor-path <version>`     | Gets the installation directory of the editor, if installed.         |
+| `project-version <path>`    | Gets the Unity version information from a project.                   |
+
+`path` can be:
+
+- ProjectVersion.txt file
+- A search directory to find a Unity project in (searches upwards and downwards)
+
+---
+
 ## Setup
 
-Create an alias in your shell config (.zshrc, .bashrc, etc.):
+1. Download the binaries from the releases page or clone the repository.
+2. Create an alias in your shell config (.zshrc, .bashrc, etc.):
 
 ```bash
-echo 'alias unity="~/UnityCommandLineLauncher/dotnet/UnityLauncher/bin/Release/osx-arm64/publish/unity-launcher"' >> ~/.zshrc
+echo 'alias unity="~/UnityCommandLineLauncher/dotnet/UnityLauncher/bin/Release/osx-arm64/publish/ucll"' >> ~/.zshrc
 ```
 
 Or add the binary location to your PATH variable.
@@ -66,26 +41,72 @@ Or add the binary location to your PATH variable.
 export PATH=$PATH:UnityLauncher/bin/Release/osx-arm64/publish/
 ```
 
+### Enhanced Fuzzy Search (Optional)
+
+Install [fzf](https://github.com/junegunn/fzf):
+
+```bash
+brew install fzf
+```
+
+With `fzf` installed, the interactive project selection (`unity open`) will use enhanced matching:
+
+- **Acronyms**: `cfp` finds "core-frontend-platform"
+- **Typo tolerance**: `sigle-sign` finds "single-sign-on"
+
+If `fzf` is not installed, the built-in search will be used as a fallback.
+
+![](docs/Screenshot_Open_Search.png)
+
+---
+
+## Usage
+
+Discover available commands and options:
+
+```bash
+unity --help
+```
+
+Show more info about a command:
+
+```bash
+unity open --help
+```
+
+## Features
+
+- Opens Unity projects from the terminal (faster than using the Unity Hub GUI)
+- Interactive project selection from Unity Hub's recent projects (with optional favorite filter)
+- Detects the Unity Editor version from the project
+- Installs missing Unity Editor versions via Unity Hub
+- Fetches changeset info from Unity API when missing in ProjectVersion.txt (e.g. legacy projects)
+- Additional Unity command line arguments (e.g. `-batchmode -quit`) are forwarded
+- Installation path auto-detection for Unity Hub and editors
+
 ## Configuration
 
-The tool discovers Unity Hub and editor installations in the following order:
+Unity Hub and editor installations are detected in the following order:
 
 1. Environment variables (optional, see table below)
 2. Default paths on platform
-3. Search utility or similar heuristic to guess the paths
+3. Search heuristic to guess the paths
 
-Setting the environment variables should not be necessary in most cases, but it will make tool execution quicker.
+Setting the environment variables should not be necessary in most cases,
+but it will speed up tool execution for non-default install locations.
 
-| Platform | Variable Example                                                                        |
+| Platform | Environment Variable Example                                                            |
 |----------|-----------------------------------------------------------------------------------------|
 | macOS    | `UNITY_EDITOR_PATH="/Applications/Unity/Hub/Editor/{0}/Unity.app/Contents/MacOS/Unity"` |
 |          | `UNITY_HUB_PATH="/Applications/Unity Hub.app/Contents/MacOS/Unity Hub"`                 |
+|          |                                                                                         |
 | Windows  | `UNITY_EDITOR_PATH="C:\Program Files\Unity\Hub\Editor\{0}\Editor\Unity.exe"`            |
 |          | `UNITY_HUB_PATH="C:\Program Files\Unity Hub\Unity Hub.exe"`                             |
+|          |                                                                                         |
 | Linux    | `UNITY_EDITOR_PATH="/home/<user>/Unity/Hub/Editor/{0}/Editor/Unity"`                    |
 |          | `UNITY_HUB_PATH="/home/<user>/Applications/Unity Hub.AppImage"`                         |
 
-The placeholder `{0}` is meant to be part of the path pattern and will be replaced with the editor version at runtime.
+The placeholder `{0}` is part of the path pattern and will be replaced with the editor version at runtime.
 
 ## Design Background
 
@@ -94,8 +115,8 @@ The placeholder `{0}` is meant to be part of the path pattern and will be replac
 - Unity Hub is slow to open.
 - Projects must be added to the Hub manually.
 - Managing a large amount of projects can be cumbersome in a GUI workflow.
-- Opening multiple test projects (e.g. when developing Unity packages) can be cumbersome.
-- The Unity Hub CLI can be cumbersome:
+- Opening multiple test projects (e.g. when developing Unity packages) can be hard to automate.
+- The Unity Hub CLI can be difficult to work with:
     - Hub path must be hardcoded or searched for with extra code.
     - Installing an editor requires passing the changeset in many cases, but the changeset is not always available in
       the ProjectVersion.txt file.
@@ -107,13 +128,13 @@ The placeholder `{0}` is meant to be part of the path pattern and will be replac
     - Global hotkey in iTerm2.
     - Terminal window in IDE.
     - Context menu on directories in macOS Finder.
-- Opening multiple projects can be automated with a helper script.
-- Additional commands extend the Unity Hub CLI API.
+- Our custom tool addresses the Unity Hub API shortcommings by providing a streamlined UX.
 
 ## Development
 
-This repository provides multiple experimental implementations of the launcher tool.
-All implementations are meant to provide the same functionality, and they are currently being evaluated.
-In the end, a single implementation will be distributed as a package.
+This repository contains multiple implementation projects. The dotnet version is "officially" supported by me.
+The additional implementations can be used as a reference or to copy-paste into your own projects.
 
-Currently, the dotnet implementation is favored (and the most complete).
+## Outlook
+
+If the tool receives enough stars/forks, I'll publish it to _Homebrew_ and similar package managers.

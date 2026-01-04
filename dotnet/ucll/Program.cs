@@ -1,7 +1,7 @@
 var app = new CommandApp();
 app.Configure(config =>
 {
-	config.SetApplicationName("unity-launcher");
+	config.SetApplicationName("ucll");
 	config.SetApplicationVersion("1.0.0");
 
 	config.AddCommand<OpenCommand>("open")
