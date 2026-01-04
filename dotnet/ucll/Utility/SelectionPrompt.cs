@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 static class SelectionPrompt
 {
 	public static string Prompt(IList<string> choices, string title)

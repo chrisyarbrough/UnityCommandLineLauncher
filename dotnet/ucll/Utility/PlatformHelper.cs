@@ -68,9 +68,10 @@ static class PlatformHelper
 	private static string FindUnityHubPathMacOS()
 	{
 		var process = new ProcessRunner().Run(
-			"mdfind",
-			redirectOutput: true,
-			"kMDItemCFBundleIdentifier == 'com.unity3d.unityhub'");
+			new ProcessStartInfo("mdfind", "kMDItemCFBundleIdentifier == 'com.unity3d.unityhub'")
+			{
+				RedirectStandardOutput = true,
+			});
 
 		var output = process.StandardOutput.ReadToEnd();
 		process.WaitForExit();

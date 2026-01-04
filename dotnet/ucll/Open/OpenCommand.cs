@@ -16,7 +16,7 @@ class OpenCommand : BaseCommand<OpenSettings>
 		Debug.WriteLine($"File: {filePath}\n{unityVersion}\nVersion: {unityVersion}");
 
 		new UnityHub(settings.MutatingProcess)
-			.EnsureEditorInstalledAsync(unityVersion.Version, unityVersion.Changeset).Wait();
+			.EnsureEditorInstalled(unityVersion.Version, unityVersion.Changeset);
 
 		var editorPath = UnityHub.GetEditorPath(unityVersion.Version);
 		AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
@@ -26,14 +26,16 @@ class OpenCommand : BaseCommand<OpenSettings>
 		var args = new List<string> { "-projectPath", projectDir };
 		args.AddRange(additionalArgs);
 
-		settings.MutatingProcess.Run(
-			fileName: editorPath,
-			redirectOutput: false,
-			args: string.Join(" ", args.Select(a => a.Contains(' ') ? $"\"{a}\"" : a)));
+		settings.MutatingProcess.Run(new ProcessStartInfo(fileName: editorPath, arguments: JoinQuoted(args)));
 
 		// Unity doesn't report an exit code if the editor fails to open a project.
 		// Instead, it prints error into the log. So, for now, we just assume it succeeded.
 		return 0;
+	}
+
+	private static string JoinQuoted(List<string> args)
+	{
+		return string.Join(" ", args.Select(a => a.Contains(' ') ? $"\"{a}\"" : a));
 	}
 
 	private static string PromptForRecentProject(bool favoritesOnly)

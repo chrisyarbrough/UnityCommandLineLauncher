@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 readonly struct ProfilingTimer : IDisposable
 {
 	private readonly string? label;

@@ -1,24 +1,19 @@
-using System.Diagnostics;
-
 interface IProcessRunner
 {
-	Process Run(string fileName, bool redirectOutput = false, string? args = null);
+	Process Run(ProcessStartInfo startInfo);
 }
 
 class ProcessRunner : IProcessRunner
 {
-	public Process Run(string fileName, bool redirectOutput = false, string? args = null)
+	public static readonly IProcessRunner Default = new ProcessRunner();
+
+	public virtual Process Run(ProcessStartInfo startInfo)
 	{
-		var timer = new ProfilingTimer($"{fileName} {args?[..Math.Min(42, args.Length)]}");
+		string args = startInfo.Arguments;
+		var timer = new ProfilingTimer($"{startInfo.FileName} {args[..Math.Min(42, args.Length)]}");
 		var process = new Process
 		{
-			StartInfo = new ProcessStartInfo
-			{
-				FileName = fileName,
-				Arguments = args,
-				RedirectStandardOutput = redirectOutput,
-				RedirectStandardError = redirectOutput,
-			},
+			StartInfo = startInfo,
 			EnableRaisingEvents = true,
 		};
 		process.Exited += (_, _) => timer.Stop();
@@ -30,13 +25,14 @@ class ProcessRunner : IProcessRunner
 	}
 }
 
-class DryRunProcessRunner : IProcessRunner
+class DryRunProcessRunner : ProcessRunner
 {
-	private static readonly IProcessRunner dummyProcess = new ProcessRunner();
+	public static readonly IProcessRunner DryRun = new DryRunProcessRunner();
 
-	public Process Run(string fileName, bool redirectOutput = false, string? args = null)
+	public override Process Run(ProcessStartInfo startInfo)
 	{
-		AnsiConsole.MarkupLine($"[dim][[DryRun]] {fileName} {args}[/]");
-		return dummyProcess.Run("true", redirectOutput, args);
+		AnsiConsole.MarkupLine($"[dim][[DryRun]] {startInfo.FileName} {startInfo.Arguments}[/]");
+		startInfo.FileName = "true";
+		return base.Run(startInfo);
 	}
 }

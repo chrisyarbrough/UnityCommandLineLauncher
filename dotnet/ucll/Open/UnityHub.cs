@@ -4,11 +4,10 @@ using System.Text.RegularExpressions;
 
 record EditorInfo(string Version, string Path);
 
-partial class UnityHub(IProcessRunner modifyingProcessRunner)
+partial class UnityHub(IProcessRunner mutatingProcessRunner)
 {
 	private static string? _hubPathCache;
 	private static List<EditorInfo>? _editorsCache;
-	private static IProcessRunner readOnlyProcessRunner = new ProcessRunner();
 
 	/// <summary>
 	/// Returns the path to the editor executable on the current platform.
@@ -68,18 +67,18 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 		}
 	}
 
-	public async Task EnsureEditorInstalledAsync(string version, string? changeset)
+	public void EnsureEditorInstalled(string version, string? changeset, string[]? additionalArgs = null)
 	{
 		if (IsEditorInstalled(version))
 			return;
 
 		if (changeset == null)
 		{
-			AnsiConsole.MarkupLine("Changeset not provided, fetching from Unity API...");
-			changeset = await UnityReleaseApi.FetchChangesetAsync(version);
+			WriteStatusUpdate("Changeset not provided, fetching from Unity API");
+			changeset = UnityReleaseApi.FetchChangesetAsync(version).Result;
 		}
 
-		InstallEditor(version, changeset);
+		InstallEditor(version, changeset, additionalArgs ?? []);
 	}
 
 	private static List<EditorInfo> ListInstalledEditors()
@@ -89,10 +88,9 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 
 		var hubPath = GetUnityHubPath();
 
-		var process = readOnlyProcessRunner.Run(
-			hubPath,
-			redirectOutput: true,
-			PlatformHelper.FormatHubArgs("--headless editors --installed"));
+		var process = ProcessRunner.Default.Run(
+			new ProcessStartInfo(hubPath, PlatformHelper.FormatHubArgs("--headless editors --installed"))
+				{ RedirectStandardOutput = true });
 		var output = process.StandardOutput.ReadToEnd();
 		process.WaitForExit();
 
@@ -157,7 +155,7 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 		}
 	}
 
-	private void InstallEditor(string version, string changeset)
+	private void InstallEditor(string version, string changeset, string[] additionalArgs)
 	{
 		var hubPath = GetUnityHubPath();
 
@@ -170,22 +168,30 @@ partial class UnityHub(IProcessRunner modifyingProcessRunner)
 				$"Unsupported architecture: {RuntimeInformation.ProcessArchitecture}"),
 		};
 
-		AnsiConsole.MarkupLine($"Installing Unity version {version} {changeset}...");
+		WriteStatusUpdate($"Installing Unity version {version} {changeset}");
 
-		var process = modifyingProcessRunner.Run(
+		var args = $"--headless install --version {version} --changeset {changeset} --architecture {arch}";
+		if (additionalArgs.Length > 0)
+			args += " " + string.Join(" ", additionalArgs);
+
+		var process = mutatingProcessRunner.Run(new ProcessStartInfo(
 			hubPath,
-			redirectOutput: true,
-			PlatformHelper.FormatHubArgs(
-				$"--headless install --version {version} --changeset {changeset} --architecture {arch}"));
+			PlatformHelper.FormatHubArgs(args)) { RedirectStandardError = true });
 		process.WaitForExit();
 
 		if (process.ExitCode != 0)
 		{
-			var error = process.StandardError.ReadToEnd();
-			throw new Exception($"Failed to install Unity {version}: {error}");
+			throw new Exception($"Failed to install Unity {version}. (Exit code: {process.ExitCode})");
 		}
 
 		// Invalidate the cache after installing a new editor
 		_editorsCache = null;
+	}
+
+	private static void WriteStatusUpdate(string message)
+	{
+		// This output is colored to differentiate it from the verbose Unity Hub output, which can be noisy.
+		// However, we do want the progress feedback that the Hub provides.
+		AnsiConsole.MarkupLine($"[cyan]{message}...[/]");
 	}
 }

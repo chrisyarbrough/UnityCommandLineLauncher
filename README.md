@@ -14,9 +14,9 @@ A terminal command to open Unity projects quickly from the command line.
 |-----------------------------|----------------------------------------------------------------------|
 | `open [path]`               | Opens the Unity project.                                             |
 | `open`                      | Shows a selection prompt of recent projects from the Unity Hub.      |
-| `install <version>`         | Installs the editor by version, fetching the revision, if necessary. |
+| `install <version>`         | Installs the Editor by version, fetching the revision, if necessary. |
 | `editor-revision <version>` | Fetches the revision from Unity's API.                               |
-| `editor-path <version>`     | Gets the installation directory of the editor, if installed.         |
+| `editor-path <version>`     | Gets the installation directory of the Editor, if installed.         |
 | `project-version <path>`    | Gets the Unity version information from a project.                   |
 
 `path` can be a ProjectVersion.txt file or a directory (searches up and down for projects).
@@ -73,10 +73,14 @@ Show more info about a command:
 unity open --help
 ```
 
-Forward additional arguments to the Unity editor by separating them with a `--`:
+Forward additional arguments to Unity Hub/Editor by separating them with a `--`:
 
 ```bash
 unity open path/to/project -- -batchmode -quit
+```
+
+```bash
+unity install 2022.3.10f1 -- --module webgl
 ```
 
 ## Features
@@ -87,11 +91,11 @@ unity open path/to/project -- -batchmode -quit
 - Installs missing Unity Editor versions via Unity Hub
 - Fetches changeset info from Unity API when missing in ProjectVersion.txt (e.g. legacy projects)
 - Forwards additional Unity CLI arguments (e.g. `-batchmode -quit`)
-- Auto-detects Unity Hub and editor installation paths
+- Auto-detects Unity Hub and Editor installation paths
 
 ## Configuration
 
-Unity Hub and editor installations are detected in the following order:
+Unity Hub and Editor installations are detected in the following order:
 
 1. Environment variables (optional, see table below)
 2. Default paths on platform
@@ -110,7 +114,7 @@ Environment variables are optional but speed up execution for non-default instal
 | Linux    | `UNITY_EDITOR_PATH="/home/<user>/Unity/Hub/Editor/{0}/Editor/Unity"`                    |
 |          | `UNITY_HUB_PATH="/home/<user>/Applications/Unity Hub.AppImage"`                         |
 
-The placeholder `{0}` is part of the path pattern and will be replaced with the editor version at runtime.
+The placeholder `{0}` is part of the path pattern and will be replaced with the Editor version at runtime.
 
 ## Design Background
 

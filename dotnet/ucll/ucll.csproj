@@ -32,6 +32,7 @@
 	<ItemGroup>
 		<Using Include="Spectre.Console" />
 		<Using Include="Spectre.Console.Cli" />
+		<Using Include="System.Diagnostics" />
 	</ItemGroup>
 
 	<ItemGroup>

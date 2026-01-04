@@ -14,7 +14,8 @@ app.Configure(config =>
 	config.AddCommand<InstallCommand>("install")
 		.WithDescription("Install Unity Editor version")
 		.WithExample("install", "2022.3.10f1")
-		.WithExample("install", "2022.3.10f1", "ff3792e53c62");
+		.WithExample("install", "2022.3.10f1", "ff3792e53c62")
+		.WithExample("install", "2022.3.10f1", "--", "--module", "android");
 
 	config.AddCommand<EditorRevisionCommand>("editor-revision")
 		.WithDescription("Get revision for Unity version")
