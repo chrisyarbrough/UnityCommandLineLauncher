@@ -1,6 +1,6 @@
 # Unity Command Line Launcher
 
-A terminal command designed to open Unity projects quickly and with convenience.
+A terminal command to open Unity projects quickly from the command line.
 
 ![](docs/Screenshot_Open_Path.png)
 
@@ -19,26 +19,25 @@ A terminal command designed to open Unity projects quickly and with convenience.
 | `editor-path <version>`     | Gets the installation directory of the editor, if installed.         |
 | `project-version <path>`    | Gets the Unity version information from a project.                   |
 
-`path` can be:
-
-- ProjectVersion.txt file
-- A search directory to find a Unity project in (searches upwards and downwards)
+`path` can be a ProjectVersion.txt file or a directory (searches up and down for projects).
+If a directory contains multiple Unity projects, an interactive prompt will request a single selection.
 
 ---
 
 ## Setup
 
 1. Download the binaries from the releases page or clone the repository.
-2. Create an alias in your shell config (.zshrc, .bashrc, etc.):
+2. When building from source run `dotnet publish` to publish a binary for your current platform.
+3. Create an alias in your shell config (.zshrc, .bashrc, etc.):
 
 ```bash
-echo 'alias unity="~/UnityCommandLineLauncher/dotnet/UnityLauncher/bin/Release/osx-arm64/publish/ucll"' >> ~/.zshrc
+echo 'alias unity="~/UnityCommandLineLauncher/dotnet/ucll/bin/Release/osx-arm64/publish/ucll"' >> ~/.zshrc
 ```
 
 Or add the binary location to your PATH variable.
 
 ```bash
-export PATH=$PATH:UnityLauncher/bin/Release/osx-arm64/publish/
+export PATH=$PATH:~/UnityCommandLineLauncher/dotnet/ucll/bin/Release/osx-arm64/publish/
 ```
 
 ### Enhanced Fuzzy Search (Optional)
@@ -77,12 +76,12 @@ unity open --help
 ## Features
 
 - Opens Unity projects from the terminal (faster than using the Unity Hub GUI)
-- Interactive project selection from Unity Hub's recent projects (with optional favorite filter)
-- Detects the Unity Editor version from the project
+- Interactive project selection from Unity Hub's recent projects (optional favorites filter)
+- Detects Unity Editor version from projects
 - Installs missing Unity Editor versions via Unity Hub
 - Fetches changeset info from Unity API when missing in ProjectVersion.txt (e.g. legacy projects)
-- Additional Unity command line arguments (e.g. `-batchmode -quit`) are forwarded
-- Installation path auto-detection for Unity Hub and editors
+- Forwards additional Unity CLI arguments (e.g. `-batchmode -quit`)
+- Auto-detects Unity Hub and editor installation paths
 
 ## Configuration
 
@@ -92,8 +91,7 @@ Unity Hub and editor installations are detected in the following order:
 2. Default paths on platform
 3. Search heuristic to guess the paths
 
-Setting the environment variables should not be necessary in most cases,
-but it will speed up tool execution for non-default install locations.
+Environment variables are optional but speed up execution for non-default installations.
 
 | Platform | Environment Variable Example                                                            |
 |----------|-----------------------------------------------------------------------------------------|
@@ -112,29 +110,23 @@ The placeholder `{0}` is part of the path pattern and will be replaced with the 
 
 ### Problems
 
-- Unity Hub is slow to open.
-- Projects must be added to the Hub manually.
-- Managing a large amount of projects can be cumbersome in a GUI workflow.
-- Opening multiple test projects (e.g. when developing Unity packages) can be hard to automate.
-- The Unity Hub CLI can be difficult to work with:
-    - Hub path must be hardcoded or searched for with extra code.
-    - Installing an editor requires passing the changeset in many cases, but the changeset is not always available in
-      the ProjectVersion.txt file.
-    - Installing an editor requires passing the architecture on macOS, which requires extra code to query this info.
+- Unity Hub is slow to open and requires manual project management
+- GUI-based workflows are cumbersome for multiple projects
+- Unity Hub CLI has limitations: requires hardcoded paths, needs changeset info for installations, requires architecture
+  detection on macOS
 
 ### Solutions
 
-- Developers have quick access to the Terminal:
-    - Global hotkey in iTerm2.
-    - Terminal window in IDE.
-    - Context menu on directories in macOS Finder.
-- Our custom tool addresses the Unity Hub API shortcommings by providing a streamlined UX.
+- Terminal access is faster (global hotkeys, IDE integration, Finder context menu)
+- This tool streamlines the Unity Hub API with a better UX
 
 ## Development
 
-This repository contains multiple implementation projects. The dotnet version is "officially" supported by me.
-The additional implementations can be used as a reference or to copy-paste into your own projects.
+This repository contains multiple implementations. The dotnet version is officially supported.
+The additional experiments can be used as a reference or to copy-paste into your own projects.
 
-## Outlook
+See the [Developer Readme](dotnet/ucll/DeveloperReadme.md) for .NET development.
+
+## Future
 
 If the tool receives enough stars/forks, I'll publish it to _Homebrew_ and similar package managers.
