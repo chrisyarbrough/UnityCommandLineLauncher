@@ -90,12 +90,15 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 
 		var process = ProcessRunner.Default.Run(
 			new ProcessStartInfo(hubPath, PlatformHelper.FormatHubArgs("--headless editors --installed"))
-				{ RedirectStandardOutput = true });
+				{ RedirectStandardOutput = true, RedirectStandardError = true });
 		var output = process.StandardOutput.ReadToEnd();
 		process.WaitForExit();
 
 		if (process.ExitCode != 0)
-			throw new Exception($"Failed to list installed editors: {process.StandardError.ReadToEnd()}");
+		{
+			throw new Exception(
+				$"Failed to list installed editors. Exit code: {process.ExitCode} Error output: {process.StandardError.ReadToEnd()}");
+		}
 
 		_editorsCache = ParseEditorsOutput(output);
 		return _editorsCache;
