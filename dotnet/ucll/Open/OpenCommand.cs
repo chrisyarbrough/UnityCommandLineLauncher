@@ -2,7 +2,7 @@ class OpenCommand : BaseCommand<OpenSettings>
 {
 	protected override int ExecuteImpl(OpenSettings settings)
 	{
-		var searchPath = settings.SearchPath ?? PromptForRecentProject(settings.Favorites);
+		var searchPath = settings.SearchPath ?? PromptForRecentProject(settings.Favorite);
 
 		searchPath = Path.GetFullPath(searchPath);
 
@@ -22,7 +22,7 @@ class OpenCommand : BaseCommand<OpenSettings>
 		AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
 
 		string projectDir = new FileInfo(filePath).Directory!.Parent!.FullName;
-		string[] additionalArgs = settings.UnityArgs ?? [];
+		string[] additionalArgs = context.Remaining.Raw.ToArray();
 		var args = new List<string> { "-projectPath", projectDir };
 		args.AddRange(additionalArgs);
 

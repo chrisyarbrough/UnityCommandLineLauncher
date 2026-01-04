@@ -9,9 +9,5 @@ class OpenSettings : MutatingCommand
 
 	[CommandOption("-f|--favorite|--favorites")]
 	[Description("Show only favorite projects in interactive selection")]
-	public bool Favorites { get; init; }
-
-	[Description("Additional arguments to pass to Unity Editor")]
-	[CommandArgument(1, "[unityArgs]")]
-	public string[]? UnityArgs { get; init; }
+	public bool Favorite { get; init; }
 }

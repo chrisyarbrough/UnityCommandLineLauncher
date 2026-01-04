@@ -1,6 +1,8 @@
 abstract class BaseCommand<TSettings> : Command<TSettings>
 	where TSettings : CommandSettings
 {
+	protected CommandContext context { get; private set; } = null!;
+
 	public sealed override int Execute(
 		CommandContext context,
 		TSettings settings,
@@ -10,6 +12,7 @@ abstract class BaseCommand<TSettings> : Command<TSettings>
 		{
 			using (new ProfilingTimer(GetType().Name))
 			{
+				this.context = context;
 				return ExecuteImpl(settings);
 			}
 		}

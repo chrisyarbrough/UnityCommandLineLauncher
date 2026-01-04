@@ -73,6 +73,12 @@ Show more info about a command:
 unity open --help
 ```
 
+Forward additional arguments to the Unity editor by separating them with a `--`:
+
+```bash
+unity open path/to/project -- -batchmode -quit
+```
+
 ## Features
 
 - Opens Unity projects from the terminal (faster than using the Unity Hub GUI)

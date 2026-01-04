@@ -9,7 +9,7 @@ app.Configure(config =>
 		.WithExample("open")
 		.WithExample("open", ".")
 		.WithExample("open", "path/to/project")
-		.WithExample("open", "path/to/project", "-batchmode", "-quit");
+		.WithExample("open", "path/to/project", "--", "-batchmode", "-quit");
 
 	config.AddCommand<InstallCommand>("install")
 		.WithDescription("Install Unity Editor version")
