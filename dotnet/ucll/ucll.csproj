@@ -18,7 +18,6 @@
 
 		<DebugType>embedded</DebugType>
 		<Deterministic>true</Deterministic>
-		<RootNamespace>uccl</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -33,5 +32,9 @@
 	<ItemGroup>
 		<Using Include="Spectre.Console" />
 		<Using Include="Spectre.Console.Cli" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="ucll.Tests" />
 	</ItemGroup>
 </Project>
