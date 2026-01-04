@@ -1,16 +1,8 @@
-using System.Diagnostics;
-
 class OpenCommand : BaseCommand<OpenSettings>
 {
 	protected override int ExecuteImpl(OpenSettings settings)
 	{
 		var searchPath = settings.SearchPath ?? PromptForRecentProject(settings.Favorites);
-
-		if (string.IsNullOrEmpty(searchPath))
-		{
-			AnsiConsole.MarkupLine("No search path provided. Aborting.");
-			return 0;
-		}
 
 		searchPath = Path.GetFullPath(searchPath);
 
@@ -46,49 +38,13 @@ class OpenCommand : BaseCommand<OpenSettings>
 
 	private static string PromptForRecentProject(bool favoritesOnly)
 	{
-		var recentProjects = UnityHub.GetRecentProjects(favoritesOnly).ToList();
+		var recentProjects = UnityHub.GetRecentProjects(favoritesOnly).ToArray();
 
-		if (recentProjects.Count == 0)
+		if (recentProjects.Length == 0)
 			throw new Exception("No projects found in Unity Hub.");
 
-		try
-		{
-			// This supports fuzzy matching and acronyms.
-			return PromptWithFzf(recentProjects);
-		}
-		catch (Exception)
-		{
-			return AnsiConsole.Prompt(
-				new SelectionPrompt<string>()
-					.Title($"Select a [green]{(favoritesOnly ? "favorite" : "recent")} project[/]:")
-					.EnableSearch()
-					.SearchPlaceholderText("[dim](Type to search. Install 'fzf' for fuzzy matching.)[/]")
-					.AddChoices(recentProjects));
-		}
-	}
-
-	private static string PromptWithFzf(List<string> projects)
-	{
-		var process = new Process
-		{
-			StartInfo = new ProcessStartInfo
-			{
-				FileName = "fzf",
-				Arguments = "--prompt=\"Select project: \" --height=40% --reverse --bind=change:first -i",
-				RedirectStandardInput = true,
-				RedirectStandardOutput = true,
-			},
-		};
-
-		process.Start();
-
-		foreach (var project in projects)
-			process.StandardInput.WriteLine(project);
-
-		process.StandardInput.Close();
-
-		string result = process.StandardOutput.ReadToEnd().Trim();
-		process.WaitForExit();
-		return result;
+		return SelectionPrompt.Prompt(
+			recentProjects,
+			$"Select a [green]{(favoritesOnly ? "favorite" : "recent")} project[/]:");
 	}
 }

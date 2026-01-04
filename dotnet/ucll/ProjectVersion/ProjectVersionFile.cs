@@ -98,14 +98,10 @@ static partial class ProjectVersionFile
 
 		if (foundFiles.Count > 1)
 		{
-			var selection = AnsiConsole.Prompt(
-				new SelectionPrompt<string>()
-					.Title($"Found {foundFiles.Count} Unity projects. [green]Select one[/]:")
-					.PageSize(10)
-					.EnableSearch()
-					.AddChoices(foundFiles.OrderBy(x => x)));
-
-			return selection;
+			foundFiles.Sort();
+			return SelectionPrompt.Prompt(
+				foundFiles,
+				$"Found {foundFiles.Count} Unity projects. [green]Select one[/]:");
 		}
 		else if (foundFiles.Count == 1)
 		{
