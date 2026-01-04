@@ -47,6 +47,6 @@ class OpenCommand : BaseCommand<OpenSettings>
 
 		return SelectionPrompt.Prompt(
 			recentProjects,
-			$"Select a [green]{(favoritesOnly ? "favorite" : "recent")} project[/]:");
+			$"Select a {(favoritesOnly ? "favorite" : "recent")} project: ");
 	}
 }

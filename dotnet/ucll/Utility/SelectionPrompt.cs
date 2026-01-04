@@ -15,7 +15,7 @@ static class SelectionPrompt
 		try
 		{
 			// This supports fuzzy matching and acronyms.
-			return PromptWithFzf(choices);
+			return PromptWithFzf(choices, title);
 		}
 		catch (Exception)
 		{
@@ -28,14 +28,14 @@ static class SelectionPrompt
 		}
 	}
 
-	private static string PromptWithFzf(IList<string> projects)
+	private static string PromptWithFzf(IList<string> projects, string title)
 	{
 		var process = new Process
 		{
 			StartInfo = new ProcessStartInfo
 			{
 				FileName = "fzf",
-				Arguments = "--prompt=\"Select project: \" --height=40% --reverse --bind=change:first -i",
+				Arguments = $"--prompt=\"{title}\" --height=40% --reverse --bind=change:first -i",
 				RedirectStandardInput = true,
 				RedirectStandardOutput = true,
 			},

@@ -99,9 +99,7 @@ static partial class ProjectVersionFile
 		if (foundFiles.Count > 1)
 		{
 			foundFiles.Sort();
-			return SelectionPrompt.Prompt(
-				foundFiles,
-				$"Found {foundFiles.Count} Unity projects. [green]Select one[/]:");
+			return SelectionPrompt.Prompt(foundFiles, "Select one of the found projects: ");
 		}
 		else if (foundFiles.Count == 1)
 		{
