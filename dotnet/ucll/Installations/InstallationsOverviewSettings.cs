@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-class InstallationsSettings : CommandSettings
+class InstallationsOverviewSettings : CommandSettings
 {
 	[CommandOption("--parseable")]
 	[Description("Output in a simple machine-parseable format")]

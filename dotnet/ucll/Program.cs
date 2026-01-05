@@ -17,21 +17,34 @@ app.Configure(config =>
 		.WithExample("install", "2022.3.10f1", "ff3792e53c62")
 		.WithExample("install", "2022.3.10f1", "--", "--module", "android");
 
-	config.AddCommand<EditorRevisionCommand>("editor-revision")
-		.WithDescription("Get revision for Unity version")
-		.WithExample("editor-revision", "2022.3.10f1");
+	config.AddBranch("editor", command =>
+	{
+		command.AddCommand<EditorRevisionCommand>("revision")
+			.WithDescription("Get revision for Unity version")
+			.WithExample("editor", "revision", "2022.3.10f1");
 
-	config.AddCommand<EditorPathCommand>("editor-path")
-		.WithDescription("Get installation path for Unity version")
-		.WithExample("editor-path", "2022.3.10f1");
+		command.AddCommand<EditorPathCommand>("path")
+			.WithDescription("Get installation path for Unity version")
+			.WithExample("editor", "path", "2022.3.10f1");
+	});
 
 	config.AddCommand<ProjectVersionCommand>("project-version")
 		.WithDescription("Get Unity version from project search directory or ProjectVersion.txt")
 		.WithExample("project-version", "path");
 
-	config.AddCommand<InstallationsCommand>("installations")
-		.WithDescription("List installed Unity Editor versions")
-		.WithExample("installations");
+	config.AddBranch("installations", installations =>
+	{
+		installations.SetDescription("Manage and view Unity Editor installations");
+
+		installations.AddCommand<InstallationsOverviewCommand>("overview")
+			.WithDescription("List installed Unity Editor versions")
+			.WithExample("installations", "overview")
+			.WithExample("installations", "overview", "--parseable");
+
+		installations.AddCommand<InstallationsUsedCommand>("used")
+			.WithDescription("Find all projects using a specific Unity version")
+			.WithExample("installations", "used", "2022.3.10f1");
+	});
 });
 
 return app.Run(args);

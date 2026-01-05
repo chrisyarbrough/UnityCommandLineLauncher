@@ -1,6 +1,6 @@
-class InstallationsCommand : BaseCommand<InstallationsSettings>
+class InstallationsOverviewCommand : BaseCommand<InstallationsOverviewSettings>
 {
-	protected override int ExecuteImpl(InstallationsSettings settings)
+	protected override int ExecuteImpl(InstallationsOverviewSettings settings)
 	{
 		var editorVersions = UnityHub.ListInstalledEditors().Select(i => i.Version).ToHashSet();
 		var usedEditorVersions = FindUnityProjects().Select(p => ProjectVersionFile.Parse(p, out string _).Version)
