@@ -29,14 +29,13 @@ static class PlatformSupport
 	// The path from what UnityHub considers the "install directory" to the platform executable.
 	public static string GetRelativeEditorPathToExecutable()
 	{
-		// TODO
 		OSPlatform platform = GetCurrentOS();
 		if (platform == OSPlatform.OSX)
 			return "Contents/MacOS/Unity";
 		else if (platform == OSPlatform.Windows)
-			return @"Editor\Unity.exe"; // ?
+			return @"Editor\Unity.exe";
 		else
-			return "Editor/Unity"; // ?
+			return "Editor/Unity";
 	}
 
 	// Accepts a path that was provided by UnityHub.GetEditorPath().
