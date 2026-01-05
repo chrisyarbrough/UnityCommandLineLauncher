@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 class InstallationsOverviewSettings : CommandSettings
 {
-	[CommandOption("--parseable")]
+	[CommandOption("-p|--plaintext|--plain")]
 	[Description("Output in a simple machine-parseable format")]
-	public bool Parseable { get; init; }
+	public bool PlainText { get; init; }
 }

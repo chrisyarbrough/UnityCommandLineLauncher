@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-static class PlatformHelper
+static class PlatformSupport
 {
 	// https://docs.unity3d.com/6000.3/Documentation/Manual/EditorCommandLineArguments.html
 	// https://docs.unity3d.com/hub/manual/HubCLI.html
@@ -25,6 +25,41 @@ static class PlatformHelper
 				config: Path.Combine(UserHome, ".config/UnityHub"))
 		},
 	};
+
+	// The path from what UnityHub considers the "install directory" to the platform executable.
+	public static string GetRelativeEditorPathToExecutable()
+	{
+		// TODO
+		OSPlatform platform = GetCurrentOS();
+		if (platform == OSPlatform.OSX)
+			return "Contents/MacOS/Unity";
+		else if (platform == OSPlatform.Windows)
+			return @"Editor\Unity.exe"; // ?
+		else
+			return "Editor/Unity"; // ?
+	}
+
+	// Accepts a path that was provided by UnityHub.GetEditorPath().
+	public static string GetInstallationRootDirectory(string editorPath)
+	{
+		// Extract the version directory from the editor path
+		// macOS: /Applications/Unity/Hub/Editor/{version}/Unity.app/Contents/MacOS/Unity -> go up 4 levels
+		// Windows: C:\Program Files\Unity\Hub\Editor\{version}\Editor\Unity.exe -> go up 2 levels
+		// Linux: ~/Unity/Hub/Editor/{version}/Editor/Unity -> go up 2 levels
+		// Remember, the version is only part of default installations, but it could very well be a custom name entirely.
+
+		int levelsToGoUp = GetCurrentOS() == OSPlatform.OSX ? 4 : 2;
+
+		string? dir = editorPath;
+		for (int i = 0; i < levelsToGoUp; i++)
+		{
+			dir = Path.GetDirectoryName(dir);
+			if (dir == null)
+				throw new Exception($"Unable to determine installation directory from path: {editorPath}");
+		}
+
+		return dir;
+	}
 
 	public static string? FindDefaultEditorInstallPath(string version)
 		=> FindFirstValidPath(GetEditorPathCandidatePatterns(), pattern => string.Format(pattern, version));

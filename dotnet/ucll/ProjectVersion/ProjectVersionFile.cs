@@ -13,6 +13,8 @@ record UnityVersion(string Version, string? Changeset)
 
 static partial class ProjectVersionFile
 {
+	public static UnityVersion Parse(string directoryOrFile) => Parse(directoryOrFile, out string _);
+
 	public static UnityVersion Parse(string directoryOrFile, out string filePath)
 	{
 		if (File.Exists(directoryOrFile))

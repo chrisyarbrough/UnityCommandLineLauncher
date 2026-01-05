@@ -15,7 +15,7 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 	public static string GetEditorPath(string version)
 	{
 		// Fast path: check default install location first
-		var fastPath = PlatformHelper.FindDefaultEditorInstallPath(version);
+		var fastPath = PlatformSupport.FindDefaultEditorInstallPath(version);
 		if (fastPath != null)
 			return fastPath;
 
@@ -26,12 +26,12 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 		if (path == null)
 			throw new Exception($"Unity version {version} is not installed.");
 
-		return path;
+		return Path.Combine(path, PlatformSupport.GetRelativeEditorPathToExecutable());
 	}
 
 	public static IEnumerable<string> GetRecentProjects(bool favoritesOnly = false)
 	{
-		var configDir = PlatformHelper.GetUnityHubConfigDirectory();
+		var configDir = PlatformSupport.GetUnityHubConfigDirectory();
 		var projectsFile = Path.Combine(configDir, "projects-v1.json");
 
 		try
@@ -89,7 +89,7 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 		var hubPath = GetUnityHubPath();
 
 		var process = ProcessRunner.Default.Run(
-			new ProcessStartInfo(hubPath, PlatformHelper.FormatHubArgs("--headless editors --installed"))
+			new ProcessStartInfo(hubPath, PlatformSupport.FormatHubArgs("--headless editors --installed"))
 				{ RedirectStandardOutput = true, RedirectStandardError = true });
 		var output = process.StandardOutput.ReadToEnd();
 		process.WaitForExit();
@@ -132,7 +132,7 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 		if (_hubPathCache != null)
 			return _hubPathCache;
 
-		_hubPathCache = PlatformHelper.FindDefaultHubInstallPath();
+		_hubPathCache = PlatformSupport.FindDefaultHubInstallPath();
 
 		if (_hubPathCache == null)
 			throw new Exception("Unity Hub not found.");
@@ -143,7 +143,7 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 	private static bool IsEditorInstalled(string version)
 	{
 		// Fast path: check default install location first
-		if (PlatformHelper.FindDefaultEditorInstallPath(version) != null)
+		if (PlatformSupport.FindDefaultEditorInstallPath(version) != null)
 			return true;
 
 		// Fallback: query Unity Hub for custom installation locations
@@ -179,7 +179,7 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 
 		var process = mutatingProcessRunner.Run(new ProcessStartInfo(
 			hubPath,
-			PlatformHelper.FormatHubArgs(args)) { RedirectStandardError = true });
+			PlatformSupport.FormatHubArgs(args)) { RedirectStandardError = true });
 		process.WaitForExit();
 
 		if (process.ExitCode != 0)

@@ -2,19 +2,17 @@ class InstallationsOverviewCommand : BaseCommand<InstallationsOverviewSettings>
 {
 	protected override int ExecuteImpl(InstallationsOverviewSettings settings)
 	{
-		var editorVersions = UnityHub.ListInstalledEditors().Select(i => i.Version).ToHashSet();
-		var usedEditorVersions = FindUnityProjects().Select(p => ProjectVersionFile.Parse(p, out string _).Version)
-			.ToHashSet();
+		var versions = VersionUsage.PerformSearch();
 
-		if (settings.Parseable)
-			PrintParseable(editorVersions, usedEditorVersions);
+		if (settings.PlainText)
+			PrintParseable(versions);
 		else
-			PrintTable(editorVersions, usedEditorVersions);
+			PrintTable(versions);
 
 		return 0;
 	}
 
-	private static void PrintTable(HashSet<string> editorVersions, HashSet<string> usedEditorVersions)
+	private static void PrintTable(VersionUsage versions)
 	{
 		var table = new Table();
 		table.Border(TableBorder.Rounded);
@@ -22,10 +20,10 @@ class InstallationsOverviewCommand : BaseCommand<InstallationsOverviewSettings>
 		table.AddColumn("[bold]Installed[/]");
 		table.AddColumn("[bold]Used[/]");
 
-		foreach (string version in editorVersions.Union(usedEditorVersions).Order())
+		foreach (string version in versions.Installed.Union(versions.Used))
 		{
-			bool isInstalled = editorVersions.Contains(version);
-			bool isUsed = usedEditorVersions.Contains(version);
+			bool isInstalled = versions.Installed.Contains(version);
+			bool isUsed = versions.Used.Contains(version);
 
 			static string GetIcon(bool value) => value ? "[green]✓[/]" : "[red]✗[/]";
 
@@ -35,47 +33,37 @@ class InstallationsOverviewCommand : BaseCommand<InstallationsOverviewSettings>
 		AnsiConsole.Write(table);
 
 		AnsiConsole.WriteLine();
-		AnsiConsole.MarkupLine($"[bold]Summary:[/]");
-		AnsiConsole.MarkupLine($"  Installed versions: [cyan]{editorVersions.Count}[/]");
-		AnsiConsole.MarkupLine($"  Used versions: [cyan]{usedEditorVersions.Count}[/]");
-		AnsiConsole.MarkupLine($"  Used but not installed: [yellow]{usedEditorVersions.Except(editorVersions).Count()}[/]");
-		AnsiConsole.MarkupLine($"  Installed but not used: [yellow]{editorVersions.Except(usedEditorVersions).Count()}[/]");
+		AnsiConsole.MarkupLine("[bold]Summary:[/]");
+		AnsiConsole.MarkupLine($"  Installed versions: [cyan]{versions.Installed.Count}[/]");
+		AnsiConsole.MarkupLine($"  Used versions: [cyan]{versions.Used.Count}[/]");
+		AnsiConsole.MarkupLine($"  Used but not installed: [yellow]{versions.UsedNotInstalled.Count}[/]");
+		AnsiConsole.MarkupLine($"  Installed but not used: [yellow]{versions.InstalledNotUsed.Count}[/]");
 	}
 
-	private static void PrintParseable(HashSet<string> editorVersions, HashSet<string> usedEditorVersions)
+	private static void PrintParseable(VersionUsage installs)
 	{
-		Console.WriteLine("Installed Unity versions: " + editorVersions.Count);
-		foreach (string version in editorVersions.Order())
+		Console.WriteLine("# Installed versions: " + installs.Installed.Count);
+		foreach (string version in installs.Installed)
 		{
 			Console.WriteLine(version);
 		}
 
-		Console.WriteLine("Used Unity versions: " + usedEditorVersions.Count);
-		foreach (string version in usedEditorVersions.Order())
+		Console.WriteLine("# Used versions: " + installs.Used.Count);
+		foreach (string version in installs.Used)
 		{
 			Console.WriteLine(version);
 		}
 
-		Console.WriteLine("Used versions that are not installed: ");
-		foreach (string version in usedEditorVersions.Except(editorVersions).Order())
+		Console.WriteLine("# Used versions that are not installed: " + installs.UsedNotInstalled.Count);
+		foreach (string version in installs.UsedNotInstalled)
 		{
 			Console.WriteLine(version);
 		}
 
-		Console.WriteLine("Installed versions that are not used: ");
-		foreach (string version in editorVersions.Except(usedEditorVersions).Order())
+		Console.WriteLine("# Installed versions that are not used: " + installs.InstalledNotUsed.Count);
+		foreach (string version in installs.InstalledNotUsed)
 		{
 			Console.WriteLine(version);
 		}
-	}
-
-	private static IEnumerable<string> FindUnityProjects()
-	{
-		var startInfo = PlatformHelper.GetUnityProjectSearchProcess();
-		startInfo.RedirectStandardOutput = true;
-		var process = ProcessRunner.Default.Run(startInfo);
-		process.WaitForExit();
-		while (!process.StandardOutput.EndOfStream)
-			yield return process.StandardOutput.ReadLine()!;
 	}
 }
