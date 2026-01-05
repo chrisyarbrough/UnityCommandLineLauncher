@@ -28,8 +28,13 @@ class OpenCommand : BaseCommand<OpenSettings>
 
 		settings.MutatingProcess.Run(new ProcessStartInfo(fileName: editorPath, arguments: JoinQuoted(args)));
 
+		if (settings.CodeEditor)
+		{
+			OpenSolutionFile(projectDir, settings.MutatingProcess);
+		}
+
 		// Unity doesn't report an exit code if the editor fails to open a project.
-		// Instead, it prints error into the log. So, for now, we just assume it succeeded.
+		// Instead, it prints error into the log. So, for now, we must assume it succeeded.
 		return 0;
 	}
 
@@ -48,5 +53,17 @@ class OpenCommand : BaseCommand<OpenSettings>
 		return SelectionPrompt.Prompt(
 			recentProjects,
 			$"Select a {(favoritesOnly ? "favorite" : "recent")} project: ");
+	}
+
+	private static void OpenSolutionFile(string projectDir, IProcessRunner processRunner)
+	{
+		var path = Directory.GetFiles(projectDir, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+		if (path == null)
+			return;
+
+		AnsiConsole.MarkupLine($"[dim]Solution: {Path.GetFileName(path)}[/]");
+
+		processRunner.Run(PlatformSupport.GetOpenFileProcess(path));
 	}
 }

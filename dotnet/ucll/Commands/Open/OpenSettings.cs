@@ -10,4 +10,8 @@ class OpenSettings : MutatingCommand
 	[CommandOption("-f|--favorite|--favorites")]
 	[Description("Show only favorite projects in interactive selection")]
 	public bool Favorite { get; init; }
+
+	[CommandOption("-c|--code-editor")]
+	[Description("Open the solution file in the default code editor")]
+	public bool CodeEditor { get; init; }
 }

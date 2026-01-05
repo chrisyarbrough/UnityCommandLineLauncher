@@ -186,9 +186,35 @@ static class PlatformSupport
 
 		else if (os == OSPlatform.Linux)
 		{
-			// Presumably required manual database update (at least on macOS it's not up-to-date by default).
+			// Presumably requires manual database update (at least on macOS it's not up-to-date by default).
 			return new ProcessStartInfo("bash",
 				"-c \"locate ProjectVersion.txt | grep ProjectSettings/ProjectVersion.txt\"");
+		}
+
+		throw new NotSupportedException($"Unsupported OS: {os}");
+	}
+
+	/// <summary>
+	/// Returns a ProcessStartInfo configured to open a file with the OS default application.
+	/// </summary>
+	public static ProcessStartInfo GetOpenFileProcess(string filePath)
+	{
+		var os = GetCurrentOS();
+
+		if (os == OSPlatform.OSX)
+		{
+			return new ProcessStartInfo("open", filePath);
+		}
+
+		if (os == OSPlatform.Windows)
+		{
+			// Use cmd /c start with empty window title
+			return new ProcessStartInfo("cmd.exe", $"/c start \"\" \"{filePath}\"");
+		}
+
+		if (os == OSPlatform.Linux)
+		{
+			return new ProcessStartInfo("xdg-open", filePath);
 		}
 
 		throw new NotSupportedException($"Unsupported OS: {os}");
