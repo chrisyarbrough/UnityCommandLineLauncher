@@ -6,6 +6,44 @@ class InstallationsCommand : BaseCommand<InstallationsSettings>
 		var usedEditorVersions = FindUnityProjects().Select(p => ProjectVersionFile.Parse(p, out string _).Version)
 			.ToHashSet();
 
+		if (settings.Parseable)
+			PrintParseable(editorVersions, usedEditorVersions);
+		else
+			PrintTable(editorVersions, usedEditorVersions);
+
+		return 0;
+	}
+
+	private static void PrintTable(HashSet<string> editorVersions, HashSet<string> usedEditorVersions)
+	{
+		var table = new Table();
+		table.Border(TableBorder.Rounded);
+		table.AddColumn("[bold]Version[/]");
+		table.AddColumn("[bold]Installed[/]");
+		table.AddColumn("[bold]Used[/]");
+
+		foreach (string version in editorVersions.Union(usedEditorVersions).Order())
+		{
+			bool isInstalled = editorVersions.Contains(version);
+			bool isUsed = usedEditorVersions.Contains(version);
+
+			static string GetIcon(bool value) => value ? "[green]✓[/]" : "[red]✗[/]";
+
+			table.AddRow(Markup.Escape(version), GetIcon(isInstalled), GetIcon(isUsed));
+		}
+
+		AnsiConsole.Write(table);
+
+		AnsiConsole.WriteLine();
+		AnsiConsole.MarkupLine($"[bold]Summary:[/]");
+		AnsiConsole.MarkupLine($"  Installed versions: [cyan]{editorVersions.Count}[/]");
+		AnsiConsole.MarkupLine($"  Used versions: [cyan]{usedEditorVersions.Count}[/]");
+		AnsiConsole.MarkupLine($"  Used but not installed: [yellow]{usedEditorVersions.Except(editorVersions).Count()}[/]");
+		AnsiConsole.MarkupLine($"  Installed but not used: [yellow]{editorVersions.Except(usedEditorVersions).Count()}[/]");
+	}
+
+	private static void PrintParseable(HashSet<string> editorVersions, HashSet<string> usedEditorVersions)
+	{
 		Console.WriteLine("Installed Unity versions: " + editorVersions.Count);
 		foreach (string version in editorVersions.Order())
 		{
@@ -13,7 +51,7 @@ class InstallationsCommand : BaseCommand<InstallationsSettings>
 		}
 
 		Console.WriteLine("Used Unity versions: " + usedEditorVersions.Count);
-		foreach (string version in usedEditorVersions)
+		foreach (string version in usedEditorVersions.Order())
 		{
 			Console.WriteLine(version);
 		}
@@ -29,8 +67,6 @@ class InstallationsCommand : BaseCommand<InstallationsSettings>
 		{
 			Console.WriteLine(version);
 		}
-
-		return 0;
 	}
 
 	private static IEnumerable<string> FindUnityProjects()
