@@ -81,7 +81,7 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 		InstallEditor(version, changeset, additionalArgs ?? []);
 	}
 
-	private static List<EditorInfo> ListInstalledEditors()
+	public static List<EditorInfo> ListInstalledEditors()
 	{
 		if (_editorsCache != null)
 			return _editorsCache;

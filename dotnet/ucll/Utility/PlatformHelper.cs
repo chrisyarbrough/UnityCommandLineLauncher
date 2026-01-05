@@ -107,4 +107,56 @@ static class PlatformHelper
 		var needsDashes = os == OSPlatform.OSX || os == OSPlatform.Windows;
 		return needsDashes ? $"-- {args}" : args;
 	}
+
+	/// <summary>
+	/// Returns a ProcessStartInfo configured to search the OS index for Unity projects on the current platform.
+	/// </summary>
+	public static ProcessStartInfo GetUnityProjectSearchProcess()
+	{
+		var os = GetCurrentOS();
+
+		if (os == OSPlatform.OSX)
+		{
+			// Automatically indexed Spotlight search.
+			return new ProcessStartInfo("bash",
+				"-c \"mdfind 'kMDItemFSName == ProjectVersion.txt' | grep ProjectSettings/ProjectVersion.txt\"");
+		}
+
+		if (os == OSPlatform.Windows)
+		{
+			// Use Windows Search index via COM (equivalent to mdfind on macOS)
+			// Queries the SystemIndex database - very fast, uses existing Windows Search index
+			// Note: Only searches indexed locations (configurable in Windows Search settings)
+			const string script = """
+			                      $connection = New-Object -ComObject ADODB.Connection
+			                      $recordset = New-Object -ComObject ADODB.Recordset
+			                      try {
+			                      	$connection.Open('Provider=Search.CollatorDSO;Extended Properties=''Application=Windows'';')
+			                      	$query = 'SELECT System.ItemPathDisplay FROM SystemIndex WHERE System.FileName = ''ProjectVersion.txt'''
+			                      	$recordset.Open($query, $connection)
+			                      	while (-not $recordset.EOF) {
+			                      		$path = $recordset.Fields.Item('System.ItemPathDisplay').Value
+			                      		if ($path -like '*\ProjectSettings\ProjectVersion.txt') {
+			                      			$path
+			                      		}
+			                      		$recordset.MoveNext()
+			                      	}
+			                      } finally {
+			                      	if ($recordset.State -eq 1) { $recordset.Close() }
+			                      	if ($connection.State -eq 1) { $connection.Close() }
+			                      }
+			                      """;
+
+			return new ProcessStartInfo("powershell.exe", $"-NoProfile -Command \"{script}\"");
+		}
+
+		else if (os == OSPlatform.Linux)
+		{
+			// Presumably required manual database update (at least on macOS it's not up-to-date by default).
+			return new ProcessStartInfo("bash",
+				"-c \"locate ProjectVersion.txt | grep ProjectSettings/ProjectVersion.txt\"");
+		}
+
+		throw new NotSupportedException($"Unsupported OS: {os}");
+	}
 }

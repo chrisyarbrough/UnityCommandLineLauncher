@@ -1,0 +1,3 @@
+class InstallationsSettings : CommandSettings
+{
+}

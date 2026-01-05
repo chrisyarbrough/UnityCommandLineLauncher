@@ -86,7 +86,7 @@ static partial class ProjectVersionFile
 	{
 		var ignoredFolders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 		{
-			".git", "Library", "Temp", "Logs", "obj", "bin",
+			".git", "Library", "Temp", "Logs", "obj", "bin", "Assets",
 			"Packages", "UserSettings", "Build", "Builds", "node_modules",
 		};
 

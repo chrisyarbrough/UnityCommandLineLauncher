@@ -28,6 +28,10 @@ app.Configure(config =>
 	config.AddCommand<ProjectVersionCommand>("project-version")
 		.WithDescription("Get Unity version from project search directory or ProjectVersion.txt")
 		.WithExample("project-version", "path");
+
+	config.AddCommand<InstallationsCommand>("installations")
+		.WithDescription("List installed Unity Editor versions")
+		.WithExample("installations");
 });
 
 return app.Run(args);
