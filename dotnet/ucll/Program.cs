@@ -1,8 +1,30 @@
-var app = new CommandApp();
+using Microsoft.Extensions.DependencyInjection;
+using System.Runtime.InteropServices;
+
+var services = new ServiceCollection();
+
+services.AddSingleton<PlatformSupport>(_ =>
+{
+	if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+		return new MacSupport();
+
+	if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		return new WindowsSupport();
+
+	if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+		return new LinuxSupport();
+
+	throw new PlatformNotSupportedException("Unsupported platform.");
+});
+
+services.AddSingleton<UnityHub>();
+
+var registrar = new TypeRegistrar(services);
+var app = new CommandApp(registrar);
 app.Configure(config =>
 {
 	config.SetApplicationName("ucll");
-	config.SetApplicationVersion("1.0.0");
+	config.SetApplicationVersion("0.1.0");
 
 	config.AddCommand<OpenCommand>("open")
 		.WithDescription("Open Unity Editor for a project search path or via recent projects prompt")
@@ -57,3 +79,19 @@ app.Configure(config =>
 });
 
 return app.Run(args);
+
+public sealed class TypeRegistrar(IServiceCollection services) : ITypeRegistrar
+{
+	public ITypeResolver Build() => new TypeResolver(services.BuildServiceProvider());
+
+	public void Register(Type service, Type implementation) => services.AddSingleton(service, implementation);
+
+	public void RegisterInstance(Type service, object implementation) => services.AddSingleton(service, implementation);
+
+	public void RegisterLazy(Type service, Func<object> factory) => services.AddSingleton(service, _ => factory());
+}
+
+public sealed class TypeResolver(IServiceProvider provider) : ITypeResolver
+{
+	public object? Resolve(Type? type) => type == null ? null : provider.GetService(type);
+}

@@ -5,22 +5,20 @@ class VersionUsage
 	public HashSet<string> UsedNotInstalled => Used.Except(Installed).ToHashSet();
 	public HashSet<string> InstalledNotUsed => Installed.Except(Used).ToHashSet();
 
-	public static VersionUsage PerformSearch() => new VersionUsage();
-
-	private VersionUsage()
+	public VersionUsage(PlatformSupport platformSupport, UnityHub unityHub)
 	{
-		Installed = UnityHub.ListInstalledEditors()
+		Installed = unityHub.ListInstalledEditors()
 			.Select(i => i.Version)
 			.ToHashSet();
 
-		Used = FindUnityProjects()
+		Used = FindUnityProjects(platformSupport)
 			.Select(p => ProjectVersionFile.Parse(p, out string _).Version)
 			.ToHashSet();
 	}
 
-	public static IEnumerable<string> FindUnityProjects()
+	public static IEnumerable<string> FindUnityProjects(PlatformSupport platformSupport)
 	{
-		var startInfo = PlatformSupport.GetUnityProjectSearchProcess();
+		var startInfo = platformSupport.GetUnityProjectSearchProcess();
 		startInfo.RedirectStandardOutput = true;
 		var process = ProcessRunner.Default.Run(startInfo);
 		process.WaitForExit();

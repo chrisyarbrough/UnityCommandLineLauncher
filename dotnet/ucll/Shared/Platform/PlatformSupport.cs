@@ -1,23 +1,5 @@
-using System.Runtime.InteropServices;
-
 abstract class PlatformSupport
 {
-	private static readonly Lazy<PlatformSupport> _instance = new(() =>
-	{
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-			return new MacSupport();
-
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			return new WindowsSupport();
-
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-			return new LinuxSupport();
-
-		throw new PlatformNotSupportedException($"Unsupported platform.");
-	});
-
-	private static PlatformSupport Instance => _instance.Value;
-
 	#region Abstract Template Methods
 
 	protected abstract string GetRelativeEditorPathToExecutableCore();
@@ -34,14 +16,14 @@ abstract class PlatformSupport
 
 	#endregion
 
-	#region Public Static API (Facades)
+	#region Public Instance API
 
-	public static string GetRelativeEditorPathToExecutable()
-		=> Instance.GetRelativeEditorPathToExecutableCore();
+	public string GetRelativeEditorPathToExecutable()
+		=> GetRelativeEditorPathToExecutableCore();
 
-	public static string GetInstallationRootDirectory(string editorPath)
+	public string GetInstallationRootDirectory(string editorPath)
 	{
-		int levelsToGoUp = Instance.GetInstallationLevelsToGoUp();
+		int levelsToGoUp = GetInstallationLevelsToGoUp();
 
 		string? dir = editorPath;
 		for (int i = 0; i < levelsToGoUp; i++)
@@ -54,47 +36,47 @@ abstract class PlatformSupport
 		return dir;
 	}
 
-	public static string? FindDefaultEditorInstallPath(string version)
+	public string? FindDefaultEditorInstallPath(string version)
 		=> FindFirstValidPath(GetEditorPathCandidatePatterns(), pattern => string.Format(pattern, version));
 
-	private static IEnumerable<string?> GetEditorPathCandidatePatterns()
+	private IEnumerable<string?> GetEditorPathCandidatePatterns()
 	{
 		yield return Environment.GetEnvironmentVariable("UNITY_EDITOR_PATH");
-		yield return Instance.GetEditorPathPattern();
+		yield return GetEditorPathPattern();
 	}
 
-	public static string GetUnityHubConfigDirectory()
-		=> Instance.GetConfigDirectoryPath();
+	public string GetUnityHubConfigDirectory()
+		=> GetConfigDirectoryPath();
 
-	public static string? FindDefaultHubInstallPath()
+	public string? FindDefaultHubInstallPath()
 		=> FindFirstValidPath(GetHubPathCandidates());
 
-	private static IEnumerable<string?> GetHubPathCandidates()
+	private IEnumerable<string?> GetHubPathCandidates()
 	{
 		yield return Environment.GetEnvironmentVariable("UNITY_HUB_PATH");
-		yield return Instance.GetHubPathPattern();
+		yield return GetHubPathPattern();
 
-		foreach (var path in Instance.GetPlatformSpecificHubPaths())
+		foreach (var path in GetPlatformSpecificHubPaths())
 			yield return path;
 	}
 
-	public static string FormatHubArgs(string args)
-		=> Instance.FormatHubArgsCore(args);
+	public string FormatHubArgs(string args)
+		=> FormatHubArgsCore(args);
 
-	public static ProcessStartInfo GetUnityProjectSearchProcess()
-		=> Instance.GetUnityProjectSearchProcessCore();
+	public ProcessStartInfo GetUnityProjectSearchProcess()
+		=> GetUnityProjectSearchProcessCore();
 
-	public static ProcessStartInfo GetOpenFileProcess(string filePath)
-		=> Instance.GetOpenFileProcessCore(filePath);
+	public ProcessStartInfo GetOpenFileProcess(string filePath)
+		=> GetOpenFileProcessCore(filePath);
 
-	public static ProcessStartInfo GetOpenFileWithApplicationProcess(string applicationPath, string filePath)
-		=> Instance.GetOpenFileWithApplicationProcessCore(applicationPath, filePath);
+	public ProcessStartInfo GetOpenFileWithApplicationProcess(string applicationPath, string filePath)
+		=> GetOpenFileWithApplicationProcessCore(applicationPath, filePath);
 
-	public static string? GetUnityScriptingEditorPath()
+	public string? GetUnityScriptingEditorPath()
 	{
 		try
 		{
-			string? editorPath = Instance.GetScriptingEditorPathCore();
+			string? editorPath = GetScriptingEditorPathCore();
 
 			if (!string.IsNullOrWhiteSpace(editorPath))
 				return editorPath;
@@ -111,7 +93,7 @@ abstract class PlatformSupport
 
 	#region Shared Utility Methods
 
-	private static string? FindFirstValidPath(IEnumerable<string?> paths, Func<string, string>? processor = null)
+	private string? FindFirstValidPath(IEnumerable<string?> paths, Func<string, string>? processor = null)
 	{
 		foreach (string? path in paths)
 		{

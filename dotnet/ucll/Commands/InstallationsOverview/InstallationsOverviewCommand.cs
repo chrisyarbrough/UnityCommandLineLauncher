@@ -1,8 +1,9 @@
-class InstallationsOverviewCommand : BaseCommand<InstallationsOverviewSettings>
+class InstallationsOverviewCommand(PlatformSupport platformSupport, UnityHub unityHub)
+	: BaseCommand<InstallationsOverviewSettings>
 {
 	protected override int ExecuteImpl(InstallationsOverviewSettings settings)
 	{
-		var versions = VersionUsage.PerformSearch();
+		var versions = new VersionUsage(platformSupport, unityHub);
 
 		if (settings.PlainText)
 			PrintParseable(versions);

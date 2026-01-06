@@ -4,18 +4,18 @@ using System.Text.RegularExpressions;
 
 record EditorInfo(string Version, string Path);
 
-partial class UnityHub(IProcessRunner mutatingProcessRunner)
+partial class UnityHub(PlatformSupport platformSupport)
 {
-	private static string? _hubPathCache;
-	private static List<EditorInfo>? _editorsCache;
+	private string? _hubPathCache;
+	private List<EditorInfo>? _editorsCache;
 
 	/// <summary>
 	/// Returns the path to the editor executable on the current platform.
 	/// </summary>
-	public static string GetEditorPath(string version)
+	public string GetEditorPath(string version)
 	{
 		// Fast path: check default install location first
-		var fastPath = PlatformSupport.FindDefaultEditorInstallPath(version);
+		var fastPath = platformSupport.FindDefaultEditorInstallPath(version);
 		if (fastPath != null)
 			return fastPath;
 
@@ -26,12 +26,12 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 		if (path == null)
 			throw new Exception($"Unity version {version} is not installed.");
 
-		return Path.Combine(path, PlatformSupport.GetRelativeEditorPathToExecutable());
+		return Path.Combine(path, platformSupport.GetRelativeEditorPathToExecutable());
 	}
 
-	public static IEnumerable<string> GetRecentProjects(bool favoritesOnly = false)
+	public IEnumerable<string> GetRecentProjects(bool favoritesOnly = false)
 	{
-		var configDir = PlatformSupport.GetUnityHubConfigDirectory();
+		var configDir = platformSupport.GetUnityHubConfigDirectory();
 		var projectsFile = Path.Combine(configDir, "projects-v1.json");
 
 		try
@@ -67,7 +67,11 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 		}
 	}
 
-	public void EnsureEditorInstalled(string version, string? changeset, string[]? additionalArgs = null)
+	public void EnsureEditorInstalled(
+		string version,
+		string? changeset,
+		IProcessRunner processRunner,
+		string[]? additionalArgs = null)
 	{
 		if (IsEditorInstalled(version))
 			return;
@@ -78,10 +82,10 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 			changeset = UnityReleaseApi.FetchChangesetAsync(version).Result;
 		}
 
-		InstallEditor(version, changeset, additionalArgs ?? []);
+		InstallEditor(version, changeset, processRunner, additionalArgs ?? []);
 	}
 
-	public static List<EditorInfo> ListInstalledEditors()
+	public List<EditorInfo> ListInstalledEditors()
 	{
 		if (_editorsCache != null)
 			return _editorsCache;
@@ -89,7 +93,7 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 		var hubPath = GetUnityHubPath();
 
 		var process = ProcessRunner.Default.Run(
-			new ProcessStartInfo(hubPath, PlatformSupport.FormatHubArgs("--headless editors --installed"))
+			new ProcessStartInfo(hubPath, platformSupport.FormatHubArgs("--headless editors --installed"))
 				{ RedirectStandardOutput = true, RedirectStandardError = true });
 		var output = process.StandardOutput.ReadToEnd();
 		process.WaitForExit();
@@ -127,12 +131,12 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 		return editors;
 	}
 
-	private static string GetUnityHubPath()
+	private string GetUnityHubPath()
 	{
 		if (_hubPathCache != null)
 			return _hubPathCache;
 
-		_hubPathCache = PlatformSupport.FindDefaultHubInstallPath();
+		_hubPathCache = platformSupport.FindDefaultHubInstallPath();
 
 		if (_hubPathCache == null)
 			throw new Exception("Unity Hub not found.");
@@ -140,10 +144,10 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 		return _hubPathCache;
 	}
 
-	private static bool IsEditorInstalled(string version)
+	private bool IsEditorInstalled(string version)
 	{
 		// Fast path: check default install location first
-		if (PlatformSupport.FindDefaultEditorInstallPath(version) != null)
+		if (platformSupport.FindDefaultEditorInstallPath(version) != null)
 			return true;
 
 		// Fallback: query Unity Hub for custom installation locations
@@ -158,7 +162,7 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 		}
 	}
 
-	private void InstallEditor(string version, string changeset, string[] additionalArgs)
+	private void InstallEditor(string version, string changeset, IProcessRunner processRunner, string[] additionalArgs)
 	{
 		var hubPath = GetUnityHubPath();
 
@@ -177,9 +181,9 @@ partial class UnityHub(IProcessRunner mutatingProcessRunner)
 		if (additionalArgs.Length > 0)
 			args += " " + string.Join(" ", additionalArgs);
 
-		var process = mutatingProcessRunner.Run(new ProcessStartInfo(
+		var process = processRunner.Run(new ProcessStartInfo(
 			hubPath,
-			PlatformSupport.FormatHubArgs(args)) { RedirectStandardError = true });
+			platformSupport.FormatHubArgs(args)) { RedirectStandardError = true });
 		process.WaitForExit();
 
 		if (process.ExitCode != 0)

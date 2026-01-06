@@ -1,10 +1,9 @@
-class InstallCommand : BaseCommand<InstallSettings>
+class InstallCommand(UnityHub unityHub) : BaseCommand<InstallSettings>
 {
 	protected override int ExecuteImpl(InstallSettings settings)
 	{
 		string[] additionalArgs = context.Remaining.Raw.ToArray();
-		new UnityHub(settings.MutatingProcess)
-			.EnsureEditorInstalled(settings.Version, settings.Changeset, additionalArgs);
+		unityHub.EnsureEditorInstalled(settings.Version, settings.Changeset, settings.MutatingProcess, additionalArgs);
 
 		WriteSuccess($"Unity {settings.Version} is installed.");
 		return 0;

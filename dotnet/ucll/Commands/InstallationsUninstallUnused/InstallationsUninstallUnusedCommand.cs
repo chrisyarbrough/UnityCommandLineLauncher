@@ -1,8 +1,9 @@
-class InstallationsUninstallUnusedCommand : BaseCommand<MutatingCommand>
+class InstallationsUninstallUnusedCommand(PlatformSupport platformSupport, UnityHub unityHub)
+	: BaseCommand<MutatingCommand>
 {
 	protected override int ExecuteImpl(MutatingCommand settings)
 	{
-		var versions = VersionUsage.PerformSearch();
+		var versions = new VersionUsage(platformSupport, unityHub);
 		var unusedVersions = versions.InstalledNotUsed.ToList();
 
 		if (unusedVersions.Count == 0)
@@ -19,8 +20,8 @@ class InstallationsUninstallUnusedCommand : BaseCommand<MutatingCommand>
 		{
 			try
 			{
-				string editorPath = UnityHub.GetEditorPath(version);
-				string installDir = PlatformSupport.GetInstallationRootDirectory(editorPath);
+				string editorPath = unityHub.GetEditorPath(version);
+				string installDir = platformSupport.GetInstallationRootDirectory(editorPath);
 				versionPaths[version] = installDir;
 
 				AnsiConsole.MarkupLine($"  [yellow]•[/] {Markup.Escape(version)}");

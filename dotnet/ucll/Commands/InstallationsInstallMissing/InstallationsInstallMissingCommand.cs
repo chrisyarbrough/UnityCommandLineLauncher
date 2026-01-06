@@ -1,8 +1,9 @@
-class InstallationsInstallMissingCommand : BaseCommand<MutatingCommand>
+class InstallationsInstallMissingCommand(PlatformSupport platformSupport, UnityHub unityHub)
+	: BaseCommand<MutatingCommand>
 {
 	protected override int ExecuteImpl(MutatingCommand settings)
 	{
-		var versions = VersionUsage.PerformSearch();
+		var versions = new VersionUsage(platformSupport, unityHub);
 		var missingVersions = versions.UsedNotInstalled.ToList();
 
 		if (missingVersions.Count == 0)
@@ -32,7 +33,6 @@ class InstallationsInstallMissingCommand : BaseCommand<MutatingCommand>
 		}
 
 		AnsiConsole.WriteLine();
-		var unityHub = new UnityHub(settings.MutatingProcess);
 
 		foreach (string version in missingVersions)
 		{
@@ -41,7 +41,7 @@ class InstallationsInstallMissingCommand : BaseCommand<MutatingCommand>
 			try
 			{
 				string[] additionalArgs = context.Remaining.Raw.ToArray();
-				unityHub.EnsureEditorInstalled(version, changeset: null, additionalArgs);
+				unityHub.EnsureEditorInstalled(version, changeset: null, settings.MutatingProcess, additionalArgs);
 				WriteSuccess($"Unity {version} installed successfully.");
 			}
 			catch (Exception ex)

@@ -1,8 +1,8 @@
-class OpenCommand : BaseCommand<OpenSettings>
+class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) : BaseCommand<OpenSettings>
 {
 	protected override int ExecuteImpl(OpenSettings settings)
 	{
-		var searchPath = settings.SearchPath ?? PromptForRecentProject(settings.Favorite);
+		var searchPath = settings.SearchPath ?? PromptForRecentProject(settings.Favorite, unityHub);
 
 		searchPath = Path.GetFullPath(searchPath);
 
@@ -15,10 +15,9 @@ class OpenCommand : BaseCommand<OpenSettings>
 		UnityVersion unityVersion = ProjectVersionFile.Parse(searchPath, out string filePath);
 		Debug.WriteLine($"File: {filePath}\n{unityVersion}\nVersion: {unityVersion}");
 
-		new UnityHub(settings.MutatingProcess)
-			.EnsureEditorInstalled(unityVersion.Version, unityVersion.Changeset);
+		unityHub.EnsureEditorInstalled(unityVersion.Version, unityVersion.Changeset, settings.MutatingProcess);
 
-		var editorPath = UnityHub.GetEditorPath(unityVersion.Version);
+		var editorPath = unityHub.GetEditorPath(unityVersion.Version);
 		AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
 
 		string projectDir = new FileInfo(filePath).Directory!.Parent!.FullName;
@@ -43,9 +42,9 @@ class OpenCommand : BaseCommand<OpenSettings>
 		return string.Join(" ", args.Select(a => a.Contains(' ') ? $"\"{a}\"" : a));
 	}
 
-	private static string PromptForRecentProject(bool favoritesOnly)
+	public static string PromptForRecentProject(bool favoritesOnly, UnityHub unityHub)
 	{
-		var recentProjects = UnityHub.GetRecentProjects(favoritesOnly).ToArray();
+		var recentProjects = unityHub.GetRecentProjects(favoritesOnly).ToArray();
 
 		if (recentProjects.Length == 0)
 			throw new Exception("No projects found in Unity Hub.");
@@ -55,24 +54,24 @@ class OpenCommand : BaseCommand<OpenSettings>
 			$"Select a {(favoritesOnly ? "favorite" : "recent")} project: ");
 	}
 
-	private static void OpenSolutionFile(string projectDir, IProcessRunner processRunner)
+	private void OpenSolutionFile(string projectDir, IProcessRunner processRunner)
 	{
 		string path = WaitForFileAsync(projectDir, "*.sln").Result;
 		AnsiConsole.MarkupLine($"[dim]Solution: {Path.GetFileName(path)}[/]");
 
 		// Try to get Unity's configured scripting editor first
-		string? scriptingEditor = PlatformSupport.GetUnityScriptingEditorPath();
+		string? scriptingEditor = platformSupport.GetUnityScriptingEditorPath();
 
 		ProcessStartInfo processInfo;
 		if (scriptingEditor != null)
 		{
 			// Use Unity's configured scripting editor
-			processInfo = PlatformSupport.GetOpenFileWithApplicationProcess(scriptingEditor, path);
+			processInfo = platformSupport.GetOpenFileWithApplicationProcess(scriptingEditor, path);
 		}
 		else
 		{
 			// Fall back to OS default application
-			processInfo = PlatformSupport.GetOpenFileProcess(path);
+			processInfo = platformSupport.GetOpenFileProcess(path);
 		}
 
 		processRunner.Run(processInfo);
