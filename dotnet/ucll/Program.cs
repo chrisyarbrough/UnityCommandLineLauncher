@@ -14,13 +14,14 @@ services.AddSingleton<PlatformSupport>(_ =>
 	if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 		return new LinuxSupport();
 
-	throw new PlatformNotSupportedException("Unsupported platform.");
+	throw new UserException($"Unsupported platform: {RuntimeInformation.RuntimeIdentifier}");
 });
 
 services.AddSingleton<UnityHub>();
 
 var registrar = new TypeRegistrar(services);
 var app = new CommandApp(registrar);
+
 app.Configure(config =>
 {
 	config.SetApplicationName("ucll");

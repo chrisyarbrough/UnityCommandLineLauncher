@@ -47,7 +47,7 @@ class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) : BaseComm
 		var recentProjects = unityHub.GetRecentProjects(favoritesOnly).ToArray();
 
 		if (recentProjects.Length == 0)
-			throw new Exception("No projects found in Unity Hub.");
+			throw new UserException("No projects found in Unity Hub.");
 
 		return SelectionPrompt.Prompt(
 			recentProjects,

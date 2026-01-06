@@ -29,7 +29,7 @@ static partial class ProjectVersionFile
 			);
 		}
 
-		throw new Exception($"Could not find Unity version in {filePath}");
+		throw new UserException($"Could not find Unity version in: {filePath}");
 	}
 
 	public static string FindFilePath(string directoryOrFile)
@@ -39,19 +39,18 @@ static partial class ProjectVersionFile
 		else if (Directory.Exists(directoryOrFile))
 			return Find(directoryOrFile);
 		else
-			throw new FileNotFoundException("Argument must be a valid directory or ProjectVersion.txt file path.");
+			throw new UserException("Argument must be a valid directory or ProjectVersion.txt file path.");
 	}
 
 	private static string Find(string searchDir)
 	{
-		var upwardResult = FindUpward(searchDir);
-		if (upwardResult != null)
-			return upwardResult;
-
-		var downwardResult = FindDownward(searchDir);
-		if (downwardResult == null)
-			throw new Exception($"No ProjectSettings/ProjectVersion.txt found in {searchDir}");
-		return downwardResult;
+		foreach (var strategy in (Func<string, string?>[])[FindUpward, FindDownward])
+		{
+			string? result = strategy.Invoke(searchDir);
+			if (result != null)
+				return result;
+		}
+		throw new UserException($"No ProjectSettings/ProjectVersion.txt found in {searchDir}");
 	}
 
 	private static string? FindUpward(string startDir)

@@ -16,10 +16,15 @@ abstract class BaseCommand<TSettings> : Command<TSettings>
 				return ExecuteImpl(settings);
 			}
 		}
+		catch (UserException e)
+		{
+			WriteError(e.Message);
+			return 1;
+		}
 		catch (Exception ex)
 		{
 			WriteError(ex);
-			return 1;
+			return 2;
 		}
 	}
 

@@ -5,7 +5,7 @@ using EditorInfo = (string Version, string Path);
 
 partial class UnityHub(PlatformSupport platformSupport)
 {
-	private Lazy<string> _hubPathCache = new(() => platformSupport.FindHubInstallPath() ?? throw new Exception(
+	private Lazy<string> _hubPathCache = new(() => platformSupport.FindHubInstallPath() ?? throw new UserException(
 		"Unity Hub not found. If you have it installed in a custom location, " +
 		"configure the UNITY_HUB_PATH environment variable."));
 
@@ -26,7 +26,7 @@ partial class UnityHub(PlatformSupport platformSupport)
 		string? appBundlePath = editors.FirstOrDefault(p => p.Version == version).Path;
 
 		if (appBundlePath == null)
-			throw new Exception($"Unity version {version} is not installed.");
+			throw new UserException($"Unity version {version} is not installed.");
 
 		return Path.Combine(appBundlePath, platformSupport.RelativeEditorPathToExecutable);
 	}
@@ -104,7 +104,7 @@ partial class UnityHub(PlatformSupport platformSupport)
 
 		if (process.ExitCode != 0)
 		{
-			throw new Exception($"Failed to install Unity {version}. (Exit code: {process.ExitCode})");
+			throw new UserException($"Failed to install Unity {version}. (Exit code: {process.ExitCode})");
 		}
 
 		// Invalidate the cache after installing a new editor
@@ -173,15 +173,16 @@ partial class UnityHub(PlatformSupport platformSupport)
 	{
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 		{
-			// ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
 			var arch = RuntimeInformation.ProcessArchitecture switch
 			{
 				Architecture.X64 => "x86_64",
 				Architecture.Arm64 => "arm64",
-				_ => throw new PlatformNotSupportedException(
-					$"Unsupported architecture: {RuntimeInformation.ProcessArchitecture}"),
+				// Unsupported architecture will probably cause the hub installation to fail,
+				// but better we try and let the user discover that and report a bug than abort.
+				_ => null,
 			};
-			return args + $" --architecture {arch}";
+			if (arch != null)
+				return args + $" --architecture {arch}";
 		}
 		return args;
 	}

@@ -17,9 +17,7 @@ class ProcessRunner : IProcessRunner
 			EnableRaisingEvents = true,
 		};
 		process.Exited += (_, _) => timer.Stop();
-
-		if (!process.Start())
-			throw new Exception("Failed to launch Unity");
+		process.Start();
 
 		return process;
 	}

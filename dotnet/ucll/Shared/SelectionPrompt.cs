@@ -5,7 +5,7 @@ static class SelectionPrompt
 		string choice = PromptImpl(choices, title);
 
 		if (string.IsNullOrEmpty(choice))
-			throw new Exception("No search path specified. Aborting.");
+			throw new UserException("No search path specified. Aborting.");
 
 		return choice;
 	}
