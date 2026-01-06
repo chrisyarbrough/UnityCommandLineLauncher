@@ -41,7 +41,7 @@ class InstallMissingCommand(PlatformSupport platformSupport, UnityHub unityHub)
 			try
 			{
 				string[] additionalArgs = context.Remaining.Raw.ToArray();
-				unityHub.EnsureEditorInstalled(version, changeset: null, settings.MutatingProcess, additionalArgs);
+				unityHub.InstallEditor(version, changeset: null, settings.MutatingProcess, additionalArgs);
 				WriteSuccess($"Unity {version} installed successfully.");
 			}
 			catch (Exception ex)

@@ -69,7 +69,7 @@ partial class UnityHub(PlatformSupport platformSupport)
 		}
 	}
 
-	public void EnsureEditorInstalled(
+	public void InstallEditorChecked(
 		string version,
 		string? changeset,
 		IProcessRunner processRunner,
@@ -78,13 +78,37 @@ partial class UnityHub(PlatformSupport platformSupport)
 		if (IsEditorInstalled(version))
 			return;
 
+		InstallEditor(version, changeset, processRunner, additionalArgs ?? []);
+	}
+
+	public void InstallEditor(string version, string? changeset, IProcessRunner processRunner, string[] additionalArgs)
+	{
 		if (changeset == null)
 		{
 			WriteStatusUpdate("Changeset not provided, fetching from Unity API");
 			changeset = UnityReleaseApi.FetchChangesetAsync(version).Result;
 		}
 
-		InstallEditor(version, changeset, processRunner, additionalArgs ?? []);
+		WriteStatusUpdate($"Installing Unity version {version} {changeset}");
+
+		var args = $"--headless install --version {version} --changeset {changeset}";
+		args = ConfigurePlatformArgs(args);
+
+		if (additionalArgs.Length > 0)
+			args += " " + string.Join(" ", additionalArgs);
+
+		var process = processRunner.Run(new ProcessStartInfo(
+			_hubPathCache.Value,
+			platformSupport.FormatHubArgs(args)) { RedirectStandardError = true });
+		process.WaitForExit();
+
+		if (process.ExitCode != 0)
+		{
+			throw new Exception($"Failed to install Unity {version}. (Exit code: {process.ExitCode})");
+		}
+
+		// Invalidate the cache after installing a new editor
+		_editorsCache = null;
 	}
 
 	public List<EditorInfo> ListInstalledEditors()
@@ -143,30 +167,6 @@ partial class UnityHub(PlatformSupport platformSupport)
 		{
 			return false;
 		}
-	}
-
-	private void InstallEditor(string version, string changeset, IProcessRunner processRunner, string[] additionalArgs)
-	{
-		WriteStatusUpdate($"Installing Unity version {version} {changeset}");
-
-		var args = $"--headless install --version {version} --changeset {changeset}";
-		args = ConfigurePlatformArgs(args);
-
-		if (additionalArgs.Length > 0)
-			args += " " + string.Join(" ", additionalArgs);
-
-		var process = processRunner.Run(new ProcessStartInfo(
-			_hubPathCache.Value,
-			platformSupport.FormatHubArgs(args)) { RedirectStandardError = true });
-		process.WaitForExit();
-
-		if (process.ExitCode != 0)
-		{
-			throw new Exception($"Failed to install Unity {version}. (Exit code: {process.ExitCode})");
-		}
-
-		// Invalidate the cache after installing a new editor
-		_editorsCache = null;
 	}
 
 	private static string ConfigurePlatformArgs(string args)

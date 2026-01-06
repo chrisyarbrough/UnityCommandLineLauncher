@@ -15,7 +15,7 @@ class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) : BaseComm
 		UnityVersion unityVersion = ProjectVersionFile.Parse(searchPath, out string filePath);
 		Debug.WriteLine($"File: {filePath}\n{unityVersion}\nVersion: {unityVersion}");
 
-		unityHub.EnsureEditorInstalled(unityVersion.Version, unityVersion.Changeset, settings.MutatingProcess);
+		unityHub.InstallEditorChecked(unityVersion.Version, unityVersion.Changeset, settings.MutatingProcess);
 
 		var editorPath = unityHub.GetEditorPath(unityVersion.Version);
 		AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
