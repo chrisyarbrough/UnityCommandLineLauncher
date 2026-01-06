@@ -38,8 +38,4 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="ucll.Tests" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Commands\" />
-	</ItemGroup>
 </Project>
