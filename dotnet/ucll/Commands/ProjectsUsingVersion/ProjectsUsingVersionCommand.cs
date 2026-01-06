@@ -1,4 +1,4 @@
-class InstallationsUsedCommand(PlatformSupport platformSupport) : BaseCommand<VersionSettings>
+class ProjectsUsingVersionCommand(PlatformSupport platformSupport) : BaseCommand<VersionSettings>
 {
 	protected override int ExecuteImpl(VersionSettings settings)
 	{

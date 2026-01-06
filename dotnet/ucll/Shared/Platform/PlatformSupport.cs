@@ -1,114 +1,92 @@
 abstract class PlatformSupport
 {
-	#region Abstract Template Methods
+	/// <summary>
+	/// Default path to the editor executable or null if it doesn't exist.
+	/// </summary>
+	public string? FindDefaultEditorPath(string version)
+		=> AllDefaultEditorPathTemplates()
+			.Where(p => p != null)
+			.Select(p => string.Format(p!, version))
+			.FirstOrDefault(File.Exists);
 
-	protected abstract string GetRelativeEditorPathToExecutableCore();
-	protected abstract int GetInstallationLevelsToGoUp();
-	protected abstract string GetEditorPathPattern();
-	protected abstract string GetHubPathPattern();
-	protected abstract string GetConfigDirectoryPath();
-	protected abstract IEnumerable<string?> GetPlatformSpecificHubPaths();
-	protected abstract ProcessStartInfo GetUnityProjectSearchProcessCore();
-	protected abstract ProcessStartInfo GetOpenFileProcessCore(string filePath);
-	protected abstract ProcessStartInfo GetOpenFileWithApplicationProcessCore(string applicationPath, string filePath);
-	protected abstract string FormatHubArgsCore(string args);
-	protected abstract string? GetScriptingEditorPathCore();
-
-	#endregion
-
-	#region Public Instance API
-
-	public string GetRelativeEditorPathToExecutable()
-		=> GetRelativeEditorPathToExecutableCore();
-
-	public string GetInstallationRootDirectory(string editorPath)
-	{
-		int levelsToGoUp = GetInstallationLevelsToGoUp();
-
-		string? dir = editorPath;
-		for (int i = 0; i < levelsToGoUp; i++)
-		{
-			dir = Path.GetDirectoryName(dir);
-			if (dir == null)
-				throw new Exception($"Unable to determine installation directory from path: {editorPath}");
-		}
-
-		return dir;
-	}
-
-	public string? FindDefaultEditorInstallPath(string version)
-		=> FindFirstValidPath(GetEditorPathCandidatePatterns(), pattern => string.Format(pattern, version));
-
-	private IEnumerable<string?> GetEditorPathCandidatePatterns()
+	private IEnumerable<string?> AllDefaultEditorPathTemplates()
 	{
 		yield return Environment.GetEnvironmentVariable("UNITY_EDITOR_PATH");
-		yield return GetEditorPathPattern();
+		yield return DefaultEditorPathTemplate;
 	}
 
-	public string GetUnityHubConfigDirectory()
-		=> GetConfigDirectoryPath();
+	/// <summary>
+	/// Given the path to an editor executable, returns the root directory path of the installation.
+	/// </summary>
+	public string FindInstallationRoot(string editorPath)
+		=> editorPath.Replace(RelativeEditorPathToExecutable, string.Empty);
 
-	public string? FindDefaultHubInstallPath()
-		=> FindFirstValidPath(GetHubPathCandidates());
+	/// <summary>
+	/// Path to the Unity Hub executable or null if it doesn't exist (or couldn't be found).
+	/// </summary>
+	public string? FindHubInstallPath()
+		=> AllDefaultHubInstallPaths()
+			.FirstOrDefault(File.Exists);
 
-	private IEnumerable<string?> GetHubPathCandidates()
+	private IEnumerable<string?> AllDefaultHubInstallPaths()
 	{
 		yield return Environment.GetEnvironmentVariable("UNITY_HUB_PATH");
-		yield return GetHubPathPattern();
+		yield return DefaultUnityHubPath;
 
-		foreach (var path in GetPlatformSpecificHubPaths())
-			yield return path;
+		if (FindUnityHub() is { } unityHub)
+			yield return unityHub;
 	}
 
-	public string FormatHubArgs(string args)
-		=> FormatHubArgsCore(args);
+	/// <summary>
+	/// Prefixes the Unity Hub arguments with a double-dash by default.
+	/// </summary>
+	public virtual string FormatHubArgs(string args) => $"-- {args}";
 
-	public ProcessStartInfo GetUnityProjectSearchProcess()
-		=> GetUnityProjectSearchProcessCore();
+	/// <summary>
+	/// A system process that opens the file with the default app association.
+	/// </summary>
+	public abstract ProcessStartInfo OpenFile(string filePath);
 
-	public ProcessStartInfo GetOpenFileProcess(string filePath)
-		=> GetOpenFileProcessCore(filePath);
+	/// <summary>
+	/// A system process that launches an app (like the scripting editor).
+	/// </summary>
+	public abstract ProcessStartInfo OpenFileWithApp(string filePath, string applicationPath);
 
-	public ProcessStartInfo GetOpenFileWithApplicationProcess(string applicationPath, string filePath)
-		=> GetOpenFileWithApplicationProcessCore(applicationPath, filePath);
+	/// <summary>
+	/// The path from the installation root to the executable.
+	/// </summary>
+	public abstract string RelativeEditorPathToExecutable { get; }
 
-	public string? GetUnityScriptingEditorPath()
-	{
-		try
-		{
-			string? editorPath = GetScriptingEditorPathCore();
+	/// <summary>
+	/// The path to the directory that contains Unity Hub config files.
+	/// </summary>
+	public abstract string UnityHubConfigDirectory { get; }
 
-			if (!string.IsNullOrWhiteSpace(editorPath))
-				return editorPath;
-		}
-		catch
-		{
-			// If we can't read preferences, return null and fall back to default behavior
-		}
+	/// <summary>
+	/// A system process that returns all paths to ProjectSettings/ProjectVersion.txt files on the system.
+	/// </summary>
+	public abstract ProcessStartInfo GetUnityProjectSearchProcess();
 
-		return null;
-	}
+	/// <summary>
+	/// Returns the path to the script editor set in the Unity preferences.
+	/// </summary>
+	public abstract string? GetUnityScriptingEditorPath();
 
-	#endregion
+	/// <summary>
+	/// Path to the editor executable with a placeholder for the version directory.
+	/// E.g.: /Applications/Unity/Hub/Editor/{0}/Unity.app/Contents/MacOS/Unity
+	/// </summary>
+	protected abstract string DefaultEditorPathTemplate { get; }
 
-	#region Shared Utility Methods
+	/// <summary>
+	/// Default path to the Unity Hub executable.
+	/// </summary>
+	protected abstract string DefaultUnityHubPath { get; }
 
-	private string? FindFirstValidPath(IEnumerable<string?> paths, Func<string, string>? processor = null)
-	{
-		foreach (string? path in paths)
-		{
-			if (string.IsNullOrWhiteSpace(path))
-				continue;
-
-			string processedPath = processor?.Invoke(path) ?? path;
-			if (File.Exists(processedPath))
-				return processedPath;
-		}
-
-		return null;
-	}
+	/// <summary>
+	/// Searches the system for the path to the Unity Hub executable (if feasible on this platform).
+	/// </summary>
+	protected virtual string? FindUnityHub() => null;
 
 	protected static string UserHome => Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
-	#endregion
 }

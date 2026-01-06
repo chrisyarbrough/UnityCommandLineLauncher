@@ -1,46 +1,33 @@
 sealed class LinuxSupport : PlatformSupport
 {
-	protected override string GetRelativeEditorPathToExecutableCore()
-		=> "Editor/Unity";
+	public override string FormatHubArgs(string args)
+		=> args; // Linux doesn't need the "--" prefix
 
-	protected override int GetInstallationLevelsToGoUp()
-		=> 2;
+	public override ProcessStartInfo OpenFile(string filePath)
+		=> new ProcessStartInfo("xdg-open", filePath);
 
-	protected override string GetEditorPathPattern()
-		=> Path.Combine(UserHome, "Unity/Hub/Editor/{0}/Editor/Unity");
-
-	protected override string GetHubPathPattern()
-		=> Path.Combine(UserHome, "Applications/Unity Hub.AppImage");
-
-	protected override string GetConfigDirectoryPath()
-		=> Path.Combine(UserHome, ".config/UnityHub");
-
-	protected override IEnumerable<string?> GetPlatformSpecificHubPaths()
+	public override ProcessStartInfo OpenFileWithApp(string filePath, string applicationPath)
 	{
-		// Linux doesn't have platform-specific search like mdfind
-		yield break;
+		// On Linux, directly execute the application with the file as argument
+		return new ProcessStartInfo(applicationPath, filePath);
 	}
 
-	protected override ProcessStartInfo GetUnityProjectSearchProcessCore()
+	public override string RelativeEditorPathToExecutable => "Editor/Unity";
+
+	public override string UnityHubConfigDirectory => Path.Combine(UserHome, ".config/UnityHub");
+
+	public override ProcessStartInfo GetUnityProjectSearchProcess()
 	{
 		// Presumably requires manual database update (at least on macOS it's not up-to-date by default).
 		return new ProcessStartInfo("bash",
 			"-c \"locate ProjectVersion.txt | grep ProjectSettings/ProjectVersion.txt\"");
 	}
 
-	protected override ProcessStartInfo GetOpenFileProcessCore(string filePath)
-		=> new ProcessStartInfo("xdg-open", filePath);
+	protected override string DefaultEditorPathTemplate => Path.Combine(UserHome, "Unity/Hub/Editor/{0}/Editor/Unity");
 
-	protected override ProcessStartInfo GetOpenFileWithApplicationProcessCore(string applicationPath, string filePath)
-	{
-		// On Linux, directly execute the application with the file as argument
-		return new ProcessStartInfo(applicationPath, filePath);
-	}
+	protected override string DefaultUnityHubPath => Path.Combine(UserHome, "Applications/Unity Hub.AppImage");
 
-	protected override string FormatHubArgsCore(string args)
-		=> args; // Linux doesn't need the "--" prefix
-
-	protected override string? GetScriptingEditorPathCore()
+	public override string? GetUnityScriptingEditorPath()
 	{
 		// Read from Unity's prefs file
 		string prefsPath = Path.Combine(UserHome, ".config/unity3d/prefs");

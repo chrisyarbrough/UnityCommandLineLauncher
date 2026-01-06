@@ -58,40 +58,24 @@ app.Configure(config =>
 		.WithDescription("Get Unity version from project search directory or ProjectVersion.txt")
 		.WithExample("project-version", "path");
 
-	config.AddCommand<InstallationsOverviewCommand>("installations-all")
-		.WithDescription("List installed Unity Editor versions")
-		.WithExample("installations-all")
-		.WithExample("installations-all", "--parseable");
+	config.AddCommand<VersionUsageCommand>("version-usage")
+		.WithDescription("List installed Unity Editor versions and indicate which ones are used by projects")
+		.WithExample("version-usage")
+		.WithExample("version-usage", "--parseable");
 
-	config.AddCommand<InstallationsUsedCommand>("installations-used")
+	config.AddCommand<ProjectsUsingVersionCommand>("projects-using")
 		.WithDescription("Find all projects that use a specific Unity version")
-		.WithExample("installations-used", "2022.3.10f1");
+		.WithExample("projects-using", "2022.3.10f1");
 
-	config.AddCommand<InstallationsInstallMissingCommand>("installations-install-missing")
+	config.AddCommand<InstallMissingCommand>("install-missing")
 		.WithDescription("Install all Unity versions that are used by projects but not currently installed")
-		.WithExample("installations-install-missing")
-		.WithExample("installations-install-missing", "--", "--module", "ios");
+		.WithExample("install-missing")
+		.WithExample("install-missing", "--", "--module", "ios");
 
-	config.AddCommand<InstallationsUninstallUnusedCommand>("installations-cleanup")
+	config.AddCommand<UninstallUnusedCommand>("uninstall-unused")
 		.WithDescription("Uninstall all Unity versions that are not used by any projects")
-		.WithExample("installations-cleanup")
-		.WithExample("installations-cleanup", "--dry-run");
+		.WithExample("uninstall-unused")
+		.WithExample("uninstall-unused", "--dry-run");
 });
 
 return app.Run(args);
-
-public sealed class TypeRegistrar(IServiceCollection services) : ITypeRegistrar
-{
-	public ITypeResolver Build() => new TypeResolver(services.BuildServiceProvider());
-
-	public void Register(Type service, Type implementation) => services.AddSingleton(service, implementation);
-
-	public void RegisterInstance(Type service, object implementation) => services.AddSingleton(service, implementation);
-
-	public void RegisterLazy(Type service, Func<object> factory) => services.AddSingleton(service, _ => factory());
-}
-
-public sealed class TypeResolver(IServiceProvider provider) : ITypeResolver
-{
-	public object? Resolve(Type? type) => type == null ? null : provider.GetService(type);
-}

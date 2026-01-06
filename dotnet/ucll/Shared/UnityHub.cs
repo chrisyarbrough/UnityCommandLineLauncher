@@ -1,12 +1,14 @@
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-
-record EditorInfo(string Version, string Path);
+using EditorInfo = (string Version, string Path);
 
 partial class UnityHub(PlatformSupport platformSupport)
 {
-	private string? _hubPathCache;
+	private Lazy<string> _hubPathCache = new(() => platformSupport.FindHubInstallPath() ?? throw new Exception(
+		"Unity Hub not found. If you have it installed in a custom location, " +
+		"configure the UNITY_HUB_PATH environment variable."));
+
 	private List<EditorInfo>? _editorsCache;
 
 	/// <summary>
@@ -14,24 +16,24 @@ partial class UnityHub(PlatformSupport platformSupport)
 	/// </summary>
 	public string GetEditorPath(string version)
 	{
-		// Fast path: check default install location first
-		var fastPath = platformSupport.FindDefaultEditorInstallPath(version);
-		if (fastPath != null)
-			return fastPath;
+		// Fast: try the default install location first.
+		string? executablePath = platformSupport.FindDefaultEditorPath(version);
+		if (executablePath != null)
+			return executablePath;
 
-		// Fallback: query Unity Hub for custom installation locations
+		// Fallback: query Unity Hub for custom installation locations.
 		var editors = ListInstalledEditors();
-		string? path = editors.FirstOrDefault(e => e.Version == version)?.Path;
+		string? appBundlePath = editors.FirstOrDefault(p => p.Version == version).Path;
 
-		if (path == null)
+		if (appBundlePath == null)
 			throw new Exception($"Unity version {version} is not installed.");
 
-		return Path.Combine(path, platformSupport.GetRelativeEditorPathToExecutable());
+		return Path.Combine(appBundlePath, platformSupport.RelativeEditorPathToExecutable);
 	}
 
 	public IEnumerable<string> GetRecentProjects(bool favoritesOnly = false)
 	{
-		var configDir = platformSupport.GetUnityHubConfigDirectory();
+		var configDir = platformSupport.UnityHubConfigDirectory;
 		var projectsFile = Path.Combine(configDir, "projects-v1.json");
 
 		try
@@ -90,20 +92,20 @@ partial class UnityHub(PlatformSupport platformSupport)
 		if (_editorsCache != null)
 			return _editorsCache;
 
-		var hubPath = GetUnityHubPath();
-
-		var process = ProcessRunner.Default.Run(
-			new ProcessStartInfo(hubPath, platformSupport.FormatHubArgs("--headless editors --installed"))
-				{ RedirectStandardOutput = true, RedirectStandardError = true });
+		string args = platformSupport.FormatHubArgs("--headless editors --installed");
+		ProcessStartInfo startInfo = new(_hubPathCache.Value, args)
+		{
+			RedirectStandardOutput = true,
+			RedirectStandardError = true,
+		};
+		var process = ProcessRunner.Default.Run(startInfo);
 		var output = process.StandardOutput.ReadToEnd();
 		process.WaitForExit();
 
-		if (process.ExitCode != 0)
-		{
-			throw new Exception(
-				$"Failed to list installed editors. Exit code: {process.ExitCode} Error output: {process.StandardError.ReadToEnd()}");
-		}
+		// There's a bug in some older Unity Hub version where the exit code is non-zero, but the output works.
+		// So, don't do any validation, just attempt to parse.
 
+		// The paths in this output specify the Unity.app directory on macOS, not the executable within.
 		_editorsCache = ParseEditorsOutput(output);
 		return _editorsCache;
 	}
@@ -113,48 +115,29 @@ partial class UnityHub(PlatformSupport platformSupport)
 
 	private static List<EditorInfo> ParseEditorsOutput(string output)
 	{
-		var editors = new List<EditorInfo>();
 		var regex = EditorLineRegex();
 
-		foreach (var line in output.Split('\n'))
-		{
-			var match = regex.Match(line);
-			if (match.Success)
-			{
-				editors.Add(new EditorInfo(
-					match.Groups[1].Value,
-					match.Groups[2].Value
-				));
-			}
-		}
-
-		return editors;
-	}
-
-	private string GetUnityHubPath()
-	{
-		if (_hubPathCache != null)
-			return _hubPathCache;
-
-		_hubPathCache = platformSupport.FindDefaultHubInstallPath();
-
-		if (_hubPathCache == null)
-			throw new Exception("Unity Hub not found.");
-
-		return _hubPathCache;
+		// It would seem more efficient to store the editors in a Dictionary by version, but it's possible
+		// to install multiple editors with the same version (e.g. Intel and Silicon on macOS).
+		return output
+			.Split(Environment.NewLine)
+			.Select(line => regex.Match(line))
+			.Where(m => m.Success)
+			.Select(m => (Version: m.Groups[1].Value, Path: m.Groups[2].Value))
+			.ToList();
 	}
 
 	private bool IsEditorInstalled(string version)
 	{
 		// Fast path: check default install location first
-		if (platformSupport.FindDefaultEditorInstallPath(version) != null)
+		if (platformSupport.FindDefaultEditorPath(version) != null)
 			return true;
 
 		// Fallback: query Unity Hub for custom installation locations
 		try
 		{
 			var editors = ListInstalledEditors();
-			return editors.Any(e => e.Version == version);
+			return editors.Any(s => s.Version == version);
 		}
 		catch
 		{
@@ -164,25 +147,16 @@ partial class UnityHub(PlatformSupport platformSupport)
 
 	private void InstallEditor(string version, string changeset, IProcessRunner processRunner, string[] additionalArgs)
 	{
-		var hubPath = GetUnityHubPath();
-
-		// ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-		var arch = RuntimeInformation.ProcessArchitecture switch
-		{
-			Architecture.X64 => "x86_64",
-			Architecture.Arm64 => "arm64",
-			_ => throw new PlatformNotSupportedException(
-				$"Unsupported architecture: {RuntimeInformation.ProcessArchitecture}"),
-		};
-
 		WriteStatusUpdate($"Installing Unity version {version} {changeset}");
 
-		var args = $"--headless install --version {version} --changeset {changeset} --architecture {arch}";
+		var args = $"--headless install --version {version} --changeset {changeset}";
+		args = ConfigurePlatformArgs(args);
+
 		if (additionalArgs.Length > 0)
 			args += " " + string.Join(" ", additionalArgs);
 
 		var process = processRunner.Run(new ProcessStartInfo(
-			hubPath,
+			_hubPathCache.Value,
 			platformSupport.FormatHubArgs(args)) { RedirectStandardError = true });
 		process.WaitForExit();
 
@@ -193,6 +167,23 @@ partial class UnityHub(PlatformSupport platformSupport)
 
 		// Invalidate the cache after installing a new editor
 		_editorsCache = null;
+	}
+
+	private static string ConfigurePlatformArgs(string args)
+	{
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+		{
+			// ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
+			var arch = RuntimeInformation.ProcessArchitecture switch
+			{
+				Architecture.X64 => "x86_64",
+				Architecture.Arm64 => "arm64",
+				_ => throw new PlatformNotSupportedException(
+					$"Unsupported architecture: {RuntimeInformation.ProcessArchitecture}"),
+			};
+			return args + $" --architecture {arch}";
+		}
+		return args;
 	}
 
 	private static void WriteStatusUpdate(string message)

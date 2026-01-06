@@ -1,26 +1,44 @@
 sealed class MacSupport : PlatformSupport
 {
-	protected override string GetRelativeEditorPathToExecutableCore()
-		=> "Contents/MacOS/Unity";
+	public override ProcessStartInfo OpenFile(string filePath)
+		=> new ProcessStartInfo("open", filePath);
 
-	protected override int GetInstallationLevelsToGoUp()
-		=> 4;
-
-	protected override string GetEditorPathPattern()
-		=> "/Applications/Unity/Hub/Editor/{0}/Unity.app/Contents/MacOS/Unity";
-
-	protected override string GetHubPathPattern()
-		=> "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub";
-
-	protected override string GetConfigDirectoryPath()
-		=> Path.Combine(UserHome, "Library/Application Support/UnityHub");
-
-	protected override IEnumerable<string?> GetPlatformSpecificHubPaths()
+	public override ProcessStartInfo OpenFileWithApp(string filePath, string applicationPath)
 	{
-		yield return FindUnityHubPathMacOS();
+		// Handle .app bundles.
+		return new ProcessStartInfo("open", $"-a \"{applicationPath}\" \"{filePath}\"");
 	}
 
-	private static string? FindUnityHubPathMacOS()
+	public override string RelativeEditorPathToExecutable => "Contents/MacOS/Unity";
+
+	public override string UnityHubConfigDirectory => Path.Combine(UserHome, "Library/Application Support/UnityHub");
+
+	public override ProcessStartInfo GetUnityProjectSearchProcess()
+	{
+		// Automatically indexed Spotlight search.
+		return new ProcessStartInfo("bash",
+			"-c \"mdfind 'kMDItemFSName == ProjectVersion.txt' | grep ProjectSettings/ProjectVersion.txt\"");
+	}
+
+	protected override string DefaultEditorPathTemplate => "/Applications/Unity/Hub/Editor/{0}/Unity.app/Contents/MacOS/Unity";
+
+	protected override string DefaultUnityHubPath => "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub";
+
+	public override string? GetUnityScriptingEditorPath()
+	{
+		var process = new ProcessRunner().Run(
+			new ProcessStartInfo("defaults", "read com.unity3d.UnityEditor5.x kScriptsDefaultApp")
+			{
+				RedirectStandardOutput = true,
+			});
+
+		var output = process.StandardOutput.ReadToEnd().Trim();
+		process.WaitForExit();
+
+		return process.ExitCode == 0 ? output : null;
+	}
+
+	protected override string? FindUnityHub()
 	{
 		var process = new ProcessRunner().Run(
 			new ProcessStartInfo("mdfind", "kMDItemCFBundleIdentifier == 'com.unity3d.unityhub'")
@@ -39,40 +57,5 @@ sealed class MacSupport : PlatformSupport
 			return null;
 
 		return Path.Combine(lines[0], "Contents", "MacOS", "Unity Hub");
-	}
-
-	protected override ProcessStartInfo GetUnityProjectSearchProcessCore()
-	{
-		// Automatically indexed Spotlight search.
-		return new ProcessStartInfo("bash",
-			"-c \"mdfind 'kMDItemFSName == ProjectVersion.txt' | grep ProjectSettings/ProjectVersion.txt\"");
-	}
-
-	protected override ProcessStartInfo GetOpenFileProcessCore(string filePath)
-		=> new ProcessStartInfo("open", filePath);
-
-	protected override ProcessStartInfo GetOpenFileWithApplicationProcessCore(string applicationPath, string filePath)
-	{
-		// On macOS, use 'open -a' to open with a specific application
-		// This handles .app bundles correctly
-		return new ProcessStartInfo("open", $"-a \"{applicationPath}\" \"{filePath}\"");
-	}
-
-	protected override string FormatHubArgsCore(string args)
-		=> $"-- {args}";
-
-	protected override string? GetScriptingEditorPathCore()
-	{
-		// Use defaults command to read from Unity's plist
-		var process = new ProcessRunner().Run(
-			new ProcessStartInfo("defaults", "read com.unity3d.UnityEditor5.x kScriptsDefaultApp")
-			{
-				RedirectStandardOutput = true,
-			});
-
-		var output = process.StandardOutput.ReadToEnd().Trim();
-		process.WaitForExit();
-
-		return process.ExitCode == 0 ? output : null;
 	}
 }

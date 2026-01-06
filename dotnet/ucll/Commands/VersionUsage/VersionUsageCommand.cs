@@ -1,7 +1,7 @@
-class InstallationsOverviewCommand(PlatformSupport platformSupport, UnityHub unityHub)
-	: BaseCommand<InstallationsOverviewSettings>
+class VersionUsageCommand(PlatformSupport platformSupport, UnityHub unityHub)
+	: BaseCommand<VersionUsageSettings>
 {
-	protected override int ExecuteImpl(InstallationsOverviewSettings settings)
+	protected override int ExecuteImpl(VersionUsageSettings settings)
 	{
 		var versions = new VersionUsage(platformSupport, unityHub);
 

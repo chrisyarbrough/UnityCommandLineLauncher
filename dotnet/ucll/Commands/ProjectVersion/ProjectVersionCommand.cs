@@ -1,12 +1,23 @@
-class ProjectVersionCommand : BaseCommand<ProjectVersionSettings>
+class ProjectVersionCommand(UnityHub unityHub) : BaseCommand<ProjectVersionSettings>
 {
 	protected override int ExecuteImpl(ProjectVersionSettings settings)
 	{
-		var versionInfo = ProjectVersionFile.Parse(settings.SearchPath, out string _);
-		string output = versionInfo.Version;
+		var searchPath = settings.SearchPath ?? OpenCommand.PromptForRecentProject(settings.Favorite, unityHub);
 
-		if (versionInfo.Changeset != null)
-			output += " " + versionInfo.Changeset;
+		searchPath = Path.GetFullPath(searchPath);
+
+		if (!Directory.Exists(searchPath) && !File.Exists(searchPath))
+		{
+			WriteError($"'{searchPath}' does not exist.");
+			return 1;
+		}
+
+		UnityVersion info = ProjectVersionFile.Parse(searchPath, out string _);
+
+		string output = info.Version;
+
+		if (info.Changeset != null)
+			output += " " + info.Changeset;
 
 		AnsiConsole.WriteLine(output);
 		return 0;

@@ -1,16 +1,5 @@
 using System.Text.RegularExpressions;
 
-record UnityVersion(string Version, string? Changeset)
-{
-	public override string ToString()
-	{
-		string s = Version;
-		if (Changeset != null)
-			s += $" ({Changeset})";
-		return s;
-	}
-}
-
 static partial class ProjectVersionFile
 {
 	public static UnityVersion Parse(string directoryOrFile) => Parse(directoryOrFile, out string _);

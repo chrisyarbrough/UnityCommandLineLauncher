@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-class InstallationsOverviewSettings : CommandSettings
+class VersionUsageSettings : CommandSettings
 {
 	[CommandOption("-p|--plaintext|--plain")]
 	[Description("Output in a simple machine-parseable format")]

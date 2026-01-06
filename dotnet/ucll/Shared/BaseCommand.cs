@@ -18,12 +18,15 @@ abstract class BaseCommand<TSettings> : Command<TSettings>
 		}
 		catch (Exception ex)
 		{
-			WriteError(ex.Message);
+			WriteError(ex);
 			return 1;
 		}
 	}
 
 	protected abstract int ExecuteImpl(TSettings settings);
+
+	protected static void WriteError(Exception exception) =>
+		AnsiConsole.WriteException(exception, ExceptionFormats.ShortenPaths);
 
 	protected static void WriteError(string message) =>
 		AnsiConsole.MarkupLine($"[red]Error: {Markup.Escape(message)}[/]");

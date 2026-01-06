@@ -8,7 +8,7 @@ class VersionUsage
 	public VersionUsage(PlatformSupport platformSupport, UnityHub unityHub)
 	{
 		Installed = unityHub.ListInstalledEditors()
-			.Select(i => i.Version)
+			.Select(info => info.Version)
 			.ToHashSet();
 
 		Used = FindUnityProjects(platformSupport)

@@ -1,27 +1,22 @@
 sealed class WindowsSupport : PlatformSupport
 {
-	protected override string GetRelativeEditorPathToExecutableCore()
-		=> @"Editor\Unity.exe";
-
-	protected override int GetInstallationLevelsToGoUp()
-		=> 2;
-
-	protected override string GetEditorPathPattern()
-		=> @"C:\Program Files\Unity\Hub\Editor\{0}\Editor\Unity.exe";
-
-	protected override string GetHubPathPattern()
-		=> @"C:\Program Files\Unity Hub\Unity Hub.exe";
-
-	protected override string GetConfigDirectoryPath()
-		=> Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "UnityHub");
-
-	protected override IEnumerable<string?> GetPlatformSpecificHubPaths()
+	public override ProcessStartInfo OpenFile(string filePath)
 	{
-		// Windows doesn't have platform-specific search like mdfind
-		yield break;
+		// Use cmd /c start with empty window title
+		return new ProcessStartInfo("cmd.exe", $"/c start \"\" \"{filePath}\"");
 	}
 
-	protected override ProcessStartInfo GetUnityProjectSearchProcessCore()
+	public override ProcessStartInfo OpenFileWithApp(string filePath, string applicationPath)
+	{
+		// On Windows, directly execute the application with the file as argument
+		return new ProcessStartInfo(applicationPath, $"\"{filePath}\"");
+	}
+
+	public override string RelativeEditorPathToExecutable => @"Editor\Unity.exe";
+
+	public override string UnityHubConfigDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "UnityHub");
+
+	public override ProcessStartInfo GetUnityProjectSearchProcess()
 	{
 		// Use Windows Search index via COM (equivalent to mdfind on macOS)
 		// Queries the SystemIndex database - very fast, uses existing Windows Search index
@@ -49,22 +44,11 @@ sealed class WindowsSupport : PlatformSupport
 		return new ProcessStartInfo("powershell.exe", $"-NoProfile -Command \"{script}\"");
 	}
 
-	protected override ProcessStartInfo GetOpenFileProcessCore(string filePath)
-	{
-		// Use cmd /c start with empty window title
-		return new ProcessStartInfo("cmd.exe", $"/c start \"\" \"{filePath}\"");
-	}
+	protected override string DefaultEditorPathTemplate => @"C:\Program Files\Unity\Hub\Editor\{0}\Editor\Unity.exe";
 
-	protected override ProcessStartInfo GetOpenFileWithApplicationProcessCore(string applicationPath, string filePath)
-	{
-		// On Windows, directly execute the application with the file as argument
-		return new ProcessStartInfo(applicationPath, $"\"{filePath}\"");
-	}
+	protected override string DefaultUnityHubPath => @"C:\Program Files\Unity Hub\Unity Hub.exe";
 
-	protected override string FormatHubArgsCore(string args)
-		=> $"-- {args}";
-
-	protected override string? GetScriptingEditorPathCore()
+	public override string? GetUnityScriptingEditorPath()
 	{
 		// Read from Windows registry
 		const string script = """
