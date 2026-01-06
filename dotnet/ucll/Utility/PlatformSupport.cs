@@ -219,4 +219,126 @@ static class PlatformSupport
 
 		throw new NotSupportedException($"Unsupported OS: {os}");
 	}
+
+	/// <summary>
+	/// Returns a ProcessStartInfo configured to open a file with a specific application.
+	/// </summary>
+	public static ProcessStartInfo GetOpenFileWithApplicationProcess(string applicationPath, string filePath)
+	{
+		var os = GetCurrentOS();
+
+		if (os == OSPlatform.OSX)
+		{
+			// On macOS, use 'open -a' to open with a specific application
+			// This handles .app bundles correctly
+			return new ProcessStartInfo("open", $"-a \"{applicationPath}\" \"{filePath}\"");
+		}
+
+		if (os == OSPlatform.Windows)
+		{
+			// On Windows, directly execute the application with the file as argument
+			return new ProcessStartInfo(applicationPath, $"\"{filePath}\"");
+		}
+
+		if (os == OSPlatform.Linux)
+		{
+			// On Linux, directly execute the application with the file as argument
+			return new ProcessStartInfo(applicationPath, filePath);
+		}
+
+		throw new NotSupportedException($"Unsupported OS: {os}");
+	}
+
+	/// <summary>
+	/// Gets the scripting editor path from Unity preferences.
+	/// Returns null if the preference is not set.
+	/// </summary>
+	public static string? GetUnityScriptingEditorPath()
+	{
+		var os = GetCurrentOS();
+
+		try
+		{
+			string? editorPath = null;
+
+			if (os == OSPlatform.OSX)
+				editorPath = GetScriptingEditorMacOS();
+			else if (os == OSPlatform.Windows)
+				editorPath = GetScriptingEditorWindows();
+			else if (os == OSPlatform.Linux)
+				editorPath = GetScriptingEditorLinux();
+
+			if (!string.IsNullOrWhiteSpace(editorPath))
+				return editorPath;
+		}
+		catch
+		{
+			// If we can't read preferences, return null and fall back to default behavior
+		}
+
+		return null;
+	}
+
+	private static string? GetScriptingEditorMacOS()
+	{
+		// Use defaults command to read from Unity's plist
+		var process = new ProcessRunner().Run(
+			new ProcessStartInfo("defaults", "read com.unity3d.UnityEditor5.x kScriptsDefaultApp")
+			{
+				RedirectStandardOutput = true,
+			});
+
+		var output = process.StandardOutput.ReadToEnd().Trim();
+		process.WaitForExit();
+
+		return process.ExitCode == 0 ? output : null;
+	}
+
+	private static string? GetScriptingEditorWindows()
+	{
+		// Read from Windows registry
+		const string script = """
+		                      try {
+		                      	$path = Get-ItemProperty -Path 'HKCU:\Software\Unity Technologies\Unity Editor 5.x' -Name 'kScriptsDefaultApp' -ErrorAction Stop
+		                      	$path.'kScriptsDefaultApp'
+		                      } catch {
+		                      	exit 1
+		                      }
+		                      """;
+
+		var process = new ProcessRunner().Run(
+			new ProcessStartInfo("powershell.exe", $"-NoProfile -Command \"{script}\"")
+			{
+				RedirectStandardOutput = true,
+			});
+
+		var output = process.StandardOutput.ReadToEnd().Trim();
+		process.WaitForExit();
+
+		return process.ExitCode == 0 ? output : null;
+	}
+
+	private static string? GetScriptingEditorLinux()
+	{
+		// Read from Unity's prefs file
+		string prefsPath = Path.Combine(UserHome, ".config/unity3d/prefs");
+
+		if (!File.Exists(prefsPath))
+			return null;
+
+		foreach (string line in File.ReadLines(prefsPath))
+		{
+			if (line.StartsWith("kScriptsDefaultApp"))
+			{
+				// Format: kScriptsDefaultApp: /path/to/editor
+				var parts = line.Split(':', 2);
+				if (parts.Length == 2)
+				{
+					return parts[1].Trim();
+				}
+			}
+		}
+
+		return null;
+	}
 }

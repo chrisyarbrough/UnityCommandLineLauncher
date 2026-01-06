@@ -59,7 +59,23 @@ class OpenCommand : BaseCommand<OpenSettings>
 	{
 		string path = WaitForFileAsync(projectDir, "*.sln").Result;
 		AnsiConsole.MarkupLine($"[dim]Solution: {Path.GetFileName(path)}[/]");
-		processRunner.Run(PlatformSupport.GetOpenFileProcess(path));
+
+		// Try to get Unity's configured scripting editor first
+		string? scriptingEditor = PlatformSupport.GetUnityScriptingEditorPath();
+
+		ProcessStartInfo processInfo;
+		if (scriptingEditor != null)
+		{
+			// Use Unity's configured scripting editor
+			processInfo = PlatformSupport.GetOpenFileWithApplicationProcess(scriptingEditor, path);
+		}
+		else
+		{
+			// Fall back to OS default application
+			processInfo = PlatformSupport.GetOpenFileProcess(path);
+		}
+
+		processRunner.Run(processInfo);
 	}
 
 	private static async Task<string> WaitForFileAsync(string projectDir, string searchPattern)
