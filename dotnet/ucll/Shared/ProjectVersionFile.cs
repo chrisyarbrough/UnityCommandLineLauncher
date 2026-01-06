@@ -17,13 +17,7 @@ static partial class ProjectVersionFile
 
 	public static UnityVersion Parse(string directoryOrFile, out string filePath)
 	{
-		if (File.Exists(directoryOrFile))
-			filePath = directoryOrFile;
-		else if (Directory.Exists(directoryOrFile))
-			filePath = Find(directoryOrFile);
-		else
-			throw new FileNotFoundException("Argument must be a valid directory or ProjectVersion.txt file path.");
-
+		filePath = FindFilePath(directoryOrFile);
 		var content = File.ReadAllText(filePath);
 
 		// Try pattern 1: m_EditorVersionWithRevision: 2021.3.45f1 (abc123)
@@ -47,6 +41,16 @@ static partial class ProjectVersionFile
 		}
 
 		throw new Exception($"Could not find Unity version in {filePath}");
+	}
+
+	public static string FindFilePath(string directoryOrFile)
+	{
+		if (File.Exists(directoryOrFile))
+			return directoryOrFile;
+		else if (Directory.Exists(directoryOrFile))
+			return Find(directoryOrFile);
+		else
+			throw new FileNotFoundException("Argument must be a valid directory or ProjectVersion.txt file path.");
 	}
 
 	private static string Find(string searchDir)

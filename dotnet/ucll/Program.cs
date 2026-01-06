@@ -11,6 +11,13 @@ app.Configure(config =>
 		.WithExample("open", "path/to/project")
 		.WithExample("open", "path/to/project", "--", "-batchmode", "-quit");
 
+	config.AddCommand<ProjectPathCommand>("project-path")
+		.WithDescription("Get Unity project root directory from search path or via recent projects prompt")
+		.WithExample("project-path")
+		.WithExample("project-path", ".")
+		.WithExample("project-path", "path/to/project")
+		.WithExample("cd $(project-path)");
+
 	config.AddCommand<InstallCommand>("install")
 		.WithDescription("Install Unity Editor version")
 		.WithExample("install", "2022.3.10f1")

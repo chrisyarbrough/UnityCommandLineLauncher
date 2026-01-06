@@ -1,6 +1,6 @@
-class EditorPathCommand : BaseCommand<EditorPathSettings>
+class EditorPathCommand : BaseCommand<VersionSettings>
 {
-	protected override int ExecuteImpl(EditorPathSettings settings)
+	protected override int ExecuteImpl(VersionSettings settings)
 	{
 		var path = UnityHub.GetEditorPath(settings.Version);
 		AnsiConsole.WriteLine(path);
