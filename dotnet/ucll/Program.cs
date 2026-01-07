@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.InteropServices;
 
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
 var services = new ServiceCollection();
 
 services.AddSingleton<PlatformSupport>(_ =>
