@@ -77,6 +77,12 @@ app.Configure(config =>
 		.WithDescription("Uninstall all Unity versions that are not used by any projects")
 		.WithExample("uninstall-unused")
 		.WithExample("uninstall-unused", "--dry-run");
+
+	config.AddCommand<UpmGitUrlCommand>("upm-git-url")
+		.WithDescription("Generate a git URL for Unity Package Manager from a Unity project")
+		.WithExample("upm-git-url")
+		.WithExample("upm-git-url", ".")
+		.WithExample("upm-git-url", "path/to/project");
 });
 
 return app.Run(args);

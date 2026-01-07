@@ -35,11 +35,25 @@ static partial class ProjectVersionFile
 	public static string FindFilePath(string directoryOrFile)
 	{
 		if (File.Exists(directoryOrFile))
-			return directoryOrFile;
+		{
+			if (directoryOrFile.EndsWith("ProjectVersion.txt"))
+			{
+				return directoryOrFile;
+			}
+			else
+			{
+				// This would be more or less unintended use: a file that is not the version file.
+				return Find(Path.GetDirectoryName(directoryOrFile)!);
+			}
+		}
 		else if (Directory.Exists(directoryOrFile))
+		{
 			return Find(directoryOrFile);
+		}
 		else
+		{
 			throw new UserException("Argument must be a valid directory or ProjectVersion.txt file path.");
+		}
 	}
 
 	private static string Find(string searchDir)

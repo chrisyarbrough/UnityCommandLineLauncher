@@ -11,6 +11,7 @@ class ProcessRunner : IProcessRunner
 	{
 		string args = startInfo.Arguments;
 		var timer = new ProfilingTimer($"{startInfo.FileName} {args[..Math.Min(42, args.Length)]}");
+
 		var process = new Process
 		{
 			StartInfo = startInfo,
