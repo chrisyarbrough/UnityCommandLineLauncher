@@ -7,6 +7,11 @@ A terminal command to open Unity projects quickly from the command line.
 ## Supported Platforms
 
 - macOS (tested with Sequoia 15.7.1)
+- Windows (11)
+
+Dependencies:
+- Unity Hub 3.15.4 or newer
+- fzf ?
 
 ## Commands
 

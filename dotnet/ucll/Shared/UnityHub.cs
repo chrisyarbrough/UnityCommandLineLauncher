@@ -1,13 +1,14 @@
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
-using System.Text.RegularExpressions;
 using EditorInfo = (string Version, string Path);
 
-partial class UnityHub(PlatformSupport platformSupport)
+class UnityHub(PlatformSupport platformSupport)
 {
 	private Lazy<string> _hubPathCache = new(() => platformSupport.FindHubInstallPath() ?? throw new UserException(
 		"Unity Hub not found. If it is installed in a custom location, configure the UNITY_HUB_PATH environment variable."));
 
+	// It would seem more efficient to store the editors in a Dictionary by version, but it's possible
+	// to install multiple editors with the same version (e.g. Intel and Silicon on macOS).
 	private List<EditorInfo>? _editorsCache;
 
 	/// <summary>
@@ -138,20 +139,15 @@ partial class UnityHub(PlatformSupport platformSupport)
 		return _editorsCache;
 	}
 
-	[GeneratedRegex(@"([0-9]+\.[0-9]+\.[0-9]+[a-z0-9]*)\s+\(.*\)\s+installed\s+at\s+(.+)")]
-	private static partial Regex EditorLineRegex();
-
-	private static List<EditorInfo> ParseEditorsOutput(string output)
+	internal static List<EditorInfo> ParseEditorsOutput(string output)
 	{
-		var regex = EditorLineRegex();
-
-		// It would seem more efficient to store the editors in a Dictionary by version, but it's possible
-		// to install multiple editors with the same version (e.g. Intel and Silicon on macOS).
 		return output
 			.Split(Environment.NewLine)
-			.Select(line => regex.Match(line))
-			.Where(m => m.Success)
-			.Select(m => (Version: m.Groups[1].Value, Path: m.Groups[2].Value))
+			.Select(line => line.Split(" installed at ", StringSplitOptions.None))
+			.Where(parts => parts.Length == 2)
+			.Select(parts => (
+				Version: parts[0].Split(' ')[0],
+				Path: parts[1]))
 			.ToList();
 	}
 
