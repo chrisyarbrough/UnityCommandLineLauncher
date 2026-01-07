@@ -83,6 +83,11 @@ app.Configure(config =>
 		.WithExample("upm-git-url")
 		.WithExample("upm-git-url", ".")
 		.WithExample("upm-git-url", "path/to/project");
+
+	config.AddCommand<HubCommand>("hub")
+		.WithDescription("Execute Unity Hub interactively or with additional CLI arguments")
+		.WithExample("hub")
+		.WithExample("hub", "-- --headless help");
 });
 
 return app.Run(args);

@@ -12,6 +12,11 @@ partial class UnityHub(PlatformSupport platformSupport)
 	private List<EditorInfo>? _editorsCache;
 
 	/// <summary>
+	/// Returns the path to the Unity Hub executable.
+	/// </summary>
+	public string GetHubPath() => _hubPathCache.Value;
+
+	/// <summary>
 	/// Returns the path to the editor executable on the current platform.
 	/// </summary>
 	public string GetEditorPath(string version)
