@@ -16,8 +16,14 @@ tar -czf bin/ucll-osx-arm64.tar.gz -C bin/osx-arm64/publish ucll
 dotnet publish --runtime osx-x64
 tar -czf bin/ucll-osx-x64.tar.gz -C bin/osx-x64/publish ucll
 
+dotnet publish --runtime linux-arm64
+tar -czf bin/ucll-linux-arm64.tar.gz -C bin/linux-arm64/publish ucll
+
 dotnet publish --runtime linux-x64
 tar -czf bin/ucll-linux-x64.tar.gz -C bin/linux-x64/publish ucll
+
+dotnet publish --runtime win-arm64
+zip -j bin/ucll-windows-arm64.zip bin/win-arm64/publish/ucll.exe
 
 dotnet publish --runtime win-x64
 zip -j bin/ucll-windows-x64.zip bin/win-x64/publish/ucll.exe

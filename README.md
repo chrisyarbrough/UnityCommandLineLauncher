@@ -57,6 +57,10 @@ If `fzf` is not installed, the built-in search will be used as a fallback.
 
 ![](docs/Screenshot_Open_Search.png)
 
+### Unity
+
+- Ensure Unity Hub is installed (https://unity.com/download)
+
 ---
 
 ## Usage

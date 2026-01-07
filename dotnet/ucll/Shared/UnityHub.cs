@@ -6,8 +6,7 @@ using EditorInfo = (string Version, string Path);
 partial class UnityHub(PlatformSupport platformSupport)
 {
 	private Lazy<string> _hubPathCache = new(() => platformSupport.FindHubInstallPath() ?? throw new UserException(
-		"Unity Hub not found. If you have it installed in a custom location, " +
-		"configure the UNITY_HUB_PATH environment variable."));
+		"Unity Hub not found. If it is installed in a custom location, configure the UNITY_HUB_PATH environment variable."));
 
 	private List<EditorInfo>? _editorsCache;
 
