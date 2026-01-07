@@ -34,6 +34,12 @@ app.Configure(config =>
 		.WithExample("open", "path/to/project")
 		.WithExample("open", "path/to/project", "--", "-batchmode", "-quit");
 
+	config.AddCommand<CreateCommand>("create")
+		.WithDescription("Create a new Unity project")
+		.WithExample("create", "~/MyProject", "2023.2.10f1")
+		.WithExample("create", ".", "2023.2.10f1")
+		.WithExample("create", "path/to/project", "2023.2.10f1");
+
 	config.AddCommand<ProjectPathCommand>("project-path")
 		.WithDescription("Get Unity project root directory from search path or via recent projects prompt")
 		.WithExample("project-path")
