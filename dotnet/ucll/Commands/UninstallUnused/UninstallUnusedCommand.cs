@@ -1,4 +1,4 @@
-class UninstallUnusedCommand(PlatformSupport platformSupport, UnityHub unityHub)
+internal class UninstallUnusedCommand(PlatformSupport platformSupport, UnityHub unityHub)
 	: BaseCommand<MutatingCommand>
 {
 	protected override int ExecuteImpl(MutatingCommand settings)

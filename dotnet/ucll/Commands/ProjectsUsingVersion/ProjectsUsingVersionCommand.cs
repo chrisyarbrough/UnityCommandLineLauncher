@@ -1,4 +1,4 @@
-class ProjectsUsingVersionCommand(PlatformSupport platformSupport) : BaseCommand<VersionSettings>
+internal class ProjectsUsingVersionCommand(PlatformSupport platformSupport) : BaseCommand<VersionSettings>
 {
 	protected override int ExecuteImpl(VersionSettings settings)
 	{

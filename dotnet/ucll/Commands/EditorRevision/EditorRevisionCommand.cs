@@ -1,4 +1,4 @@
-class EditorRevisionCommand : BaseCommand<VersionSettings>
+internal class EditorRevisionCommand : BaseCommand<VersionSettings>
 {
 	protected override int ExecuteImpl(VersionSettings settings)
 	{

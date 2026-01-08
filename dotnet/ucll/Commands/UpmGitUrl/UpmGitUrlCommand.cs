@@ -1,4 +1,4 @@
-class UpmGitUrlCommand(UnityHub unityHub) : BaseCommand<UpmGitUrlSettings>
+internal class UpmGitUrlCommand(UnityHub unityHub) : BaseCommand<UpmGitUrlSettings>
 {
 	protected override int ExecuteImpl(UpmGitUrlSettings settings)
 	{

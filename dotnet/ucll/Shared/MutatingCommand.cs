@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-class MutatingCommand : CommandSettings
+internal class MutatingCommand : CommandSettings
 {
 	[CommandOption("--dry-run")]
 	[Description("Show what would be executed without actually running mutating commands.")]

@@ -1,4 +1,4 @@
-class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
+internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 {
 	protected override int ExecuteImpl(CreateSettings settings)
 	{

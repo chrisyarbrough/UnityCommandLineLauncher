@@ -1,4 +1,4 @@
-class VersionUsage
+internal class VersionUsage
 {
 	public HashSet<string> Installed { get; }
 	public HashSet<string> Used { get; }

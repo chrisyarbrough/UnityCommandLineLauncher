@@ -1,9 +1,9 @@
-interface IProcessRunner
+internal interface IProcessRunner
 {
-	Process Run(ProcessStartInfo startInfo);
+	public Process Run(ProcessStartInfo startInfo);
 }
 
-class ProcessRunner : IProcessRunner
+internal class ProcessRunner : IProcessRunner
 {
 	public static readonly IProcessRunner Default = new ProcessRunner();
 
@@ -24,7 +24,7 @@ class ProcessRunner : IProcessRunner
 	}
 }
 
-class DryRunProcessRunner : ProcessRunner
+internal class DryRunProcessRunner : ProcessRunner
 {
 	public static readonly IProcessRunner DryRun = new DryRunProcessRunner();
 

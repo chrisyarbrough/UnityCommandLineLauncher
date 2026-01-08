@@ -1,4 +1,4 @@
-class InstallMissingCommand(PlatformSupport platformSupport, UnityHub unityHub)
+internal class InstallMissingCommand(PlatformSupport platformSupport, UnityHub unityHub)
 	: BaseCommand<MutatingCommand>
 {
 	protected override int ExecuteImpl(MutatingCommand settings)

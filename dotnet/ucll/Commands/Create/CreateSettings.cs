@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-class CreateSettings : MutatingCommand
+internal class CreateSettings : MutatingCommand
 {
 	[CommandArgument(0, "<path>")]
 	[Description("Path where the Unity project should be created")]

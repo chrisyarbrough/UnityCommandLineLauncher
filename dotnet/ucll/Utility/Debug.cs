@@ -1,4 +1,4 @@
-static class Debug
+internal static class Debug
 {
 	public static readonly bool IsEnabled = Environment.CommandLine.Contains("--debug");
 

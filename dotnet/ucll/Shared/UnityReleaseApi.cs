@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
 
 // https://services.docs.unity.com/release/v1/
-static class UnityReleaseApi
+internal static class UnityReleaseApi
 {
 	public static async Task<string> FetchChangesetAsync(string version)
 	{

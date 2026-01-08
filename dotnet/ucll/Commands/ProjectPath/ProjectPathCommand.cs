@@ -1,4 +1,4 @@
-class ProjectPathCommand(UnityHub unityHub) : BaseCommand<ProjectPathSettings>
+internal class ProjectPathCommand(UnityHub unityHub) : BaseCommand<ProjectPathSettings>
 {
 	protected override int ExecuteImpl(ProjectPathSettings settings)
 	{

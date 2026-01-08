@@ -1,4 +1,4 @@
-class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) : BaseCommand<OpenSettings>
+internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) : BaseCommand<OpenSettings>
 {
 	protected override int ExecuteImpl(OpenSettings settings)
 	{

@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-static partial class ProjectVersionFile
+internal static partial class ProjectVersionFile
 {
 	public static UnityVersion Parse(string directoryOrFile) => Parse(directoryOrFile, out string _);
 

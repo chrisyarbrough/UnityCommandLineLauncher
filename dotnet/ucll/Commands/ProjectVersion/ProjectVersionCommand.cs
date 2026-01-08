@@ -1,4 +1,4 @@
-class ProjectVersionCommand(UnityHub unityHub) : BaseCommand<ProjectVersionSettings>
+internal class ProjectVersionCommand(UnityHub unityHub) : BaseCommand<ProjectVersionSettings>
 {
 	protected override int ExecuteImpl(ProjectVersionSettings settings)
 	{

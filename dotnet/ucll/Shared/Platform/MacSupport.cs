@@ -1,4 +1,4 @@
-sealed class MacSupport : PlatformSupport
+internal sealed class MacSupport : PlatformSupport
 {
 	public override ProcessStartInfo OpenFile(string filePath)
 		=> new ProcessStartInfo("open", filePath);

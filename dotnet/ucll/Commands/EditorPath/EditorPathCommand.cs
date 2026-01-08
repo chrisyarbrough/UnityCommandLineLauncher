@@ -1,4 +1,4 @@
-class EditorPathCommand(UnityHub unityHub) : BaseCommand<VersionSettings>
+internal class EditorPathCommand(UnityHub unityHub) : BaseCommand<VersionSettings>
 {
 	protected override int ExecuteImpl(VersionSettings settings)
 	{

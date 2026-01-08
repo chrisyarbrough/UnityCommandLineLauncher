@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-class UpmGitUrlSettings : CommandSettings
+internal class UpmGitUrlSettings : CommandSettings
 {
 	[CommandArgument(0, "[searchPath]")]
 	[Description(

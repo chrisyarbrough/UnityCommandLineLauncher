@@ -1,4 +1,4 @@
-sealed class WindowsSupport : PlatformSupport
+internal sealed class WindowsSupport : PlatformSupport
 {
 	public override ProcessStartInfo OpenFile(string filePath)
 	{

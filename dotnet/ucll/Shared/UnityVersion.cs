@@ -1,4 +1,4 @@
-record UnityVersion(string Version, string? Changeset)
+internal record UnityVersion(string Version, string? Changeset)
 {
 	public override string ToString()
 	{

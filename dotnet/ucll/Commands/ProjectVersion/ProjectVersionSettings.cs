@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-class ProjectVersionSettings : CommandSettings
+internal class ProjectVersionSettings : CommandSettings
 {
 	[CommandArgument(0, "[searchPath]")]
 	[Description(

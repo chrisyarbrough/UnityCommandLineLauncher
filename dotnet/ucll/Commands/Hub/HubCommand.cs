@@ -1,4 +1,4 @@
-class HubCommand(UnityHub unityHub) : BaseCommand<HubCommand.HubSettings>
+internal class HubCommand(UnityHub unityHub) : BaseCommand<HubCommand.HubSettings>
 {
 	internal class HubSettings : CommandSettings;
 

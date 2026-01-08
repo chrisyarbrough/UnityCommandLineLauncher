@@ -1,4 +1,4 @@
-class InstallCommand(UnityHub unityHub) : BaseCommand<InstallSettings>
+internal class InstallCommand(UnityHub unityHub) : BaseCommand<InstallSettings>
 {
 	protected override int ExecuteImpl(InstallSettings settings)
 	{

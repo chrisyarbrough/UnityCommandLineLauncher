@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-class OpenSettings : MutatingCommand
+internal class OpenSettings : MutatingCommand
 {
 	[CommandArgument(0, "[searchPath]")]
 	[Description(

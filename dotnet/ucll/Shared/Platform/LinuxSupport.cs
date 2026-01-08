@@ -1,4 +1,4 @@
-sealed class LinuxSupport : PlatformSupport
+internal sealed class LinuxSupport : PlatformSupport
 {
 	public override string FormatHubArgs(string args)
 		=> args; // Linux doesn't need the "--" prefix

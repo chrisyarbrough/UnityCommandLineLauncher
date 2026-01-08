@@ -1,4 +1,4 @@
-class VersionUsageCommand(PlatformSupport platformSupport, UnityHub unityHub)
+internal class VersionUsageCommand(PlatformSupport platformSupport, UnityHub unityHub)
 	: BaseCommand<VersionUsageSettings>
 {
 	protected override int ExecuteImpl(VersionUsageSettings settings)

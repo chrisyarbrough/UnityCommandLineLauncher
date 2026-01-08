@@ -1,4 +1,4 @@
-abstract class PlatformSupport
+internal abstract class PlatformSupport
 {
 	/// <summary>
 	/// Default path to the editor executable or null if it doesn't exist.

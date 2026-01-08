@@ -1,4 +1,4 @@
-abstract class BaseCommand<TSettings> : Command<TSettings>
+internal abstract class BaseCommand<TSettings> : Command<TSettings>
 	where TSettings : CommandSettings
 {
 	protected CommandContext context { get; private set; } = null!;

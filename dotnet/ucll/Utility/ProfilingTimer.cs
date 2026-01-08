@@ -1,4 +1,4 @@
-readonly struct ProfilingTimer : IDisposable
+internal readonly struct ProfilingTimer : IDisposable
 {
 	private readonly string? label;
 	private readonly Stopwatch? watch;

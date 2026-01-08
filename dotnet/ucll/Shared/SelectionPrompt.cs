@@ -1,4 +1,4 @@
-static class SelectionPrompt
+internal static class SelectionPrompt
 {
 	public static string Prompt(IList<string> choices, string title)
 	{
