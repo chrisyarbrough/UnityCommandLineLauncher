@@ -142,7 +142,7 @@ class UnityHub(PlatformSupport platformSupport)
 	internal static List<EditorInfo> ParseEditorsOutput(string output)
 	{
 		return output
-			.Split(Environment.NewLine)
+			.Split(["\r\n", "\r", "\n"], StringSplitOptions.RemoveEmptyEntries)
 			.Select(line => line.Split(" installed at ", StringSplitOptions.None))
 			.Where(parts => parts.Length == 2)
 			.Select(parts => (
