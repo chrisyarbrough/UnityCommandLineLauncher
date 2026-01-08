@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using EditorInfo = (string Version, string Path);
 
 class UnityHub(PlatformSupport platformSupport)
@@ -141,14 +142,8 @@ class UnityHub(PlatformSupport platformSupport)
 
 	internal static List<EditorInfo> ParseEditorsOutput(string output)
 	{
-		return output
-			.Split(["\r\n", "\r", "\n"], StringSplitOptions.RemoveEmptyEntries)
-			.Select(line => line.Split(" installed at ", StringSplitOptions.None))
-			.Where(parts => parts.Length == 2)
-			.Select(parts => (
-				Version: parts[0].Split(' ')[0],
-				Path: parts[1]))
-			.ToList();
+		var matches = Regex.Matches(output, @"(\S+).*? installed at (.+)");
+		return matches.Select(m => new EditorInfo(m.Groups[1].Value, m.Groups[2].Value)).ToList();
 	}
 
 	private bool IsEditorInstalled(string version)

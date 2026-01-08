@@ -25,7 +25,10 @@ public class UnityHubTests
 	public void ParseEditorsOutput_WithMultipleLines_ReturnsExpectedEditorInfo()
 	{
 		// Also handle mixed line-ending output on Windows (can't use Environment.NewLine).
-		const string hubOutput = "\r\n6000.0.58f2 installed at C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.58f2\\Editor\\Unity.exe\n4000.0.59f2 installed at C:\\Program Files\\Unity\\Hub\\Editor\\4000.0.59f2\\Editor\\Unity.exe\n";
+		const string hubOutput =
+			"\r\n" +
+			@"6000.0.58f2 installed at C:\Program Files\Unity\Hub\Editor\6000.0.58f2\Editor\Unity.exe" + "\n" +
+			@"4000.0.59f2 installed at C:\Program Files\Unity\Hub\Editor\4000.0.59f2\Editor\Unity.exe" + "\n";
 		var result = UnityHub.ParseEditorsOutput(hubOutput);
 		Assert.Equal(2, result.Count);
 		Assert.Equal("6000.0.58f2", result[0].Version);
