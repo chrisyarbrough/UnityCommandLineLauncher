@@ -14,7 +14,8 @@ sealed class WindowsSupport : PlatformSupport
 
 	public override string RelativeEditorPathToExecutable => @"Editor\Unity.exe";
 
-	public override string UnityHubConfigDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "UnityHub");
+	public override string UnityHubConfigDirectory =>
+		Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "UnityHub");
 
 	public override ProcessStartInfo GetUnityProjectSearchProcess()
 	{

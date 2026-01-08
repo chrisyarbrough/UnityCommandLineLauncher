@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		UnityCommandLineLauncher.sln.DotSettings = UnityCommandLineLauncher.sln.DotSettings
 		..\README.md = ..\README.md
 		.gitignore = .gitignore
+		..\.editorconfig = ..\.editorconfig
 	EndProjectSection
 EndProject
 Global

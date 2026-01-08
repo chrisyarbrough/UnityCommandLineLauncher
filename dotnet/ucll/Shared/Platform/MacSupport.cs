@@ -20,7 +20,8 @@ sealed class MacSupport : PlatformSupport
 			"-c \"mdfind 'kMDItemFSName == ProjectVersion.txt' | grep ProjectSettings/ProjectVersion.txt\"");
 	}
 
-	protected override string DefaultEditorPathTemplate => "/Applications/Unity/Hub/Editor/{0}/Unity.app/Contents/MacOS/Unity";
+	protected override string DefaultEditorPathTemplate =>
+		"/Applications/Unity/Hub/Editor/{0}/Unity.app/Contents/MacOS/Unity";
 
 	protected override string DefaultUnityHubPath => "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub";
 

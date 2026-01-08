@@ -10,6 +10,7 @@ A terminal command to open Unity projects quickly from the command line.
 - Windows (11)
 
 Dependencies:
+
 - Unity Hub 3.15.4 or newer
 - fzf ?
 
