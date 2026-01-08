@@ -40,7 +40,7 @@ sealed class LinuxSupport : PlatformSupport
 			if (line.StartsWith("kScriptsDefaultApp"))
 			{
 				// Format: kScriptsDefaultApp: /path/to/editor
-				var parts = line.Split(':', 2);
+				string[] parts = line.Split(':', 2);
 				if (parts.Length == 2)
 				{
 					return parts[1].Trim();

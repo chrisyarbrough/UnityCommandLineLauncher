@@ -1,7 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.InteropServices;
+using System.Text;
 
-Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.OutputEncoding = Encoding.UTF8;
 
 var services = new ServiceCollection();
 

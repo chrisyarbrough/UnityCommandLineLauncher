@@ -24,7 +24,7 @@ class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 			"-batchmode",
 			"-quit",
 			"-createProject",
-			projectPath
+			projectPath,
 		};
 
 		// 6. Add any additional user arguments

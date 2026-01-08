@@ -33,7 +33,7 @@ sealed class MacSupport : PlatformSupport
 				RedirectStandardOutput = true,
 			});
 
-		var output = process.StandardOutput.ReadToEnd().Trim();
+		string output = process.StandardOutput.ReadToEnd().Trim();
 		process.WaitForExit();
 
 		return process.ExitCode == 0 ? output : null;
@@ -47,13 +47,13 @@ sealed class MacSupport : PlatformSupport
 				RedirectStandardOutput = true,
 			});
 
-		var output = process.StandardOutput.ReadToEnd();
+		string output = process.StandardOutput.ReadToEnd();
 		process.WaitForExit();
 
 		if (process.ExitCode != 0 || string.IsNullOrWhiteSpace(output))
 			return null;
 
-		var lines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+		string[] lines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 		if (lines.Length == 0)
 			return null;
 

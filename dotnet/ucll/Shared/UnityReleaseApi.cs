@@ -6,12 +6,12 @@ static class UnityReleaseApi
 	public static async Task<string> FetchChangesetAsync(string version)
 	{
 		using var client = new HttpClient();
-		var url = $"https://services.api.unity.com/unity/editor/release/v1/releases?version={version}";
+		string url = $"https://services.api.unity.com/unity/editor/release/v1/releases?version={version}";
 
 		var response = await client.GetAsync(url);
 		response.EnsureSuccessStatusCode();
 
-		var content = await response.Content.ReadAsStringAsync();
+		string content = await response.Content.ReadAsStringAsync();
 		var apiResponse = JsonNode.Parse(content);
 
 		var results = apiResponse?["results"]?.AsArray();

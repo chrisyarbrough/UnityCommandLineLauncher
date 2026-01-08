@@ -43,7 +43,7 @@ static class SelectionPrompt
 
 		process.Start();
 
-		foreach (var project in projects)
+		foreach (string project in projects)
 			process.StandardInput.WriteLine(project);
 
 		process.StandardInput.Close();

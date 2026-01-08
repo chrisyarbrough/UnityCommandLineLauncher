@@ -7,7 +7,7 @@ static partial class ProjectVersionFile
 	public static UnityVersion Parse(string directoryOrFile, out string filePath)
 	{
 		filePath = FindFilePath(directoryOrFile);
-		var content = File.ReadAllText(filePath);
+		string content = File.ReadAllText(filePath);
 
 		// Try pattern 1: m_EditorVersionWithRevision: 2021.3.45f1 (abc123)
 		var match = EditorVersionWithRevisionRegex().Match(content);
@@ -74,11 +74,11 @@ static partial class ProjectVersionFile
 
 		while (current != null)
 		{
-			var projectSettingsDir = Path.Combine(current.FullName, "ProjectSettings");
+			string projectSettingsDir = Path.Combine(current.FullName, "ProjectSettings");
 
 			if (Directory.Exists(projectSettingsDir))
 			{
-				var versionFilePath = Path.Combine(projectSettingsDir, "ProjectVersion.txt");
+				string versionFilePath = Path.Combine(projectSettingsDir, "ProjectVersion.txt");
 
 				if (File.Exists(versionFilePath))
 					return versionFilePath;
@@ -121,7 +121,7 @@ static partial class ProjectVersionFile
 	{
 		try
 		{
-			var versionFile = Path.Combine(currentDir.FullName, "ProjectSettings", "ProjectVersion.txt");
+			string versionFile = Path.Combine(currentDir.FullName, "ProjectSettings", "ProjectVersion.txt");
 			if (File.Exists(versionFile))
 			{
 				results.Add(versionFile);

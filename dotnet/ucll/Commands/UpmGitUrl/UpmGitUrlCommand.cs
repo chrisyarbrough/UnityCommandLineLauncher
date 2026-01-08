@@ -2,7 +2,7 @@ class UpmGitUrlCommand(UnityHub unityHub) : BaseCommand<UpmGitUrlSettings>
 {
 	protected override int ExecuteImpl(UpmGitUrlSettings settings)
 	{
-		var searchPath = settings.SearchPath ?? OpenCommand.PromptForRecentProject(settings.Favorite, unityHub);
+		string searchPath = settings.SearchPath ?? OpenCommand.PromptForRecentProject(settings.Favorite, unityHub);
 		searchPath = Path.GetFullPath(searchPath);
 
 		if (!Directory.Exists(searchPath) && !File.Exists(searchPath))
@@ -19,7 +19,7 @@ class UpmGitUrlCommand(UnityHub unityHub) : BaseCommand<UpmGitUrlSettings>
 		if (!Directory.Exists(packagesDir))
 			throw new UserException($"Packages directory not found in the project: {projectDir}");
 
-		var packageJsonFiles = Directory.GetFiles(packagesDir, "package.json", SearchOption.AllDirectories);
+		string[] packageJsonFiles = Directory.GetFiles(packagesDir, "package.json", SearchOption.AllDirectories);
 
 		if (packageJsonFiles.Length == 0)
 			throw new UserException($"No package.json files found in {packagesDir}");
@@ -31,7 +31,7 @@ class UpmGitUrlCommand(UnityHub unityHub) : BaseCommand<UpmGitUrlSettings>
 		}
 		else
 		{
-			var choices = packageJsonFiles
+			string[] choices = packageJsonFiles
 				.Select(p => Path.GetRelativePath(projectDir, p))
 				.ToArray();
 			string relativeChoice = SelectionPrompt.Prompt(choices, "Multiple package.json files found. Select one: ");

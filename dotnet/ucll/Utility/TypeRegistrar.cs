@@ -13,7 +13,7 @@ public sealed class TypeRegistrar(IServiceCollection services) : ITypeRegistrar
 
 	public void RegisterLazy(Type service, Func<object> factory) => services.AddSingleton(service, _ => factory());
 
-	public sealed class TypeResolver(IServiceProvider provider) : ITypeResolver
+	private sealed class TypeResolver(IServiceProvider provider) : ITypeResolver
 	{
 		public object? Resolve(Type? type) => type == null ? null : provider.GetService(type);
 	}

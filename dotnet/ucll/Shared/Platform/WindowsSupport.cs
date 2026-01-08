@@ -67,7 +67,7 @@ sealed class WindowsSupport : PlatformSupport
 				RedirectStandardOutput = true,
 			});
 
-		var output = process.StandardOutput.ReadToEnd().Trim();
+		string output = process.StandardOutput.ReadToEnd().Trim();
 		process.WaitForExit();
 
 		return process.ExitCode == 0 ? output : null;

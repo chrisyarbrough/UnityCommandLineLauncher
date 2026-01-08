@@ -2,7 +2,7 @@ class ProjectPathCommand(UnityHub unityHub) : BaseCommand<ProjectPathSettings>
 {
 	protected override int ExecuteImpl(ProjectPathSettings settings)
 	{
-		var searchPath = settings.SearchPath ?? OpenCommand.PromptForRecentProject(settings.Favorite, unityHub);
+		string searchPath = settings.SearchPath ?? OpenCommand.PromptForRecentProject(settings.Favorite, unityHub);
 
 		searchPath = Path.GetFullPath(searchPath);
 

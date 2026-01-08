@@ -2,7 +2,7 @@ class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) : BaseComm
 {
 	protected override int ExecuteImpl(OpenSettings settings)
 	{
-		var searchPath = settings.SearchPath ?? PromptForRecentProject(settings.Favorite, unityHub);
+		string searchPath = settings.SearchPath ?? PromptForRecentProject(settings.Favorite, unityHub);
 
 		searchPath = Path.GetFullPath(searchPath);
 
@@ -17,7 +17,7 @@ class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) : BaseComm
 
 		unityHub.InstallEditorChecked(unityVersion.Version, unityVersion.Changeset, settings.MutatingProcess);
 
-		var editorPath = unityHub.GetEditorPath(unityVersion.Version);
+		string editorPath = unityHub.GetEditorPath(unityVersion.Version);
 		AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
 
 		string projectDir = new FileInfo(filePath).Directory!.Parent!.FullName;
@@ -44,7 +44,7 @@ class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) : BaseComm
 
 	public static string PromptForRecentProject(bool favoritesOnly, UnityHub unityHub)
 	{
-		var recentProjects = unityHub.GetRecentProjects(favoritesOnly).ToArray();
+		string[] recentProjects = unityHub.GetRecentProjects(favoritesOnly).ToArray();
 
 		if (recentProjects.Length == 0)
 			throw new UserException("No projects found in Unity Hub.");
@@ -103,7 +103,7 @@ class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) : BaseComm
 	/// </summary>
 	private static async Task<string> WaitForFileAsync(string projectDir, string searchPattern)
 	{
-		var path = Directory.GetFiles(projectDir, searchPattern, SearchOption.TopDirectoryOnly).FirstOrDefault();
+		string? path = Directory.GetFiles(projectDir, searchPattern, SearchOption.TopDirectoryOnly).FirstOrDefault();
 		if (path != null)
 			return path;
 

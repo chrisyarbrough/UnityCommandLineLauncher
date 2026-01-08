@@ -39,12 +39,12 @@ class UnityHub(PlatformSupport platformSupport)
 
 	public IEnumerable<string> GetRecentProjects(bool favoritesOnly = false)
 	{
-		var configDir = platformSupport.UnityHubConfigDirectory;
-		var projectsFile = Path.Combine(configDir, "projects-v1.json");
+		string configDir = platformSupport.UnityHubConfigDirectory;
+		string projectsFile = Path.Combine(configDir, "projects-v1.json");
 
 		try
 		{
-			var json = File.ReadAllText(projectsFile);
+			string json = File.ReadAllText(projectsFile);
 			var root = JsonNode.Parse(json);
 			var data = root?["data"]?.AsObject()!;
 
@@ -53,10 +53,10 @@ class UnityHub(PlatformSupport platformSupport)
 			foreach ((string projectPath, JsonNode? value) in data)
 			{
 				var project = value?.AsObject()!;
-				var lastModified = project["lastModified"]?.GetValue<long>();
+				long? lastModified = project["lastModified"]?.GetValue<long>();
 				if (lastModified.HasValue)
 				{
-					var isFavorite = project["isFavorite"]?.GetValue<bool>() ?? false;
+					bool isFavorite = project["isFavorite"]?.GetValue<bool>() ?? false;
 					projects.Add((projectPath, lastModified.Value, isFavorite));
 				}
 			}
@@ -97,7 +97,7 @@ class UnityHub(PlatformSupport platformSupport)
 
 		WriteStatusUpdate($"Installing Unity version {version} {changeset}");
 
-		var args = $"--headless install --version {version} --changeset {changeset}";
+		string args = $"--headless install --version {version} --changeset {changeset}";
 		args = ConfigurePlatformArgs(args);
 
 		if (additionalArgs.Length > 0)
@@ -128,8 +128,8 @@ class UnityHub(PlatformSupport platformSupport)
 			RedirectStandardOutput = true,
 			RedirectStandardError = true,
 		};
-		var process = ProcessRunner.Default.Run(startInfo);
-		var output = process.StandardOutput.ReadToEnd();
+		Process process = ProcessRunner.Default.Run(startInfo);
+		string output = process.StandardOutput.ReadToEnd();
 		process.WaitForExit();
 
 		// There's a bug in some older Unity Hub version where the exit code is non-zero, but the output works.
@@ -168,7 +168,7 @@ class UnityHub(PlatformSupport platformSupport)
 	{
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 		{
-			var arch = RuntimeInformation.ProcessArchitecture switch
+			string? arch = RuntimeInformation.ProcessArchitecture switch
 			{
 				Architecture.X64 => "x86_64",
 				Architecture.Arm64 => "arm64",
