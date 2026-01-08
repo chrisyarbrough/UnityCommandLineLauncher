@@ -3,8 +3,7 @@ internal sealed class LinuxSupport : PlatformSupport
 	public override string FormatHubArgs(string args)
 		=> args; // Linux doesn't need the "--" prefix
 
-	public override ProcessStartInfo OpenFile(string filePath)
-		=> new ProcessStartInfo("xdg-open", filePath);
+	public override ProcessStartInfo OpenFile(string filePath) => new("xdg-open", filePath);
 
 	public override ProcessStartInfo OpenFileWithApp(string filePath, string applicationPath)
 	{

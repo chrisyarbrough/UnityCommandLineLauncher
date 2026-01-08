@@ -28,7 +28,7 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 		};
 
 		// 6. Add any additional user arguments
-		string[] additionalArgs = context.Remaining.Raw.ToArray();
+		string[] additionalArgs = Context.Remaining.Raw.ToArray();
 		args.AddRange(additionalArgs);
 
 		// 7. Execute Unity

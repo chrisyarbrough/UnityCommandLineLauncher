@@ -4,7 +4,7 @@ internal class HubCommand(UnityHub unityHub) : BaseCommand<HubCommand.HubSetting
 
 	protected override int ExecuteImpl(HubSettings settings)
 	{
-		string args = string.Join(" ", context.Remaining.Raw);
+		string args = string.Join(" ", Context.Remaining.Raw);
 
 		var startInfo = new ProcessStartInfo(unityHub.GetHubPath(), args);
 

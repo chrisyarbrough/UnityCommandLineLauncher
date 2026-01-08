@@ -5,17 +5,17 @@ using EditorInfo = (string Version, string Path);
 
 internal class UnityHub(PlatformSupport platformSupport)
 {
-	private Lazy<string> _hubPathCache = new(() => platformSupport.FindHubInstallPath() ?? throw new UserException(
+	private Lazy<string> hubPathCache = new(() => platformSupport.FindHubInstallPath() ?? throw new UserException(
 		"Unity Hub not found. If it is installed in a custom location, configure the UNITY_HUB_PATH environment variable."));
 
 	// It would seem more efficient to store the editors in a Dictionary by version, but it's possible
 	// to install multiple editors with the same version (e.g. Intel and Silicon on macOS).
-	private List<EditorInfo>? _editorsCache;
+	private List<EditorInfo>? editorsCache;
 
 	/// <summary>
 	/// Returns the path to the Unity Hub executable.
 	/// </summary>
-	public string GetHubPath() => _hubPathCache.Value;
+	public string GetHubPath() => hubPathCache.Value;
 
 	/// <summary>
 	/// Returns the path to the editor executable on the current platform.
@@ -104,7 +104,7 @@ internal class UnityHub(PlatformSupport platformSupport)
 			args += " " + string.Join(" ", additionalArgs);
 
 		var process = processRunner.Run(new ProcessStartInfo(
-			_hubPathCache.Value,
+			hubPathCache.Value,
 			platformSupport.FormatHubArgs(args)) { RedirectStandardError = true });
 		process.WaitForExit();
 
@@ -114,16 +114,16 @@ internal class UnityHub(PlatformSupport platformSupport)
 		}
 
 		// Invalidate the cache after installing a new editor
-		_editorsCache = null;
+		editorsCache = null;
 	}
 
 	public List<EditorInfo> ListInstalledEditors()
 	{
-		if (_editorsCache != null)
-			return _editorsCache;
+		if (editorsCache != null)
+			return editorsCache;
 
 		string args = platformSupport.FormatHubArgs("--headless editors --installed");
-		ProcessStartInfo startInfo = new(_hubPathCache.Value, args)
+		ProcessStartInfo startInfo = new(hubPathCache.Value, args)
 		{
 			RedirectStandardOutput = true,
 			RedirectStandardError = true,
@@ -136,8 +136,8 @@ internal class UnityHub(PlatformSupport platformSupport)
 		// So, don't do any validation, just attempt to parse.
 
 		// The paths in this output specify the Unity.app directory on macOS, not the executable within.
-		_editorsCache = ParseEditorsOutput(output);
-		return _editorsCache;
+		editorsCache = ParseEditorsOutput(output);
+		return editorsCache;
 	}
 
 	internal static List<EditorInfo> ParseEditorsOutput(string output)

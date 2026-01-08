@@ -21,7 +21,7 @@ internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) :
 		AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
 
 		string projectDir = new FileInfo(filePath).Directory!.Parent!.FullName;
-		string[] additionalArgs = context.Remaining.Raw.ToArray();
+		string[] additionalArgs = Context.Remaining.Raw.ToArray();
 		var args = new List<string> { "-projectPath", projectDir };
 		args.AddRange(additionalArgs);
 
