@@ -11,6 +11,7 @@ public static class ProjectVersionFileTests
 		string? expectedChangeset)
 	{
 		const string filePath = "TestData/ProjectVersion.txt";
+		Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
 		File.WriteAllText(filePath, fileContent);
 		try
 		{
