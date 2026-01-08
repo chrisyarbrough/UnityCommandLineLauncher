@@ -1,15 +1,27 @@
 public static class ProjectVersionFileTests
 {
 	[Theory]
-	[InlineData("ProjectVersionWithRevision.txt", "6000.0.59f2", "ef281c76c3c1")]
-	[InlineData("ProjectVersionWithoutRevision.txt", "6000.0.59f2", null)]
-	private static void ParseReturnsExpectedVersion(string filePath, string expectedVersion, string? expectedChangeset)
+	[InlineData("""
+	            m_EditorVersion: 6000.0.59f2
+	            m_EditorVersionWithRevision: 6000.0.59f2 (ef281c76c3c1)
+	            """, "6000.0.59f2", "ef281c76c3c1")]
+	[InlineData("m_EditorVersion: 6000.0.59f2", "6000.0.59f2", null)]
+	private static void ParseReturnsExpectedVersion(string fileContent,
+		string expectedVersion,
+		string? expectedChangeset)
 	{
-		var testFilePath = Path.Combine("TestData", filePath);
+		const string filePath = "TestData/ProjectVersion.txt";
+		File.WriteAllText(filePath, fileContent);
+		try
+		{
+			var result = ProjectVersionFile.Parse(filePath, out string _);
 
-		var result = ProjectVersionFile.Parse(testFilePath, out string _);
-
-		Assert.Equal(expectedVersion, result.Version);
-		Assert.Equal(expectedChangeset, result.Changeset);
+			Assert.Equal(expectedVersion, result.Version);
+			Assert.Equal(expectedChangeset, result.Changeset);
+		}
+		finally
+		{
+			File.Delete(filePath);
+		}
 	}
 }
