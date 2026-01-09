@@ -54,7 +54,7 @@ internal class UninstallUnusedCommand(PlatformSupport platformSupport, UnityHub 
 
 		AnsiConsole.WriteLine();
 
-		foreach (var (version, installDir) in versionPaths)
+		foreach ((string version, string installDir) in versionPaths)
 		{
 			AnsiConsole.MarkupLine($"[bold]Uninstalling Unity {Markup.Escape(version)}...[/]");
 

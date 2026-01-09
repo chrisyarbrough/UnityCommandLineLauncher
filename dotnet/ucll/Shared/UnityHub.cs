@@ -5,7 +5,7 @@ using EditorInfo = (string Version, string Path);
 
 internal class UnityHub(PlatformSupport platformSupport)
 {
-	private Lazy<string> hubPathCache = new(() => platformSupport.FindHubInstallPath() ?? throw new UserException(
+	private readonly Lazy<string> hubPathCache = new(() => platformSupport.FindHubInstallPath() ?? throw new UserException(
 		"Unity Hub not found. If it is installed in a custom location, configure the UNITY_HUB_PATH environment variable."));
 
 	// It would seem more efficient to store the editors in a Dictionary by version, but it's possible

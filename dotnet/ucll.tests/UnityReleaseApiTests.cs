@@ -10,6 +10,6 @@ public class UnityReleaseApiTests
 	[Fact]
 	public async Task FetchChangesetAsync_WithInvalidVersion_ThrowsException()
 	{
-		await Assert.ThrowsAsync<Exception>(() => UnityReleaseApi.FetchChangesetAsync("invalid.version.xyz"));
+		await Assert.ThrowsAsync<UserException>(() => UnityReleaseApi.FetchChangesetAsync("invalid.version.xyz"));
 	}
 }

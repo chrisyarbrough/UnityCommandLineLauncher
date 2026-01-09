@@ -17,14 +17,14 @@ internal static class UnityReleaseApi
 		var results = apiResponse?["results"]?.AsArray();
 
 		if (results == null || results.Count == 0)
-			throw new Exception($"No results found for Unity version '{version}'.");
+			throw new UserException($"No results found for Unity version '{version}'.");
 		if (results.Count > 1)
-			throw new Exception($"More than one result found for Unity version '{version}'.");
+			throw new UserException($"More than one result found for Unity version '{version}'.");
 
 		string? changeset = results[0]?["shortRevision"]?.GetValue<string>();
 
 		if (string.IsNullOrEmpty(changeset))
-			throw new Exception("Changeset not found in API response.");
+			throw new UserException("Changeset not found in API response.");
 
 		return changeset;
 	}

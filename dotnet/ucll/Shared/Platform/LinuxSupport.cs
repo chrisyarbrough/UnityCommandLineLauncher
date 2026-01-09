@@ -34,19 +34,11 @@ internal sealed class LinuxSupport : PlatformSupport
 		if (!File.Exists(prefsPath))
 			return null;
 
-		foreach (string line in File.ReadLines(prefsPath))
-		{
-			if (line.StartsWith("kScriptsDefaultApp"))
-			{
-				// Format: kScriptsDefaultApp: /path/to/editor
-				string[] parts = line.Split(':', 2);
-				if (parts.Length == 2)
-				{
-					return parts[1].Trim();
-				}
-			}
-		}
-
-		return null;
+		// Format: kScriptsDefaultApp: /path/to/editor
+		return File.ReadLines(prefsPath)
+			.Where(line => line.StartsWith("kScriptsDefaultApp"))
+			.Select(line => line.Split(':', 2))
+			.Where(parts => parts.Length == 2)
+			.Select(parts => parts[1].Trim()).FirstOrDefault();
 	}
 }

@@ -104,17 +104,16 @@ internal static partial class ProjectVersionFile
 			SearchRecursive(new DirectoryInfo(searchDir), ignoredFolders, foundFiles);
 		}
 
-		if (foundFiles.Count > 1)
+		switch (foundFiles.Count)
 		{
-			foundFiles.Sort();
-			return SelectionPrompt.Prompt(foundFiles, "Select one of the found projects: ");
+			case > 1:
+				foundFiles.Sort();
+				return SelectionPrompt.Prompt(foundFiles, "Select one of the found projects: ");
+			case 1:
+				return foundFiles[0];
+			default:
+				return null;
 		}
-		else if (foundFiles.Count == 1)
-		{
-			return foundFiles[0];
-		}
-
-		return null;
 	}
 
 	private static void SearchRecursive(DirectoryInfo currentDir, HashSet<string> ignoredFolders, List<string> results)

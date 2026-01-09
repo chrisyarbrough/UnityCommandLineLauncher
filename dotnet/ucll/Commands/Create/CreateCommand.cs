@@ -51,7 +51,7 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 		return 0;
 	}
 
-	private void ValidateProjectDoesNotExist(string projectPath)
+	private static void ValidateProjectDoesNotExist(string projectPath)
 	{
 		if (!Directory.Exists(projectPath))
 			return;
