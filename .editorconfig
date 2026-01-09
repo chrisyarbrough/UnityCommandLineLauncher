@@ -9,43 +9,46 @@ insert_final_newline = false
 trim_trailing_whitespace = true
 
 [*.cs]
+csharp_default_internal_modifier = explicit
 csharp_style_var_for_built_in_types = false:warning
 csharp_style_var_when_type_is_apparent = true:suggestion
 
 dotnet_style_require_accessibility_modifiers = always
 
-resharper_member_can_be_private_global_highlighting = suggestion
-resharper_check_namespace_highlighting = none
-resharper_invert_if_highlighting = none
-resharper_arrange_this_qualifier_highlighting = none
-resharper_trailing_comma_in_multiline_lists = true
-resharper_suggest_var_or_type_simple_types_highlighting = none
-resharper_use_implicitly_typed_variable_evident_highlighting = warning
 resharper_arrange_object_creation_when_type_evident_highlighting = hint
-resharper_suggest_var_or_type_deconstruction_declarations_highlighting = hint
-resharper_redundant_if_else_block_highlighting = none
+resharper_arrange_this_qualifier_highlighting = none
+resharper_check_namespace_highlighting = none
 resharper_convert_if_statement_to_return_statement_highlighting = none
-resharper_loop_can_be_converted_to_query_highlighting = hint
 resharper_convert_if_statement_to_switch_statement_highlighting = hint
+resharper_csharp_default_internal_modifier = explicit
 resharper_field_can_be_made_read_only_local_highlighting = warning
+resharper_invert_if_highlighting = none
+resharper_loop_can_be_converted_to_query_highlighting = hint
 resharper_member_can_be_made_static_local_highlighting = warning
+resharper_member_can_be_private_global_highlighting = suggestion
 resharper_move_local_function_after_jump_statement_highlighting = none
+resharper_redundant_if_else_block_highlighting = none
+resharper_suggest_var_or_type_deconstruction_declarations_highlighting = hint
+resharper_suggest_var_or_type_simple_types_highlighting = none
+resharper_trailing_comma_in_multiline_lists = true
+resharper_use_collection_expression_highlighting = hint
+resharper_use_implicitly_typed_variable_evident_highlighting = warning
 
 # Private fields in camelCase
-dotnet_naming_symbols.fields.applicable_kinds = field
-dotnet_naming_symbols.fields.applicable_accessibilities = *
-dotnet_naming_style.camel_case.capitalization = camel_case
-dotnet_naming_rule.fields_should_be_camel_case.symbols = fields
-dotnet_naming_rule.fields_should_be_camel_case.style = camel_case
 dotnet_naming_rule.fields_should_be_camel_case.severity = suggestion
+dotnet_naming_rule.fields_should_be_camel_case.style = camel_case
+dotnet_naming_rule.fields_should_be_camel_case.symbols = fields
+dotnet_naming_style.camel_case.capitalization = camel_case
+dotnet_naming_symbols.fields.applicable_accessibilities = *
+dotnet_naming_symbols.fields.applicable_kinds = field
 
 # Public fields in PascalCase
-dotnet_naming_symbols.public_fields.applicable_kinds = field
-dotnet_naming_symbols.public_fields.applicable_accessibilities = public
-dotnet_naming_style.pascal_case.capitalization = pascal_case
-dotnet_naming_rule.public_fields_should_be_pascal_case.symbols = public_fields
-dotnet_naming_rule.public_fields_should_be_pascal_case.style = pascal_case
 dotnet_naming_rule.public_fields_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.public_fields_should_be_pascal_case.style = pascal_case
+dotnet_naming_rule.public_fields_should_be_pascal_case.symbols = public_fields
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+dotnet_naming_symbols.public_fields.applicable_accessibilities = public
+dotnet_naming_symbols.public_fields.applicable_kinds = field
 
 [UnityCommandLineLauncher.sln.DotSettings]
 ij_formatter_enabled = false
