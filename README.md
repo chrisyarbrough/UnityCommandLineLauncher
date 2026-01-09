@@ -16,14 +16,15 @@ Dependencies:
 
 ## Commands
 
-| Name                        | Description                                                          |
-|-----------------------------|----------------------------------------------------------------------|
-| `open [path]`               | Opens the Unity project.                                             |
-| `open`                      | Shows a selection prompt of recent projects from the Unity Hub.      |
-| `install <version>`         | Installs the Editor by version, fetching the revision, if necessary. |
-| `editor-revision <version>` | Fetches the revision from Unity's API.                               |
-| `editor-path <version>`     | Gets the installation directory of the Editor, if installed.         |
-| `project-version <path>`    | Gets the Unity version information from a project.                   |
+| Name                           | Description                                                          |
+|--------------------------------|----------------------------------------------------------------------|
+| `open [path]`                  | Opens the Unity project.                                             |
+| `open`                         | Shows a selection prompt of recent projects from the Unity Hub.      |
+| `install <version>`            | Installs the Editor by version, fetching the revision, if necessary. |
+| `editor-revision <version>`    | Fetches the revision from Unity's API.                               |
+| `editor-path <version>`        | Gets the installation directory of the Editor, if installed.         |
+| `project-version <path>`       | Gets the Unity version information from a project.                   |
+| `create <directory> [version]` | Creates a new empty Unity project in the directory.                  |
 
 `path` can be a ProjectVersion.txt file or a directory (searches up and down for projects).
 If a directory contains multiple Unity projects, an interactive prompt will request a single selection.
