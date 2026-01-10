@@ -1,16 +1,8 @@
-internal class ProjectVersionCommand(UnityHub unityHub) : BaseCommand<ProjectVersionSettings>
+internal class ProjectVersionCommand(UnityHub unityHub) : SearchPathCommand<ProjectVersionSettings>(unityHub)
 {
 	protected override int ExecuteImpl(ProjectVersionSettings settings)
 	{
-		string searchPath = settings.SearchPath ?? OpenCommand.PromptForRecentProject(settings.Favorite, unityHub);
-
-		searchPath = Path.GetFullPath(searchPath);
-
-		if (!Directory.Exists(searchPath) && !File.Exists(searchPath))
-		{
-			WriteError($"'{searchPath}' does not exist.");
-			return 1;
-		}
+		string searchPath = ResolveSearchPath(settings.SearchPath, settings.Favorite);
 
 		UnityVersion info = ProjectVersionFile.Parse(searchPath, out string _);
 

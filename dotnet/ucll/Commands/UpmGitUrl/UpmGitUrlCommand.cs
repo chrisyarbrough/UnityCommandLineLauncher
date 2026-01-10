@@ -1,15 +1,8 @@
-internal class UpmGitUrlCommand(UnityHub unityHub) : BaseCommand<UpmGitUrlSettings>
+internal class UpmGitUrlCommand(UnityHub unityHub) : SearchPathCommand<UpmGitUrlSettings>(unityHub)
 {
 	protected override int ExecuteImpl(UpmGitUrlSettings settings)
 	{
-		string searchPath = settings.SearchPath ?? OpenCommand.PromptForRecentProject(settings.Favorite, unityHub);
-		searchPath = Path.GetFullPath(searchPath);
-
-		if (!Directory.Exists(searchPath) && !File.Exists(searchPath))
-		{
-			WriteError($"'{searchPath}' does not exist.");
-			return 1;
-		}
+		string searchPath = ResolveSearchPath(settings.SearchPath, settings.Favorite);
 
 		string projectVersionPath = ProjectVersionFile.FindFilePath(searchPath);
 		string projectDir = new FileInfo(projectVersionPath).Directory!.Parent!.FullName;

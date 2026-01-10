@@ -1,23 +1,15 @@
-internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) : BaseCommand<OpenSettings>
+internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) : SearchPathCommand<OpenSettings>(unityHub)
 {
 	protected override int ExecuteImpl(OpenSettings settings)
 	{
-		string searchPath = settings.SearchPath ?? PromptForRecentProject(settings.Favorite, unityHub);
-
-		searchPath = Path.GetFullPath(searchPath);
-
-		if (!Directory.Exists(searchPath) && !File.Exists(searchPath))
-		{
-			WriteError($"'{searchPath}' does not exist.");
-			return 1;
-		}
+		string searchPath = ResolveSearchPath(settings.SearchPath, settings.Favorite);
 
 		UnityVersion unityVersion = ProjectVersionFile.Parse(searchPath, out string filePath);
 		Debug.WriteLine($"File: {filePath}\n{unityVersion}\nVersion: {unityVersion}");
 
-		unityHub.InstallEditorChecked(unityVersion.Version, unityVersion.Changeset, settings.MutatingProcess);
+		UnityHub.InstallEditorChecked(unityVersion.Version, unityVersion.Changeset, settings.MutatingProcess);
 
-		string editorPath = unityHub.GetEditorPath(unityVersion.Version);
+		string editorPath = UnityHub.GetEditorPath(unityVersion.Version);
 		AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
 
 		string projectDir = new FileInfo(filePath).Directory!.Parent!.FullName;
@@ -25,7 +17,8 @@ internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) :
 		var args = new List<string> { "-projectPath", projectDir };
 		args.AddRange(additionalArgs);
 
-		settings.MutatingProcess.Run(new ProcessStartInfo(fileName: editorPath, arguments: JoinQuoted(args)));
+		settings.MutatingProcess.Run(
+			new ProcessStartInfo(fileName: editorPath, arguments: ProcessRunner.JoinQuoted(args)));
 
 		if (settings.CodeEditor)
 		{
@@ -35,23 +28,6 @@ internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) :
 		// Unity doesn't report an exit code if the editor fails to open a project.
 		// Instead, it prints error into the log. So, for now, we must assume it succeeded.
 		return 0;
-	}
-
-	private static string JoinQuoted(List<string> args)
-	{
-		return string.Join(" ", args.Select(a => a.Contains(' ') ? $"\"{a}\"" : a));
-	}
-
-	public static string PromptForRecentProject(bool favoritesOnly, UnityHub unityHub)
-	{
-		string[] recentProjects = unityHub.GetRecentProjects(favoritesOnly).ToArray();
-
-		if (recentProjects.Length == 0)
-			throw new UserException("No projects found in Unity Hub.");
-
-		return SelectionPrompt.Prompt(
-			recentProjects,
-			$"Select a {(favoritesOnly ? "favorite" : "recent")} project: ");
 	}
 
 	private void OpenSolutionFile(string projectDir, IProcessRunner processRunner)
