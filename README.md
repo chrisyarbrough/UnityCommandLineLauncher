@@ -8,11 +8,7 @@ A terminal command to open Unity projects quickly from the command line.
 
 - macOS (tested with Sequoia 15.7.1)
 - Windows (11)
-
-Dependencies:
-
-- Unity Hub 3.15.4 or newer
-- fzf ?
+- Linux (limited support, contributions welcome!)
 
 ## Commands
 
@@ -31,27 +27,58 @@ If a directory contains multiple Unity projects, an interactive prompt will requ
 
 ---
 
+## Installation
+
+See [Security.md](Security.md) for instruction on how to verify the authenticity of your installation.
+
+### From Source (recommended)
+
+1. Clone the repository.
+2. Checkout a release tag and take note of the signature, e.g. `git tag -v v1.0.0`.
+3. Navigate to the project directory:
+   ```shell
+   cd dotnet/ucll
+   ```
+4. Produce a binary:
+   ```shell
+   dotnet publish
+   ```
+5. Find the binary in e.g. `dotnet/ucll/bin/osx-arm64/publish/`
+
+### Download Binaries
+
+Or, download a binary from the GitHub _Releases_ page.
+
+E.g. for macOS with an M4 Apple processor:
+`uccl-osx-arm64.zip`
+
 ## Setup
 
-1. Download the binaries from the releases page or clone the repository.
-2. When building from source run `dotnet publish` to publish a binary for your current platform.
-3. Create an alias in your shell config (.zshrc, .bashrc, etc.):
+Create an alias in your shell config (.zshrc, .shellrc, etc.):
 
-```bash
+```shell
 echo 'alias unity="~/UnityCommandLineLauncher/dotnet/ucll/bin/Release/osx-arm64/publish/ucll"' >> ~/.zshrc
 ```
 
+> The Rest of the guide assumes you have the alias named `unity` to run the `ucll` tool.
+
 Or add the binary location to your PATH variable.
 
-```bash
+```shell
 export PATH=$PATH:~/UnityCommandLineLauncher/dotnet/ucll/bin/Release/osx-arm64/publish/
+```
+
+You may need to make the file executable:
+
+```shell
+chmod +x ucll
 ```
 
 ### Enhanced Fuzzy Search (Optional)
 
-Install [fzf](https://github.com/junegunn/fzf):
+Install [fzf](https://github.com/junegunn/fzf) 0.67.0 or newer:
 
-```bash
+```shell
 brew install fzf
 ```
 
@@ -60,13 +87,13 @@ With `fzf` installed, the interactive project selection (`unity open`) will use 
 - **Acronyms**: `cfp` finds "core-frontend-platform"
 - **Typo tolerance**: `sigle-sign` finds "single-sign-on"
 
-If `fzf` is not installed, the built-in search will be used as a fallback.
-
 ![](docs/Screenshot_Open_Search.png)
 
-### Unity
+If `fzf` is not installed, the built-in search will be used as a fallback.
 
-- Ensure Unity Hub is installed (https://unity.com/download)
+### Unity Hub
+
+- Ensure version 3.15.4 or newer is installed (https://unity.com/download)
 
 ---
 
@@ -74,23 +101,23 @@ If `fzf` is not installed, the built-in search will be used as a fallback.
 
 Discover available commands and options:
 
-```bash
+```shell
 unity --help
 ```
 
 Show more info about a command:
 
-```bash
+```shell
 unity open --help
 ```
 
 Forward additional arguments to Unity Hub/Editor by separating them with a `--`:
 
-```bash
+```shell
 unity open path/to/project -- -batchmode -quit
 ```
 
-```bash
+```shell
 unity install 2022.3.10f1 -- --module webgl
 ```
 
@@ -106,11 +133,13 @@ unity install 2022.3.10f1 -- --module webgl
 
 ## Configuration
 
-Unity Hub and Editor installations are detected in the following order:
+> If Unity Hub and the editors are installed in their default location, there should be no configuration needed.
+
+Installations are detected in the following order:
 
 1. Environment variables (optional, see table below)
 2. Default paths on platform
-3. Search heuristic to guess the paths
+3. Search heuristic to find the paths
 
 Environment variables are optional but speed up execution for non-default installations.
 
@@ -126,6 +155,27 @@ Environment variables are optional but speed up execution for non-default instal
 |          | `UNITY_HUB_PATH="/home/<user>/Applications/Unity Hub.AppImage"`                         |
 
 The placeholder `{0}` is part of the path pattern and will be replaced with the Editor version at runtime.
+
+## Tips & Examples
+
+The command API is intentionally kept simple and (hopefully) logical.
+Save your favorite invocations as aliases to make the most out of this tool:
+
+```
+alias uo="ucll open --code-editor"
+```
+
+With this, opening a Unity project and the IDE in the current directory becomes a breeze:
+
+```
+uo .
+```
+
+Remember to take advantage of the builtin search to interactively select from multiple projects:
+
+```
+uo ~/repos
+```
 
 ## Design Background
 
