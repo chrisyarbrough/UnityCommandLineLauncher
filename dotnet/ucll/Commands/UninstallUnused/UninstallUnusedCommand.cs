@@ -1,7 +1,7 @@
 internal class UninstallUnusedCommand(PlatformSupport platformSupport, UnityHub unityHub)
-	: BaseCommand<MutatingCommand>
+	: BaseCommand<MutatingSettings>
 {
-	protected override int ExecuteImpl(MutatingCommand settings)
+	protected override int ExecuteImpl(MutatingSettings settings)
 	{
 		var versions = new VersionUsage(platformSupport, unityHub);
 		var unusedVersions = versions.InstalledNotUsed.ToList();

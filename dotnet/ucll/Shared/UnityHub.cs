@@ -37,7 +37,7 @@ internal class UnityHub(PlatformSupport platformSupport)
 		return Path.Combine(appBundlePath, platformSupport.RelativeEditorPathToExecutable);
 	}
 
-	public IEnumerable<string> GetRecentProjects(bool favoritesOnly = false)
+	public IEnumerable<string> GetRecentProjects(bool favoriteOnly = false)
 	{
 		string configDir = platformSupport.UnityHubConfigDirectory;
 		string projectsFile = Path.Combine(configDir, "projects-v1.json");
@@ -61,7 +61,7 @@ internal class UnityHub(PlatformSupport platformSupport)
 				}
 			}
 
-			var filteredProjects = favoritesOnly
+			var filteredProjects = favoriteOnly
 				? projects.Where(p => p.isFavorite)
 				: projects;
 
