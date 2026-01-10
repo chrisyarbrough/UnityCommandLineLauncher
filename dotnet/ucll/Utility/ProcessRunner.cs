@@ -22,6 +22,11 @@ internal class ProcessRunner : IProcessRunner
 
 		return process;
 	}
+
+	public static string JoinQuoted(List<string> args)
+	{
+		return string.Join(" ", args.Select(a => a.Contains(' ') ? $"\"{a}\"" : a));
+	}
 }
 
 internal class DryRunProcessRunner : ProcessRunner

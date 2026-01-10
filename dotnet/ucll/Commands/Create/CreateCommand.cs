@@ -27,7 +27,7 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 			};
 
 			var process = settings.MutatingProcess.Run(
-				new ProcessStartInfo(fileName: editorPath, arguments: JoinQuoted(args)));
+				new ProcessStartInfo(fileName: editorPath, arguments: ProcessRunner.JoinQuoted(args)));
 
 			process.WaitForExit();
 
@@ -44,19 +44,16 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 
 	private static void CreateManually(string projectPath, string version, string changeset)
 	{
-		Directory.CreateDirectory(projectPath);
 		Directory.CreateDirectory(Path.Combine(projectPath, "Assets"));
 
-		Directory.CreateDirectory(Path.Combine(projectPath, "ProjectSettings"));
-		File.WriteAllText(Path.Combine(projectPath, "ProjectSettings", "ProjectVersion.txt"),
+		CreateFile(Path.Combine(projectPath, "ProjectSettings", "ProjectVersion.txt"),
 			$"""
 			 m_EditorVersion: {version}
 			 m_EditorVersionWithRevision: {version} ({changeset})
 
 			 """);
 
-		Directory.CreateDirectory(Path.Combine(projectPath, "Packages"));
-		File.WriteAllText(Path.Combine(projectPath, "Packages", "manifest.json"),
+		CreateFile(Path.Combine(projectPath, "Packages", "manifest.json"),
 			"""
 			{
 			  "dependencies": {
@@ -64,6 +61,12 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 			}
 
 			""");
+	}
+
+	private static void CreateFile(string path, string content)
+	{
+		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+		File.WriteAllText(path, content);
 	}
 
 	private static void ValidateProjectDoesNotExist(string projectPath)
@@ -77,10 +80,5 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 				$"Directory '{projectPath}' already exists and is not empty. " +
 				"Choose a different location or use an empty directory.");
 		}
-	}
-
-	private static string JoinQuoted(List<string> args)
-	{
-		return string.Join(" ", args.Select(a => a.Contains(' ') ? $"\"{a}\"" : a));
 	}
 }
