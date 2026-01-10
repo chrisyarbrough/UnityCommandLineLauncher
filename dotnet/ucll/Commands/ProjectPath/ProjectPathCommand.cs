@@ -3,11 +3,8 @@ internal class ProjectPathCommand(UnityHub unityHub) : SearchPathCommand<Project
 	protected override int ExecuteImpl(ProjectPathSettings settings)
 	{
 		string searchPath = ResolveSearchPath(settings.SearchPath, settings.Favorite);
-
-		string filePath = ProjectVersionFile.FindFilePath(searchPath);
-		string projectDir = new FileInfo(filePath).Directory!.Parent!.FullName;
-
-		AnsiConsole.WriteLine(projectDir);
+		string projectPath = Project.FindProjectPath(searchPath);
+		AnsiConsole.WriteLine(projectPath);
 		return 0;
 	}
 }

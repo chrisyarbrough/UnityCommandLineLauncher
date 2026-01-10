@@ -1,20 +1,25 @@
-internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) : SearchPathCommand<OpenSettings>(unityHub)
+internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub)
+	: SearchPathCommand<OpenSettings>(unityHub)
 {
 	protected override int ExecuteImpl(OpenSettings settings)
 	{
 		string searchPath = ResolveSearchPath(settings.SearchPath, settings.Favorite);
 
-		UnityVersion unityVersion = ProjectVersionFile.Parse(searchPath, out string filePath);
-		Debug.WriteLine($"File: {filePath}\n{unityVersion}\nVersion: {unityVersion}");
+		ProjectInfo project = Project.Parse(searchPath);
 
-		UnityHub.InstallEditorChecked(unityVersion.Version, unityVersion.Changeset, settings.MutatingProcess);
+		string infoLine = string.Empty;
+		if (settings.SearchPath != project.Path)
+			infoLine = "Project:  " + project.Path;
+		infoLine += "\nVersion: " + project.VersionAndChangeset;
+		Debug.WriteLine(infoLine);
 
-		string editorPath = UnityHub.GetEditorPath(unityVersion.Version);
+		UnityHub.InstallEditorChecked(project.Version, project.Changeset, settings.MutatingProcess);
+
+		string editorPath = UnityHub.GetEditorPath(project.Version);
 		AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
 
-		string projectDir = new FileInfo(filePath).Directory!.Parent!.FullName;
 		string[] additionalArgs = Context.Remaining.Raw.ToArray();
-		var args = new List<string> { "-projectPath", projectDir };
+		var args = new List<string> { "-projectPath", project.Path };
 		args.AddRange(additionalArgs);
 
 		settings.MutatingProcess.Run(
@@ -22,7 +27,7 @@ internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub) :
 
 		if (settings.CodeEditor)
 		{
-			OpenSolutionFile(projectDir, settings.MutatingProcess);
+			OpenSolutionFile(project.Path, settings.MutatingProcess);
 		}
 
 		// Unity doesn't report an exit code if the editor fails to open a project.

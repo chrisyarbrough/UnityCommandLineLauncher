@@ -3,7 +3,7 @@ internal class ProjectsUsingVersionCommand(PlatformSupport platformSupport) : Ba
 	protected override int ExecuteImpl(VersionSettings settings)
 	{
 		foreach (string project in VersionUsage.FindUnityProjects(platformSupport)
-			         .Where(path => ProjectVersionFile.Parse(path).Version == settings.Version))
+			         .Where(path => Project.Parse(path).Version == settings.Version))
 		{
 			Console.WriteLine(project);
 		}

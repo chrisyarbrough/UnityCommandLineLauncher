@@ -4,7 +4,7 @@ internal class ProjectVersionCommand(UnityHub unityHub) : SearchPathCommand<Proj
 	{
 		string searchPath = ResolveSearchPath(settings.SearchPath, settings.Favorite);
 
-		UnityVersion info = ProjectVersionFile.Parse(searchPath, out string _);
+		ProjectInfo info = Project.Parse(searchPath);
 
 		string output = info.Version;
 

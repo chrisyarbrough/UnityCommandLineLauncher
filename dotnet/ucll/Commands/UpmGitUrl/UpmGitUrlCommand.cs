@@ -4,13 +4,12 @@ internal class UpmGitUrlCommand(UnityHub unityHub) : SearchPathCommand<UpmGitUrl
 	{
 		string searchPath = ResolveSearchPath(settings.SearchPath, settings.Favorite);
 
-		string projectVersionPath = ProjectVersionFile.FindFilePath(searchPath);
-		string projectDir = new FileInfo(projectVersionPath).Directory!.Parent!.FullName;
+		string projectPath = Project.FindProjectPath(searchPath);
 
 		// Find package.json files in the Packages directory
-		string packagesDir = Path.Combine(projectDir, "Packages");
+		string packagesDir = Path.Combine(projectPath, "Packages");
 		if (!Directory.Exists(packagesDir))
-			throw new UserException($"Packages directory not found in the project: {projectDir}");
+			throw new UserException($"Packages directory not found in the project: {projectPath}");
 
 		string[] packageJsonFiles = Directory.GetFiles(packagesDir, "package.json", SearchOption.AllDirectories);
 
@@ -25,10 +24,10 @@ internal class UpmGitUrlCommand(UnityHub unityHub) : SearchPathCommand<UpmGitUrl
 		else
 		{
 			string[] choices = packageJsonFiles
-				.Select(p => Path.GetRelativePath(projectDir, p))
+				.Select(p => Path.GetRelativePath(projectPath, p))
 				.ToArray();
 			string relativeChoice = SelectionPrompt.Prompt(choices, "Multiple package.json files found. Select one: ");
-			selectedPackageJson = Path.Combine(projectDir, relativeChoice);
+			selectedPackageJson = Path.Combine(projectPath, relativeChoice);
 		}
 
 		string packageDir = new FileInfo(selectedPackageJson).Directory!.FullName;

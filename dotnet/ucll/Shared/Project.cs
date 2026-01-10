@@ -1,21 +1,20 @@
 using System.Text.RegularExpressions;
 
-internal static partial class ProjectVersionFile
+internal static partial class Project
 {
-	public static UnityVersion Parse(string directoryOrFile) => Parse(directoryOrFile, out string _);
-
-	public static UnityVersion Parse(string directoryOrFile, out string filePath)
+	public static ProjectInfo Parse(string directoryOrFile)
 	{
-		filePath = FindFilePath(directoryOrFile);
+		string filePath = FindFilePath(directoryOrFile);
 		string content = File.ReadAllText(filePath);
 
 		// Try pattern 1: m_EditorVersionWithRevision: 2021.3.45f1 (abc123)
 		var match = EditorVersionWithRevisionRegex().Match(content);
 		if (match.Success)
 		{
-			return new UnityVersion(
+			return new ProjectInfo(
 				Version: match.Groups[1].Value,
-				Changeset: match.Groups[2].Value
+				Changeset: match.Groups[2].Value,
+				Path: FileToProjectPath(filePath)
 			);
 		}
 
@@ -23,16 +22,26 @@ internal static partial class ProjectVersionFile
 		match = EditorVersionRegex().Match(content);
 		if (match.Success)
 		{
-			return new UnityVersion(
+			return new ProjectInfo(
 				Version: match.Groups[1].Value,
-				Changeset: null
+				Changeset: null,
+				Path: FileToProjectPath(filePath)
 			);
 		}
 
 		throw new UserException($"Could not find Unity version in: {filePath}");
 	}
 
-	public static string FindFilePath(string directoryOrFile)
+	public static string FindProjectPath(string directoryOrFile)
+	{
+		string filePath = FindFilePath(directoryOrFile);
+		return FileToProjectPath(filePath);
+	}
+
+	private static string FileToProjectPath(string filePath)
+		=> new FileInfo(filePath).Directory!.Parent!.FullName;
+
+	private static string FindFilePath(string directoryOrFile)
 	{
 		if (File.Exists(directoryOrFile))
 		{

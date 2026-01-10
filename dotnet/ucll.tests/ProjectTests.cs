@@ -1,4 +1,4 @@
-public static class ProjectVersionFileTests
+public static class ProjectTests
 {
 	[Theory]
 	[InlineData("""
@@ -15,7 +15,7 @@ public static class ProjectVersionFileTests
 		File.WriteAllText(filePath, fileContent);
 		try
 		{
-			var result = ProjectVersionFile.Parse(filePath, out string _);
+			var result = Project.Parse(filePath);
 
 			Assert.Equal(expectedVersion, result.Version);
 			Assert.Equal(expectedChangeset, result.Changeset);

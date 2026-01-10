@@ -12,7 +12,7 @@ internal class VersionUsage
 			.ToHashSet();
 
 		Used = FindUnityProjects(platformSupport)
-			.Select(p => ProjectVersionFile.Parse(p, out string _).Version)
+			.Select(p => Project.Parse(p).Version)
 			.ToHashSet();
 	}
 
