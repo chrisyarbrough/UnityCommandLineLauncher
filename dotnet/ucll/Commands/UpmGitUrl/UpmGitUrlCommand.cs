@@ -70,11 +70,9 @@ internal class UpmGitUrlCommand(UnityHub unityHub) : BaseCommand<UpmGitUrlSettin
 		using var process = ProcessRunner.Default.Run(processInfo) ??
 		                    throw new UserException("Failed to start git process");
 
-		string output = process.StandardOutput.ReadToEnd();
-		string error = process.StandardError.ReadToEnd();
-		process.WaitForExit();
+		(string output, string error, int exitCode) = process.CaptureOutput();
 
-		if (process.ExitCode != 0)
+		if (exitCode != 0)
 			throw new UserException($"Git command failed: {error}");
 
 		return output.Trim();

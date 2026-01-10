@@ -32,10 +32,9 @@ internal sealed class MacSupport : PlatformSupport
 				RedirectStandardOutput = true,
 			});
 
-		string output = process.StandardOutput.ReadToEnd().Trim();
-		process.WaitForExit();
+		(string output, _, int exitCode) = process.CaptureOutput();
 
-		return process.ExitCode == 0 ? output : null;
+		return exitCode == 0 ? output : null;
 	}
 
 	protected override string? FindUnityHub()
@@ -46,8 +45,7 @@ internal sealed class MacSupport : PlatformSupport
 				RedirectStandardOutput = true,
 			});
 
-		string output = process.StandardOutput.ReadToEnd();
-		process.WaitForExit();
+		(string output, _, _) = process.CaptureOutput();
 
 		if (process.ExitCode != 0 || string.IsNullOrWhiteSpace(output))
 			return null;

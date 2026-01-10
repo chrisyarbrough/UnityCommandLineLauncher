@@ -48,8 +48,6 @@ internal static class SelectionPrompt
 
 		process.StandardInput.Close();
 
-		string result = process.StandardOutput.ReadToEnd().Trim();
-		process.WaitForExit();
-		return result;
+		return process.CaptureOutput().output.Trim();
 	}
 }

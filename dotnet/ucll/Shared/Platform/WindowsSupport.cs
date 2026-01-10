@@ -67,9 +67,8 @@ internal sealed class WindowsSupport : PlatformSupport
 				RedirectStandardOutput = true,
 			});
 
-		string output = process.StandardOutput.ReadToEnd().Trim();
-		process.WaitForExit();
+		(string output, _, int exitCode) = process.CaptureOutput();
 
-		return process.ExitCode == 0 ? output : null;
+		return exitCode == 0 ? output.Trim() : null;
 	}
 }

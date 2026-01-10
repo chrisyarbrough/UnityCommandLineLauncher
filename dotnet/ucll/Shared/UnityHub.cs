@@ -129,8 +129,7 @@ internal class UnityHub(PlatformSupport platformSupport)
 			RedirectStandardError = true,
 		};
 		Process process = ProcessRunner.Default.Run(startInfo);
-		string output = process.StandardOutput.ReadToEnd();
-		process.WaitForExit();
+		string output = process.CaptureOutput().output;
 
 		// There's a bug in some older Unity Hub version where the exit code is non-zero, but the output works.
 		// So, don't do any validation, just attempt to parse.
