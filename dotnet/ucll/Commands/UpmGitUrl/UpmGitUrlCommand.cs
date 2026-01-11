@@ -23,9 +23,7 @@ internal class UpmGitUrlCommand(UnityHub unityHub) : SearchPathCommand<UpmGitUrl
 		}
 		else
 		{
-			string[] choices = packageJsonFiles
-				.Select(p => Path.GetRelativePath(projectPath, p))
-				.ToArray();
+			var choices = packageJsonFiles.Select(p => Path.GetRelativePath(projectPath, p));
 			string relativeChoice = SelectionPrompt.Prompt(choices, "Multiple package.json files found. Select one: ");
 			selectedPackageJson = Path.Combine(projectPath, relativeChoice);
 		}

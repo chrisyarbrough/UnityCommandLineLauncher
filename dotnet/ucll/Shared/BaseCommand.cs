@@ -16,6 +16,11 @@ internal abstract class BaseCommand<TSettings> : Command<TSettings>
 				return ExecuteImpl(settings);
 			}
 		}
+		catch (UserCancelledException e)
+		{
+			AnsiConsole.WriteLine(e.Message);
+			return 0;
+		}
 		catch (UserException e)
 		{
 			WriteError(e.Message);

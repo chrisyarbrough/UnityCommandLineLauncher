@@ -1,16 +1,19 @@
+using System.Diagnostics.CodeAnalysis;
+
 internal static class SelectionPrompt
 {
-	public static string Prompt(IList<string> choices, string title)
+	public static string Prompt(IEnumerable<string> choices, string title)
 	{
 		string choice = PromptImpl(choices, title);
 
 		if (string.IsNullOrEmpty(choice))
-			throw new UserException("No search path specified. Aborting.");
+			throw new UserCancelledException("Selection prompt cancelled.");
 
 		return choice;
 	}
 
-	private static string PromptImpl(IList<string> choices, string title)
+	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+	private static string PromptImpl(IEnumerable<string> choices, string title)
 	{
 		try
 		{
@@ -28,7 +31,7 @@ internal static class SelectionPrompt
 		}
 	}
 
-	private static string PromptWithFzf(IList<string> projects, string title)
+	private static string PromptWithFzf(IEnumerable<string> projects, string title)
 	{
 		var process = new Process
 		{

@@ -48,8 +48,7 @@ internal class UninstallUnusedCommand(PlatformSupport platformSupport, UnityHub 
 
 		if (!shouldUninstall)
 		{
-			AnsiConsole.MarkupLine("[yellow]Uninstallation cancelled.[/]");
-			return 0;
+			throw new UserCancelledException("Uninstallation cancelled.");
 		}
 
 		AnsiConsole.WriteLine();

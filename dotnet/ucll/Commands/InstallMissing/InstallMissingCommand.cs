@@ -28,8 +28,7 @@ internal class InstallMissingCommand(PlatformSupport platformSupport, UnityHub u
 
 		if (!shouldInstall)
 		{
-			AnsiConsole.MarkupLine("[yellow]Installation cancelled.[/]");
-			return 0;
+			throw new UserCancelledException("Installation cancelled.");
 		}
 
 		AnsiConsole.WriteLine();
