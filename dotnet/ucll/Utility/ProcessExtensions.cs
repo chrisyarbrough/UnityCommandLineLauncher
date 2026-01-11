@@ -5,12 +5,12 @@ internal static class ProcessExtensions
 	/// </summary>                                                                                                                                                                                                                            │
 	public static (string output, string error, int exitCode) CaptureOutput(this Process process)
 	{
-		static string GetStream(bool flag, StreamReader reader)
-			=> flag ? reader.ReadToEnd() : string.Empty;
+		static string GetStream(bool flag, Func<StreamReader> readerSelector)
+			=> flag ? readerSelector.Invoke().ReadToEnd() : string.Empty;
 
 		ProcessStartInfo info = process.StartInfo;
-		string output = GetStream(info.RedirectStandardOutput, process.StandardOutput);
-		string error = GetStream(info.RedirectStandardError, process.StandardError);
+		string output = GetStream(info.RedirectStandardOutput, () => process.StandardOutput);
+		string error = GetStream(info.RedirectStandardError, () => process.StandardError);
 		process.WaitForExit();
 		return (output, error, process.ExitCode);
 	}
