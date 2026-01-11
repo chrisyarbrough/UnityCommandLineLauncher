@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Formats.Tar;
 using System.IO.Compression;
 using System.Security.Cryptography;
-using System.Text;
 
 (string runtime, string binaryExtension, Action<string, Func<string, Stream>> compressionMethod)[] targets =
 [
@@ -82,17 +81,12 @@ static void CompressZip(string sourceFile, Func<string, Stream> streamFactory)
 static string ComputeSHA256(string filePath)
 {
 	using FileStream stream = File.OpenRead(filePath);
-	byte[] hashBytes = SHA256.HashData(stream);
-	StringBuilder sb = new(hashBytes.Length * 2);
-	foreach (byte b in hashBytes)
-		sb.Append(b.ToString("x2"));
-	return sb.ToString();
+	return Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
 }
 
 static void SignWithGPG(string filePath)
 {
 	string outputPath = filePath + ".asc";
-
 	Process process = ProcessUtil.Run("gpg", $"--clearsign --output \"{outputPath}\" \"{filePath}\"");
 
 	if (process.ExitCode == 0)
