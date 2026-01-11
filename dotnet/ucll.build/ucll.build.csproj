@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<GenerateDependencyFile>false</GenerateDependencyFile>
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+</Project>

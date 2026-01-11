@@ -14,7 +14,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		..\README.md = ..\README.md
 		.gitignore = .gitignore
 		..\.editorconfig = ..\.editorconfig
+		..\TestPlan.md = ..\TestPlan.md
+		..\Security.md = ..\Security.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ucll.build", "ucll.build\ucll.build.csproj", "{86C4051C-9917-4FB7-B4E0-83BEF6FF7C31}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +29,8 @@ Global
 		{696F005F-6F0D-42C2-8311-21A7DEC97955}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A3A22E5B-E242-4B0B-B8AA-6595526E1806}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3A22E5B-E242-4B0B-B8AA-6595526E1806}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86C4051C-9917-4FB7-B4E0-83BEF6FF7C31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86C4051C-9917-4FB7-B4E0-83BEF6FF7C31}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
