@@ -4,18 +4,7 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 	{
 		ValidateProjectDoesNotExist(settings.ProjectPath);
 
-		string version;
-		if (settings.Version != null)
-		{
-			version = settings.Version;
-		}
-		else
-		{
-			AnsiConsole.MarkupLine("[dim]No version specified. Searching for available editors...[/]");
-			var versions = unityHub.ListInstalledEditors().Select(editor => editor.Version);
-			version = SelectionPrompt.Prompt(UnityVersion.SortNewestFirst(versions), "Select Unity version");
-		}
-
+		string version = settings.Version ?? VersionSettings.PromptForVersion(unityHub);
 		string editorPath = unityHub.GetEditorPath(version);
 		AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
 
