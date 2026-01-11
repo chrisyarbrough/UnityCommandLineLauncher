@@ -21,7 +21,7 @@ internal class VersionUsageCommand(PlatformSupport platformSupport, UnityHub uni
 		table.AddColumn("[bold]Installed[/]");
 		table.AddColumn("[bold]Used[/]");
 
-		foreach (string version in versions.Installed.Union(versions.Used))
+		foreach (string version in UnityVersion.SortNewestFirst(versions.Installed.Union(versions.Used)))
 		{
 			bool isInstalled = versions.Installed.Contains(version);
 			bool isUsed = versions.Used.Contains(version);
@@ -44,25 +44,25 @@ internal class VersionUsageCommand(PlatformSupport platformSupport, UnityHub uni
 	private static void PrintParseable(VersionUsage installs)
 	{
 		Console.WriteLine("# Installed versions: " + installs.Installed.Count);
-		foreach (string version in installs.Installed)
+		foreach (string version in UnityVersion.SortNewestFirst(installs.Installed))
 		{
 			Console.WriteLine(version);
 		}
 
 		Console.WriteLine("# Used versions: " + installs.Used.Count);
-		foreach (string version in installs.Used)
+		foreach (string version in UnityVersion.SortNewestFirst(installs.Used))
 		{
 			Console.WriteLine(version);
 		}
 
 		Console.WriteLine("# Used versions that are not installed: " + installs.UsedNotInstalled.Count);
-		foreach (string version in installs.UsedNotInstalled)
+		foreach (string version in UnityVersion.SortNewestFirst(installs.UsedNotInstalled))
 		{
 			Console.WriteLine(version);
 		}
 
 		Console.WriteLine("# Installed versions that are not used: " + installs.InstalledNotUsed.Count);
-		foreach (string version in installs.InstalledNotUsed)
+		foreach (string version in UnityVersion.SortNewestFirst(installs.InstalledNotUsed))
 		{
 			Console.WriteLine(version);
 		}

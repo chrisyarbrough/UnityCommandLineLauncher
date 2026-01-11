@@ -8,7 +8,7 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 		string editorPath = unityHub.GetEditorPath(version);
 		AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
 
-		AnsiConsole.MarkupLine($"[cyan]Creating Unity project...[/]");
+		AnsiConsole.MarkupLine("[cyan]Creating Unity project...[/]");
 
 		if (settings.Minimal)
 		{
@@ -37,7 +37,7 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 			}
 		}
 
-		WriteSuccess($"Unity project created successfully.");
+		WriteSuccess("Unity project created successfully.");
 		return 0;
 	}
 
