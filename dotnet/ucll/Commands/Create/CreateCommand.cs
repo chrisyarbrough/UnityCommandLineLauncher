@@ -2,19 +2,29 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 {
 	protected override int ExecuteImpl(CreateSettings settings)
 	{
-		string projectPath = settings.ProjectPath;
+		ValidateProjectDoesNotExist(settings.ProjectPath);
 
-		ValidateProjectDoesNotExist(projectPath);
+		string version;
+		if (settings.Version != null)
+		{
+			version = settings.Version;
+		}
+		else
+		{
+			AnsiConsole.MarkupLine("[dim]No version specified. Searching for available editors...[/]");
+			var versions = unityHub.ListInstalledEditors().Select(editor => editor.Version);
+			version = SelectionPrompt.Prompt(versions, "Select Unity version");
+		}
 
-		string editorPath = unityHub.GetEditorPath(settings.Version);
+		string editorPath = unityHub.GetEditorPath(version);
 		AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
 
-		AnsiConsole.MarkupLine($"[cyan]Creating Unity project at {projectPath}...[/]");
+		AnsiConsole.MarkupLine($"[cyan]Creating Unity project...[/]");
 
 		if (settings.Minimal)
 		{
-			string changeset = UnityReleaseApi.FetchChangesetAsync(settings.Version).Result;
-			CreateManually(projectPath, settings.Version, changeset);
+			string changeset = UnityReleaseApi.FetchChangesetAsync(version).Result;
+			CreateManually(settings.ProjectPath, version, changeset);
 		}
 		else
 		{
@@ -23,7 +33,7 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 				"-batchmode",
 				"-quit",
 				"-createProject",
-				projectPath,
+				settings.ProjectPath,
 			};
 
 			var process = settings.MutatingProcess.Run(
@@ -38,7 +48,7 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 			}
 		}
 
-		WriteSuccess($"Unity project created successfully at {projectPath}");
+		WriteSuccess($"Unity project created successfully.");
 		return 0;
 	}
 
