@@ -13,7 +13,7 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 		{
 			AnsiConsole.MarkupLine("[dim]No version specified. Searching for available editors...[/]");
 			var versions = unityHub.ListInstalledEditors().Select(editor => editor.Version);
-			version = SelectionPrompt.Prompt(versions, "Select Unity version");
+			version = SelectionPrompt.Prompt(UnityVersion.SortNewestFirst(versions), "Select Unity version");
 		}
 
 		string editorPath = unityHub.GetEditorPath(version);
