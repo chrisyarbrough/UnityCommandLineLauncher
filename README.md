@@ -74,6 +74,13 @@ You may need to make the file executable:
 chmod +x ucll
 ```
 
+### Interaction Selection Prompt
+
+Various commands have optional parameters which show a selection prompt:
+
+- Use the arrow keys to select an item and press Enter to confirm
+- Type on the keyboard to start searching.
+
 ### Enhanced Fuzzy Search (Optional)
 
 Install [fzf](https://github.com/junegunn/fzf) 0.67.0 or newer:
@@ -87,9 +94,12 @@ With `fzf` installed, the interactive project selection (`unity open`) will use 
 - **Acronyms**: `cfp` finds "core-frontend-platform"
 - **Typo tolerance**: `sigle-sign` finds "single-sign-on"
 
+Press the ESC key to cancel the prompt.
+
 ![](docs/Screenshot_Open_Search.png)
 
 If `fzf` is not installed, the built-in search will be used as a fallback.
+Press CTRL + C to cancel the prompt. Known bug: This will leave the console cursor hidden.
 
 ### Unity Hub
 

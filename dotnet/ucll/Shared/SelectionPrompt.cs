@@ -27,6 +27,7 @@ internal static class SelectionPrompt
 					.Title(title)
 					.EnableSearch()
 					.SearchPlaceholderText("[dim](Type to search. Install 'fzf' for fuzzy matching.)[/]")
+					.WrapAround()
 					.AddChoices(choices));
 		}
 	}
@@ -38,7 +39,7 @@ internal static class SelectionPrompt
 			StartInfo = new ProcessStartInfo
 			{
 				FileName = "fzf",
-				Arguments = $"--prompt=\"{title}\" --height=40% --reverse --bind=change:first -i",
+				Arguments = $"--prompt=\"{title}\" --height=40% --reverse --bind=change:first --cycle",
 				RedirectStandardInput = true,
 				RedirectStandardOutput = true,
 			},
