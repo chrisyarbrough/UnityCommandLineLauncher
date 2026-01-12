@@ -3,7 +3,7 @@ using System.ComponentModel;
 internal class VersionSettings : CommandSettings
 {
 	[CommandArgument(0, "[version]")]
-	[Description("Unity version (e.g., 2022.3.10f1)")]
+	[Description(Descriptions.Version)]
 	public required string? Version { get; init; }
 
 	public string GetVersionOrPrompt(UnityHub unityHub)

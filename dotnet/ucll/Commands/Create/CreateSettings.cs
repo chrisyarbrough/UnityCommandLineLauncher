@@ -7,7 +7,7 @@ internal class CreateSettings : MutatingSettings
 	public string ProjectPath { get; init; } = string.Empty;
 
 	[CommandArgument(1, "[version]")]
-	[Description("Unity version (e.g., 2022.3.10f1)")]
+	[Description(Descriptions.Version)]
 	public string? Version { get; init; }
 
 	[CommandOption("-m|--minimal")]

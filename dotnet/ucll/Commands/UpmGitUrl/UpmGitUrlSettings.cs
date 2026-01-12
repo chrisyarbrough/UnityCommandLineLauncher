@@ -3,11 +3,10 @@ using System.ComponentModel;
 internal class UpmGitUrlSettings : CommandSettings
 {
 	[CommandArgument(0, "[searchPath]")]
-	[Description(
-		"Directory to be searched for a Unity project or path to ProjectVersion.txt (omit for interactive prompt)")]
+	[Description(Descriptions.SearchPath)]
 	public string? SearchPath { get; init; }
 
 	[CommandOption("-f|--favorite|--favorites")]
-	[Description("Show only favorite projects in interactive selection")]
+	[Description(Descriptions.Favorite)]
 	public bool Favorite { get; init; }
 }

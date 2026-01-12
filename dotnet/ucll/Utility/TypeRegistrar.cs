@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// Integrates the DI framework with Spectre.Console.
+/// Integrates the Microsoft DI framework with Spectre.Console.
 /// </summary>
 public sealed class TypeRegistrar(IServiceCollection services) : ITypeRegistrar
 {

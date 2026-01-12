@@ -10,7 +10,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{B468F921-1B0D-40AD-B1F4-817FECA38C9C}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
-		UnityCommandLineLauncher.sln.DotSettings = UnityCommandLineLauncher.sln.DotSettings
 		..\README.md = ..\README.md
 		.gitignore = .gitignore
 		..\.editorconfig = ..\.editorconfig
