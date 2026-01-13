@@ -187,6 +187,12 @@ Remember to take advantage of the builtin search to interactively select from mu
 uo ~/repos
 ```
 
+You can use the `project-path` command to cd into a directory (e.g. for updating git in a project) before opening Unity:
+
+```shell
+cd $(unity project-path)
+```
+
 ## Design Background
 
 ### Problems
