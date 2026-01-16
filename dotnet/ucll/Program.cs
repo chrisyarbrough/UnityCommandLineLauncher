@@ -14,7 +14,7 @@ var app = new CommandApp(registrar);
 app.Configure(config =>
 {
 	config.SetApplicationName("ucll");
-	config.SetApplicationVersion("0.1.0");
+	config.SetApplicationVersion("0.2.0");
 	config.AddExample("open");
 	config.AddExample("open", "searchPath", "--code-editor");
 	config.AddExample("open", "searchPath", "--", "-batchmode", "-quit");
