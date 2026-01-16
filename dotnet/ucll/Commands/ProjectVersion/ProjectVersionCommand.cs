@@ -11,7 +11,7 @@ internal class ProjectVersionCommand(UnityHub unityHub) : SearchPathCommand<Proj
 		if (info.Changeset != null)
 			output += " " + info.Changeset;
 
-		AnsiConsole.WriteLine(output);
+		Console.WriteLine(output);
 		return 0;
 	}
 }

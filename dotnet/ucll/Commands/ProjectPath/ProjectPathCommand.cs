@@ -4,7 +4,7 @@ internal class ProjectPathCommand(UnityHub unityHub) : SearchPathCommand<Project
 	{
 		string searchPath = ResolveSearchPath(settings.SearchPath, settings.Favorite);
 		string projectPath = Project.FindProjectPath(searchPath);
-		AnsiConsole.WriteLine(projectPath);
+		Console.WriteLine(projectPath);
 		return 0;
 	}
 }

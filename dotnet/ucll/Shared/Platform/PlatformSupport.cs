@@ -1,5 +1,21 @@
+using System.Runtime.InteropServices;
+
 internal abstract class PlatformSupport
 {
+	public static PlatformSupport Create()
+	{
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			return new MacSupport();
+
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			return new WindowsSupport();
+
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			return new LinuxSupport();
+
+		throw new UserException($"Unsupported platform: {RuntimeInformation.RuntimeIdentifier}");
+	}
+
 	/// <summary>
 	/// Default path to the editor executable or null if it doesn't exist.
 	/// </summary>
@@ -19,7 +35,7 @@ internal abstract class PlatformSupport
 	/// Given the path to an editor executable, returns the root directory path of the installation.
 	/// </summary>
 	public string FindInstallationRoot(string editorPath)
-		=> editorPath.Replace(RelativeEditorPathToExecutable, string.Empty);
+		=> new DirectoryInfo(editorPath.Replace(RelativeEditorPathToExecutable, string.Empty)).Parent!.FullName;
 
 	/// <summary>
 	/// Path to the Unity Hub executable or null if it doesn't exist (or couldn't be found).
@@ -53,7 +69,7 @@ internal abstract class PlatformSupport
 	public abstract ProcessStartInfo OpenFileWithApp(string filePath, string applicationPath);
 
 	/// <summary>
-	/// The path from the installation root to the executable.
+	/// The path from the installation bundle (macOS) or root (Windows) to the executable.
 	/// </summary>
 	public abstract string RelativeEditorPathToExecutable { get; }
 

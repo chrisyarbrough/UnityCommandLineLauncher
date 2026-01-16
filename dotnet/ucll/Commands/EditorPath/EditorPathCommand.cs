@@ -4,7 +4,7 @@ internal class EditorPathCommand(UnityHub unityHub) : BaseCommand<VersionSetting
 	{
 		string version = settings.GetVersionOrPrompt(unityHub);
 		string path = unityHub.GetEditorPath(version);
-		AnsiConsole.WriteLine(path);
+		Console.WriteLine(path);
 		return 0;
 	}
 }

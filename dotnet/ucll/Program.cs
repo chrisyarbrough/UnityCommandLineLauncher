@@ -1,25 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
-using System.Runtime.InteropServices;
 using System.Text;
 
 Console.OutputEncoding = Encoding.UTF8;
 
 var services = new ServiceCollection();
 
-services.AddSingleton<PlatformSupport>(_ =>
-{
-	if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-		return new MacSupport();
-
-	if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-		return new WindowsSupport();
-
-	if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-		return new LinuxSupport();
-
-	throw new UserException($"Unsupported platform: {RuntimeInformation.RuntimeIdentifier}");
-});
-
+services.AddSingleton(PlatformSupport.Create());
 services.AddSingleton<UnityHub>();
 
 var registrar = new TypeRegistrar(services);

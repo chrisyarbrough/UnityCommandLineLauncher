@@ -42,7 +42,7 @@ internal class UpmGitUrlCommand(UnityHub unityHub) : SearchPathCommand<UpmGitUrl
 		string branch = RunGitCommand(gitRoot, "rev-parse --abbrev-ref HEAD");
 
 		string upmUrl = $"{remoteUrl}?path={relativePath}#{branch}";
-		AnsiConsole.WriteLine(upmUrl);
+		Console.WriteLine(upmUrl);
 		return 0;
 	}
 

@@ -18,6 +18,8 @@ internal class VersionSettings : CommandSettings
 	{
 		AnsiConsole.MarkupLine("[dim]No version specified. Searching for available editors...[/]");
 		var versions = unityHub.ListInstalledEditors().Select(editor => editor.Version);
-		return SelectionPrompt.Prompt(UnityVersion.SortNewestFirst(versions), "Select Unity version");
+		string version = SelectionPrompt.Prompt(UnityVersion.SortNewestFirst(versions), "Select Unity version");
+		AnsiConsole.MarkupLine($"[dim]Selected: {version}[/]");
+		return version;
 	}
 }

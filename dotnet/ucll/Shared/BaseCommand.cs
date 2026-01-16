@@ -18,12 +18,17 @@ internal abstract class BaseCommand<TSettings> : Command<TSettings>
 		}
 		catch (UserCancelledException e)
 		{
-			AnsiConsole.WriteLine(e.Message);
+			Console.WriteLine(e.Message);
 			return 0;
 		}
 		catch (UserException e)
 		{
 			WriteError(e.Message);
+			return 1;
+		}
+		catch (AggregateException ae) when (ae.InnerException is UserException ue)
+		{
+			WriteError(ue.Message);
 			return 1;
 		}
 		catch (Exception ex)

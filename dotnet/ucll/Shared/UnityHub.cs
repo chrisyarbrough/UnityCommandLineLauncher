@@ -89,13 +89,13 @@ internal class UnityHub(PlatformSupport platformSupport)
 
 	public void InstallEditor(string version, string? changeset, IProcessRunner processRunner, string[] additionalArgs)
 	{
+		WriteStatusUpdate($"Installing Unity version {version} {changeset}");
+
 		if (changeset == null)
 		{
 			WriteStatusUpdate("Changeset not provided, fetching from Unity API");
 			changeset = UnityReleaseApi.FetchChangesetAsync(version).Result;
 		}
-
-		WriteStatusUpdate($"Installing Unity version {version} {changeset}");
 
 		string args = $"--headless install --version {version} --changeset {changeset}";
 		args = ConfigurePlatformArgs(args);

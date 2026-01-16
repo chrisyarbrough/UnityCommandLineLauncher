@@ -17,7 +17,7 @@ internal readonly struct ProfilingTimer : IDisposable
 		if (Debug.IsEnabled)
 		{
 			watch!.Stop();
-			AnsiConsole.WriteLine($"[Timing] {label}: {watch.ElapsedMilliseconds}ms");
+			Console.WriteLine($"[Timing] {label}: {watch.ElapsedMilliseconds}ms");
 		}
 	}
 

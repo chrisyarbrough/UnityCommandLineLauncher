@@ -4,7 +4,7 @@ internal class EditorRevisionCommand(UnityHub unityHub) : BaseCommand<VersionSet
 	{
 		string version = settings.GetVersionOrPrompt(unityHub);
 		string changeset = UnityReleaseApi.FetchChangesetAsync(version).Result;
-		AnsiConsole.WriteLine(changeset);
+		Console.WriteLine(changeset);
 		return 0;
 	}
 }

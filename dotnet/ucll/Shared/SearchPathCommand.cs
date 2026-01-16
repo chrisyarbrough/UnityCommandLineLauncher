@@ -21,11 +21,13 @@ internal abstract class SearchPathCommand<TSettings>(UnityHub unityHub) : BaseCo
 	{
 		string[] recentProjects = unityHub.GetRecentProjects(favoriteOnly).ToArray();
 
+		string attribute = favoriteOnly ? "favorite" : "recent";
+
 		if (recentProjects.Length == 0)
-			throw new UserException("No projects found in Unity Hub.");
+			throw new UserException($"No {attribute} projects found in Unity Hub.");
 
 		return SelectionPrompt.Prompt(
 			recentProjects,
-			$"Select a {(favoriteOnly ? "favorite" : "recent")} project: ");
+			$"Select a {attribute} project: ");
 	}
 }

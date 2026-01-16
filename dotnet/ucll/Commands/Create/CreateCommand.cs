@@ -5,8 +5,6 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 		ValidateProjectDoesNotExist(settings.ProjectPath);
 
 		string version = settings.Version ?? VersionSettings.PromptForVersion(unityHub);
-		string editorPath = unityHub.GetEditorPath(version);
-		AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
 
 		AnsiConsole.MarkupLine("[cyan]Creating Unity project...[/]");
 
@@ -17,6 +15,9 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 		}
 		else
 		{
+			string editorPath = unityHub.GetEditorPath(version);
+			AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
+
 			var args = new List<string>
 			{
 				"-batchmode",
