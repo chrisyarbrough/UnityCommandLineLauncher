@@ -63,7 +63,7 @@ internal class UpmGitUrlCommand(UnityHub unityHub) : SearchPathCommand<UpmGitUrl
 		(string output, string error, int exitCode) = process.CaptureOutput();
 
 		if (exitCode != 0)
-			throw new UserException($"Git command failed: {error}");
+			throw new UserException($"Git command failed: {(string.IsNullOrWhiteSpace(error) ? "No output." : error)}");
 
 		return output.Trim();
 	}

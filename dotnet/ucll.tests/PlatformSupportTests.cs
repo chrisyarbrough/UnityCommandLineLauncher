@@ -4,7 +4,7 @@ public class PlatformSupportTests
 	public void FindInstallationRootReturnsValidRoot()
 	{
 		PlatformSupport platformSupport = PlatformSupport.Create();
-		string editorPath = "/Applications/Unity/Hub/Editor/2022.3.10f1/Unity.app/Contents/MacOS/Unity";
+		const string editorPath = "/Applications/Unity/Hub/Editor/2022.3.10f1/Unity.app/Contents/MacOS/Unity";
 		string root = platformSupport.FindInstallationRoot(editorPath);
 		Assert.Equal("/Applications/Unity/Hub/Editor/2022.3.10f1", root);
 	}
