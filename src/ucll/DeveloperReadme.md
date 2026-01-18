@@ -46,13 +46,13 @@ dotnet publish
 
 For the `ucll` project. You will find the build output e.g. here: `src/ucll/bin/osx-arm64/publish/ucll`
 
-If you want to publish releases for all platforms and sign them, **run** the `uccl.build` project:
+If you want to publish releases for all platforms and sign them, **run** the `ucll.build` project:
 
 ```bash
 dotnet run --project ../ucll.build
 ```
 
-> Calling `dotnet publish -project ../ucll.build` would publish the build project itself, which wouldn't make sense.
+> Calling `dotnet publish --project ../ucll.build` would publish the build project itself, which wouldn't make sense.
 
 The binaries are configured in the .csproj to be self-contained
 (they don't require a .NET runtime installed by the user).

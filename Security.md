@@ -5,7 +5,7 @@ Commits and releases are cryptographically signed with my GPG key `F744D8C299C05
 ## Prerequisite
 
 Find public sources of trust for my GPG key ID `F744D8C299C05EAA`, e.g. my website, GitHub, or similar.
-Verify the integrity of this guide by comparing the key ID and fingerpint throughout.
+Verify the integrity of this guide by comparing the key ID and fingerprint throughout.
 
 ## Verify Source
 
@@ -38,12 +38,12 @@ Verify the integrity of this guide by comparing the key ID and fingerpint throug
    ```
 2. Download one of the release files (tarball or zip).
 3. Download the SHA256SUMS.asc file which is a signed file containing checksums.
-3. In the directory of the downloaded files, verify the integrity:
+4. In the directory of the downloaded files, verify the integrity:
     ```shell
     gpg --verify SHA256SUMS.asc
     ```
-4. Ensure the output shows my name `Chris Yarbrough` and key fingerprint `98A78974F886777AB85CF1D0F744D8C299C05EAA`.
-5. Verify the checksum(s):
+5. Ensure the output shows my name `Chris Yarbrough` and key fingerprint `98A78974F886777AB85CF1D0F744D8C299C05EAA`.
+6. Verify the checksum(s):
     ```shell
     sha256sum -c SHA256SUMS.asc
     ```

@@ -41,8 +41,6 @@ If the `version` argument is omitted, an interactive prompt shows all installed 
 
 ## Installation
 
-See [Security.md](Security.md) for instruction on how to verify the authenticity of your installation.
-
 ### From Source (recommended)
 
 1. Clone the repository.
@@ -62,7 +60,9 @@ See [Security.md](Security.md) for instruction on how to verify the authenticity
 Or, download a binary from the GitHub _Releases_ page.
 
 E.g. for macOS with an M4 Apple processor:
-`uccl-osx-arm64.zip`
+`ucll-osx-arm64.tar.gz`
+
+See [Security.md](Security.md) for instructions on how to verify the authenticity of your download.
 
 ## Setup
 
@@ -72,7 +72,7 @@ Create an alias in your shell config (.zshrc, .shellrc, etc.):
 echo 'alias unity="~/UnityCommandLineLauncher/src/ucll/bin/Release/osx-arm64/publish/ucll"' >> ~/.zshrc
 ```
 
-> The Rest of the guide assumes you have the alias named `unity` to run the `ucll` tool.
+> The remainder of the guide assumes you have the alias named `unity` to run the `ucll` tool.
 
 Or add the binary location to your PATH variable.
 

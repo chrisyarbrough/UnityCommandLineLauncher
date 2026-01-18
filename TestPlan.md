@@ -24,7 +24,7 @@ This document contains test cases that need to be verified before releasing a ne
 | Interactive favorites - no favorites     | `unity open --favorite` (no favorites marked)            | Shows error                                                     |  [ ]  |
 | Favorites flag alias (--favorite)        | `unity open --favorites`                                 | Alias for --favorite                                            |  [ ]  |
 | Open with code editor                    | `unity open path --code-editor`                          | Opens project's solution file in default code editor            |  [ ]  |
-| Open with code editor (no solution)      | `unity open path --code-editor` (no yet generated)       | Opens project's solution file as soon as it is generated        |  [ ]  |
+| Open with code editor (no solution)      | `unity open path --code-editor` (not yet generated)      | Opens project's solution file as soon as it is generated        |  [ ]  |
 | Open with dry-run                        | `unity open path --dry-run`                              | Shows what would be executed without opening                    |  [ ]  |
 
 ### `create`
