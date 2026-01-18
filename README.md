@@ -223,6 +223,9 @@ cd $(unity project-path)
 
 See the [Developer Readme](src/ucll/DeveloperReadme.md) to see how to build the .NET source.
 
-## Future
+## Future & Contributions
 
-If the tool receives enough stars/forks, I'll publish it to _Homebrew_ and similar package managers.
+I consider the API pre version 1.0.0 experimental. Let's collaborate on defining the overall command structure.
+Once it has settled a bit and we have automated Docker/VM tests, we can publish a stable release version.
+
+If the tool receives enough stars/forks, we can publish it to _Homebrew_ and similar package managers.

@@ -1,5 +1,34 @@
 # Unity Command Line Launcher (.NET)
 
+## Prerequisites
+
+- Check the [Directory.Build.props](../Directory.Build.props) file for the .NET version to install.
+- You should be familiar with using the `dotnet` CLI or the build/publish features in your IDE (e.g. JetBrains Rider).
+
+## Building
+
+The project requires no special process to compile the source. Simply run:
+
+```shell
+dotnet build
+```
+
+From the project directory `ucll`.
+
+You can then run the code without having to publish a standalone binary via:
+
+```shell
+dotnet run
+```
+
+## Testing
+
+Run the default test commands in the `ucll.tests` project:
+
+```shell
+dotnet test
+```
+
 ## Debugging
 
 This project uses only a single _Release_ configuration with debugging enabled.
@@ -9,11 +38,21 @@ Run with the `--dry-run` flag to simulate mutating commands (e.g. open or instal
 
 ## Publishing
 
-Run the `uccl.build` to create signed release artifacts:
+If you want to publish (export) a single-file self-contained binary for your current platform, run:
+
+```shell
+dotnet publish
+```
+
+For the `ucll` project. You will find the build output e.g. here: `src/ucll/bin/osx-arm64/publish/ucll`
+
+If you want to publish releases for all platforms and sign them, **run** the `uccl.build` project:
 
 ```bash
 dotnet run --project ../ucll.build
 ```
+
+> Calling `dotnet publish -project ../ucll.build` would publish the build project itself, which wouldn't make sense.
 
 The binaries are configured in the .csproj to be self-contained
 (they don't require a .NET runtime installed by the user).
