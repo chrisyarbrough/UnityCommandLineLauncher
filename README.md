@@ -2,28 +2,40 @@
 
 A terminal command to open Unity projects quickly from the command line.
 
-![](docs/Screenshot_Open_Path.png)
+![](doc/Screenshot_Open_Path.png)
 
 ## Supported Platforms
 
-- macOS (tested with Sequoia 15.7.1)
-- Windows (11)
-- Linux (limited support, contributions welcome!)
+- macOS
+- Windows
+- Linux
 
 ## Commands
 
-| Name                           | Description                                                          |
-|--------------------------------|----------------------------------------------------------------------|
-| `open [path]`                  | Opens the Unity project.                                             |
-| `open`                         | Shows a selection prompt of recent projects from the Unity Hub.      |
-| `install <version>`            | Installs the Editor by version, fetching the revision, if necessary. |
-| `editor-revision <version>`    | Fetches the revision from Unity's API.                               |
-| `editor-path <version>`        | Gets the installation directory of the Editor, if installed.         |
-| `project-version <path>`       | Gets the Unity version information from a project.                   |
-| `create <directory> [version]` | Creates a new empty Unity project in the directory.                  |
+| Name                           | Description                                                                 |
+|--------------------------------|-----------------------------------------------------------------------------|
+| `open [path]`                  | Opens the Unity editor by searching for a project within path.              |
+| `open`                         | Shows a selection prompt of recent or favorite projects from the Unity Hub. |
+| `install [version]`            | Installs the Editor by version, fetching the revision, if necessary.        |
+| `install-missing`              | Installs all Unity versions used by projects but not installed.             |
+| `uninstall-unused`             | Uninstalls all Unity versions not used by any projects.                     |
+| `editor-revision [version]`    | Fetches the revision from Unity's API.                                      |
+| `editor-path [version]`        | Gets the installation directory of the Editor, if installed.                |
+| `project-version <path>`       | Gets the Unity version information from a project.                          |
+| `project-path [path]`          | Gets the Unity project root directory from a search path.                   |
+| `projects-using [version]`     | Finds all projects that use a specific Unity version.                       |
+| `version-usage`                | Lists installed Unity versions and indicates which are used.                |
+| `create <directory> [version]` | Creates a new empty Unity project in the directory.                         |
+| `upm-git-url [path]`           | Generates a package git URL for Unity Package Manager from a project.       |
+| `hub`                          | Executes Unity Hub interactively or with additional CLI arguments.          |
 
 `path` can be a ProjectVersion.txt file or a directory (searches up and down for projects).
 If a directory contains multiple Unity projects, an interactive prompt will request a single selection.
+
+If `path` is omitted, it can be selected interactively from a prompt that shows recent projects from the Unity Hub.
+Add the `--favorite` flag to show favorites instead.
+
+If the `version` argument is omitted, an interactive prompt shows all installed editor versions.
 
 ---
 
@@ -96,7 +108,7 @@ With `fzf` installed, the interactive project selection (`unity open`) will use 
 
 Press the ESC key to cancel the prompt.
 
-![](docs/Screenshot_Open_Search.png)
+![](doc/Screenshot_Open_Search.png)
 
 If `fzf` is not installed, the built-in search will be used as a fallback.
 Press CTRL + C to cancel the prompt. Known bug: This will leave the console cursor hidden.
