@@ -49,13 +49,13 @@ See [Security.md](Security.md) for instruction on how to verify the authenticity
 2. Checkout a release tag and take note of the signature, e.g. `git tag -v v1.0.0`.
 3. Navigate to the project directory:
    ```shell
-   cd dotnet/ucll
+   cd src/ucll
    ```
 4. Produce a binary:
    ```shell
    dotnet publish
    ```
-5. Find the binary in e.g. `dotnet/ucll/bin/osx-arm64/publish/`
+5. Find the binary in e.g. `src/ucll/bin/osx-arm64/publish/`
 
 ### Download Binaries
 
@@ -69,7 +69,7 @@ E.g. for macOS with an M4 Apple processor:
 Create an alias in your shell config (.zshrc, .shellrc, etc.):
 
 ```shell
-echo 'alias unity="~/UnityCommandLineLauncher/dotnet/ucll/bin/Release/osx-arm64/publish/ucll"' >> ~/.zshrc
+echo 'alias unity="~/UnityCommandLineLauncher/src/ucll/bin/Release/osx-arm64/publish/ucll"' >> ~/.zshrc
 ```
 
 > The Rest of the guide assumes you have the alias named `unity` to run the `ucll` tool.
@@ -77,7 +77,7 @@ echo 'alias unity="~/UnityCommandLineLauncher/dotnet/ucll/bin/Release/osx-arm64/
 Or add the binary location to your PATH variable.
 
 ```shell
-export PATH=$PATH:~/UnityCommandLineLauncher/dotnet/ucll/bin/Release/osx-arm64/publish/
+export PATH=$PATH:~/UnityCommandLineLauncher/src/ucll/bin/Release/osx-arm64/publish/
 ```
 
 You may need to make the file executable:
@@ -221,10 +221,7 @@ cd $(unity project-path)
 
 ## Development
 
-This repository contains multiple implementations. The dotnet version is officially supported.
-The additional experiments can be used as a reference or to copy-paste into your own projects.
-
-See the [Developer Readme](dotnet/ucll/DeveloperReadme.md) for .NET development.
+See the [Developer Readme](src/ucll/DeveloperReadme.md) to see how to build the .NET source.
 
 ## Future
 

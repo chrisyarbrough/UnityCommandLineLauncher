@@ -18,9 +18,13 @@ dotnet run --project ../ucll.build
 The binaries are configured in the .csproj to be self-contained
 (they don't require a .NET runtime installed by the user).
 
+## Virtual Machine Testing
+
+Currently, I perform manual tests by running a virtual machine in [UTM](https://github.com/utmapp/UTM).
+
 ## Dockerized Testing
 
-There's no pipeline set up yet, but we can do some manual platform testing like this:
+There's no automated pipeline set up yet, but we can also do some manual platform testing like this:
 
 ```bash
 brew install orbstack
@@ -33,7 +37,7 @@ orb start
 ```bash
 dotnet publish --runtime linux-x64
 docker run -it --rm --platform linux/amd64 \
--v /Users/christopher.yarbrough/repos/opensource/UnityCommandLineLauncher/dotnet/ucll/bin/linux-x64/publish:/app \
+-v /Users/christopher.yarbrough/repos/opensource/UnityCommandLineLauncher/src/ucll/bin/linux-x64/publish:/app \
 unityci/hub \
 bash
 ```
