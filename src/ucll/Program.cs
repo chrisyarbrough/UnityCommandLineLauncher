@@ -50,6 +50,11 @@ app.Configure(config =>
 		.WithExample("editor-path")
 		.WithExample("editor-path", "2022.3.10f1");
 
+	config.AddCommand<EditorModulesCommand>("editor-modules")
+		.WithDescription("List installed modules for Unity version")
+		.WithExample("editor-modules")
+		.WithExample("editor-modules", "2022.3.10f1");
+
 	config.AddCommand<ProjectVersionCommand>("project-version")
 		.WithDescription("Get Unity version from project search directory or ProjectVersion.txt")
 		.WithExample("project-version")

@@ -21,6 +21,7 @@ A terminal command to open Unity projects quickly from the command line.
 | `uninstall-unused`             | Uninstalls all Unity versions not used by any projects.                     |
 | `editor-revision [version]`    | Fetches the revision from Unity's API.                                      |
 | `editor-path [version]`        | Gets the installation directory of the Editor, if installed.                |
+| `editor-modules [version]`     | Lists installed modules for a Unity version.                                |
 | `project-version <path>`       | Gets the Unity version information from a project.                          |
 | `project-path [path]`          | Gets the Unity project root directory from a search path.                   |
 | `projects-using [version]`     | Finds all projects that use a specific Unity version.                       |
