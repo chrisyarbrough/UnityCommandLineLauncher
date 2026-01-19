@@ -64,7 +64,9 @@ app.Configure(config =>
 	config.AddCommand<VersionUsageCommand>("version-usage")
 		.WithDescription("List installed Unity Editor versions and indicate which ones are used by projects")
 		.WithExample("version-usage")
-		.WithExample("version-usage", "--plaintext");
+		.WithExample("version-usage", "--plaintext")
+		.WithExample("version-usage", "--modules")
+		.WithExample("version-usage", "--plaintext", "--modules");
 
 	config.AddCommand<ProjectsUsingVersionCommand>("projects-using")
 		.WithDescription("Find all projects that use a specific Unity version")
