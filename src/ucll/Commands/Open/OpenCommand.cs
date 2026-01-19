@@ -82,7 +82,7 @@ internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub)
 	/// <summary>
 	/// Returns as soon as a file found by the pattern exists in the directory.
 	/// </summary>
-	private static async Task<string> WaitForFileAsync(string projectDir, string searchPattern)
+	internal static async Task<string> WaitForFileAsync(string projectDir, string searchPattern)
 	{
 		string? path = Directory.GetFiles(projectDir, searchPattern, SearchOption.TopDirectoryOnly).FirstOrDefault();
 		if (path != null)
