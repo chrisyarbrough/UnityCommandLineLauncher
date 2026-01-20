@@ -29,6 +29,7 @@ A terminal command to open Unity projects quickly from the command line.
 | `create <directory> [version]` | Creates a new empty Unity project in the directory.                         |
 | `upm-git-url [path]`           | Generates a package git URL for Unity Package Manager from a project.       |
 | `hub`                          | Executes Unity Hub interactively or with additional CLI arguments.          |
+| `completion [shell]`           | Generates shell completion scripts (supports ZSH).                          |
 
 `path` can be a ProjectVersion.txt file or a directory (searches up and down for projects).
 If a directory contains multiple Unity projects, an interactive prompt will request a single selection.
@@ -113,6 +114,49 @@ Press the ESC key to cancel the prompt.
 
 If `fzf` is not installed, the built-in search will be used as a fallback.
 Press CTRL + C to cancel the prompt. Known bug: This will leave the console cursor hidden.
+
+### Shell Completion (Optional)
+
+`ucll` supports generating shell completion scripts to enable tab completion for commands and options.
+
+#### ZSH Setup
+
+1. **Generate the completion script:**
+   ```shell
+   ucll completion > ~/.zsh/completions/_ucll
+   ```
+
+2. **Enable completions in your `~/.zshrc` (if not already configured):**
+   ```shell
+   # Add completion directory to fpath
+   fpath=(~/.zsh/completions $fpath)
+
+   # Initialize completion system
+   autoload -Uz compinit && compinit
+   ```
+
+3. **Reload your shell:**
+   ```shell
+   exec zsh
+   ```
+   Or simply open a new terminal window.
+
+#### Usage
+
+Once installed, you can use tab completion:
+
+- `ucll <TAB>` - Shows all available commands
+- `ucll open <TAB>` - Shows options like `--favorite`, `--code-editor`, `--dry-run`
+- `ucll version-usage <TAB>` - Shows options like `--plaintext`, `--modules`
+
+#### Updating Completions
+
+When you update `ucll` or new commands are added, regenerate the completion script:
+
+```shell
+ucll completion > ~/.zsh/completions/_ucll
+exec zsh
+```
 
 ### Unity Hub
 

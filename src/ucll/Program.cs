@@ -101,6 +101,11 @@ app.Configure(config =>
 		.WithDescription("Execute Unity Hub interactively or with additional CLI arguments")
 		.WithExample("hub")
 		.WithExample("hub", "-- --headless help");
+
+	config.AddCommand<CompletionCommand>("completion")
+		.WithDescription("Generate shell completion scripts")
+		.WithExample("completion")
+		.WithExample("completion", "zsh");
 });
 
 return app.Run(args);
