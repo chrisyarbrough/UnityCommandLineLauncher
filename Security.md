@@ -1,6 +1,10 @@
 # Security
 
-Commits and releases are cryptographically signed with my GPG key `F744D8C299C05EAA` to ensure authenticity.
+Commits and releases are cryptographically signed with my (Chris Yarbrough's) GPG key `F744D8C299C05EAA` to ensure authenticity.
+
+> If you would like to contribute to this repo, you may optionally also sign your commits, but it's not a requirements, since I will be vetting each pull request anyway.
+
+Continue reading to learn how you can verify the repository and release artifacts.
 
 ## Prerequisite
 
