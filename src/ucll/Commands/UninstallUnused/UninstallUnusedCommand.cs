@@ -42,7 +42,7 @@ internal class UninstallUnusedCommand(PlatformSupport platformSupport, UnityHub 
 
 		AnsiConsole.WriteLine();
 
-		bool shouldUninstall = AnsiConsole.Confirm(
+		bool shouldUninstall = settings.Yes || AnsiConsole.Confirm(
 			"Do you want to uninstall these versions?",
 			defaultValue: false);
 

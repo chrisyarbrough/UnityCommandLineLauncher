@@ -22,7 +22,7 @@ internal class InstallMissingCommand(PlatformSupport platformSupport, UnityHub u
 
 		AnsiConsole.WriteLine();
 
-		bool shouldInstall = AnsiConsole.Confirm(
+		bool shouldInstall = settings.Yes || AnsiConsole.Confirm(
 			"Do you want to install these versions?",
 			defaultValue: false);
 

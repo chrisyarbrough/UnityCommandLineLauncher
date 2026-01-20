@@ -83,12 +83,14 @@ app.Configure(config =>
 	config.AddCommand<InstallMissingCommand>("install-missing")
 		.WithDescription("Install all Unity versions that are used by projects but not currently installed")
 		.WithExample("install-missing")
+		.WithExample("install-missing", "--yes")
 		.WithExample("install-missing", "--dry-run")
 		.WithExample("install-missing", "--", "--module", "ios");
 
 	config.AddCommand<UninstallUnusedCommand>("uninstall-unused")
 		.WithDescription("Uninstall all Unity versions that are not used by any projects")
 		.WithExample("uninstall-unused")
+		.WithExample("uninstall-unused", "--yes")
 		.WithExample("uninstall-unused", "--dry-run");
 
 	config.AddCommand<UpmGitUrlCommand>("upm-git-url")

@@ -115,6 +115,7 @@ This document contains test cases that need to be verified before releasing a ne
 |----------------------------------|-----------------------------------------|----------------------------------------------------------------|:-----:|
 | Install missing versions         | `unity install-missing`                 | Shows a prompt before installing                               |  [ ]  |
 | Install missing versions         | `unity install-missing`                 | Installs all Unity versions used by projects but not installed |  [ ]  |
+| Install missing with --yes       | `unity install-missing --yes`           | Skips confirmation prompt and installs missing versions        |  [ ]  |
 | Install missing with dry-run     | `unity install-missing --dry-run`       | Shows what would be installed without installing               |  [ ]  |
 | Install missing with Hub modules | `unity install-missing -- --module ios` | Installs missing versions with additional Hub arguments        |  [ ]  |
 | No missing versions              | `unity install-missing` (all installed) | Shows message that no versions need to be installed            |  [ ]  |
@@ -126,6 +127,7 @@ This document contains test cases that need to be verified before releasing a ne
 |-------------------------------|----------------------------------------|--------------------------------------------------------|:-----:|
 | Uninstall unused versions     | `unity uninstall-unused`               | Shows a prompt before uninstalling                     |  [ ]  |
 | Uninstall unused versions     | `unity uninstall-unused`               | Uninstalls all Unity versions not used by any projects |  [ ]  |
+| Uninstall unused with --yes   | `unity uninstall-unused --yes`         | Skips confirmation prompt and uninstalls unused versions |  [ ]  |
 | Uninstall unused with dry-run | `unity uninstall-unused --dry-run`     | Shows what would be uninstalled without uninstalling   |  [ ]  |
 | No unused versions            | `unity uninstall-unused` (all in use)  | Shows message that no versions can be uninstalled      |  [ ]  |
 | All versions unused           | `unity uninstall-unused` (none in use) | Uninstalls all installed versions                      |  [ ]  |
