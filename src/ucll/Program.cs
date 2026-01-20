@@ -17,6 +17,7 @@ app.Configure(config =>
 	config.SetApplicationVersion("0.2.0");
 	config.AddExample("open");
 	config.AddExample("open", "searchPath", "--code-editor");
+	config.AddExample("open", "searchPath", "--only-code-editor");
 	config.AddExample("open", "searchPath", "--", "-batchmode", "-quit");
 
 	config.AddCommand<OpenCommand>("open")
@@ -25,6 +26,7 @@ app.Configure(config =>
 		.WithExample("open", "--favorite")
 		.WithExample("open", ".")
 		.WithExample("open", "searchPath", "--code-editor")
+		.WithExample("open", "searchPath", "--only-code-editor")
 		.WithExample("open", "searchPath", "--", "-batchmode", "-quit");
 
 	config.AddCommand<CreateCommand>("create")

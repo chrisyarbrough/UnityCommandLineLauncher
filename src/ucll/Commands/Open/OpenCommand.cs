@@ -13,19 +13,22 @@ internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub)
 		infoLine += "\nVersion: " + project.VersionAndChangeset;
 		Debug.WriteLine(infoLine);
 
-		UnityHub.InstallEditorChecked(project.Version, project.Changeset, settings.MutatingProcess);
+		if (!settings.OnlyCodeEditor)
+		{
+			UnityHub.InstallEditorChecked(project.Version, project.Changeset, settings.MutatingProcess);
 
-		string editorPath = UnityHub.GetEditorPath(project.Version);
-		AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
+			string editorPath = UnityHub.GetEditorPath(project.Version);
+			AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
 
-		string[] additionalArgs = Context.Remaining.Raw.ToArray();
-		var args = new List<string> { "-projectPath", project.Path };
-		args.AddRange(additionalArgs);
+			string[] additionalArgs = Context.Remaining.Raw.ToArray();
+			var args = new List<string> { "-projectPath", project.Path };
+			args.AddRange(additionalArgs);
 
-		settings.MutatingProcess.Run(
-			new ProcessStartInfo(fileName: editorPath, arguments: ProcessRunner.JoinQuoted(args)));
+			settings.MutatingProcess.Run(
+				new ProcessStartInfo(fileName: editorPath, arguments: ProcessRunner.JoinQuoted(args)));
+		}
 
-		if (settings.CodeEditor)
+		if (settings.CodeEditor || settings.OnlyCodeEditor)
 		{
 			OpenSolutionFile(project.Path, settings.MutatingProcess);
 		}

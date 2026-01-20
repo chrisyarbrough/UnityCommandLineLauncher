@@ -13,4 +13,21 @@ internal class OpenSettings : MutatingSettings
 	[CommandOption("-c|--code-editor")]
 	[Description("Open the solution file in the default code editor")]
 	public bool CodeEditor { get; init; }
+
+	[CommandOption("-o|--only-code-editor")]
+	[Description("Open only the code editor without launching Unity")]
+	public bool OnlyCodeEditor { get; init; }
+
+	public override ValidationResult Validate()
+	{
+		if (CodeEditor && OnlyCodeEditor)
+		{
+			return ValidationResult.Error(
+				"Cannot use both --code-editor and --only-code-editor. " +
+				"Use --code-editor to open both Unity and the code editor, " +
+				"or --only-code-editor to open only the code editor.");
+		}
+
+		return base.Validate();
+	}
 }

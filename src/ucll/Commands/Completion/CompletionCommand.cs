@@ -51,6 +51,7 @@ internal class CompletionCommand : BaseCommand<CompletionSettings>
 		                    _arguments \
 		                        '(-f --favorite --favorites)'{-f,--favorite,--favorites}'[Use favorite projects only]' \
 		                        '(-c --code-editor)'{-c,--code-editor}'[Open the solution file in the default code editor]' \
+		                        '(-o --only-code-editor)'{-o,--only-code-editor}'[Open only the code editor without launching Unity]' \
 		                        '--dry-run[Show what would be executed without actually running mutating commands]'
 		                    ;;
 		                create)

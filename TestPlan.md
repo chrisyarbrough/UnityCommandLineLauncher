@@ -25,6 +25,8 @@ This document contains test cases that need to be verified before releasing a ne
 | Favorites flag alias (--favorite)        | `unity open --favorites`                                 | Alias for --favorite                                            |  [ ]  |
 | Open with code editor                    | `unity open path --code-editor`                          | Opens project's solution file in default code editor            |  [ ]  |
 | Open with code editor (no solution)      | `unity open path --code-editor` (not yet generated)      | Opens project's solution file as soon as it is generated        |  [ ]  |
+| Open only code editor                    | `unity open path --only-code-editor`                     | Opens only the code editor without launching Unity              |  [ ]  |
+| Code editor flags validation             | `unity open path --code-editor --only-code-editor`       | Shows error about mutually exclusive flags                      |  [ ]  |
 | Open with dry-run                        | `unity open path --dry-run`                              | Shows what would be executed without opening                    |  [ ]  |
 
 ### `create`
