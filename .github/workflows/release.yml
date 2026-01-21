@@ -12,8 +12,15 @@ permissions:
   attestations: write
 
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
   build:
+    needs: test
     runs-on: ubuntu-latest
+    env:
+      BUILD_PROJECT: src/ucll.build/ucll.build.csproj
+      ARTIFACTS_PATH: src/ucll.build/bin/artifacts/*
 
     steps:
     - name: Checkout repository
@@ -25,40 +32,30 @@ jobs:
         dotnet-version: '10.0.x'
 
     - name: Build ucll.build tool
-      run: dotnet build src/ucll.build/ucll.build.csproj
+      run: dotnet build ${{ env.BUILD_PROJECT }}
 
     - name: Run ucll.build to create release artifacts
       env:
         SKIP_GPG_SIGNING: 'true'
-      run: dotnet run --project src/ucll.build/ucll.build.csproj --no-build
-
-    - name: List artifacts
-      run: ls -lah src/ucll.build/bin/artifacts/
+      run: dotnet run --project ${{ env.BUILD_PROJECT }} --no-build
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: release-artifacts
-        path: src/ucll.build/bin/artifacts/*
+        path: ${{ env.ARTIFACTS_PATH }}
         if-no-files-found: error
 
     - name: Attest build provenance
       uses: actions/attest-build-provenance@v3
       with:
-        subject-path: src/ucll.build/bin/artifacts/*
+        subject-path: ${{ env.ARTIFACTS_PATH }}
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: |
-          src/ucll.build/bin/artifacts/ucll-osx-arm64.tar.gz
-          src/ucll.build/bin/artifacts/ucll-osx-x64.tar.gz
-          src/ucll.build/bin/artifacts/ucll-linux-arm64.tar.gz
-          src/ucll.build/bin/artifacts/ucll-linux-x64.tar.gz
-          src/ucll.build/bin/artifacts/ucll-win-arm64.zip
-          src/ucll.build/bin/artifacts/ucll-win-x64.zip
-          src/ucll.build/bin/artifacts/SHA256SUMS
+        files: ${{ env.ARTIFACTS_PATH }}
         generate_release_notes: true
         prerelease: true
         draft: true
