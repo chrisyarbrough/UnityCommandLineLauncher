@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: Build ucll.build tool
+      run: dotnet build src/ucll.build/ucll.build.csproj
+
+    - name: Run ucll.build to create release artifacts
+      env:
+        SKIP_GPG_SIGNING: 'true'
+      run: dotnet run --project src/ucll.build/ucll.build.csproj --no-build
+
+    - name: List artifacts
+      run: ls -lah src/ucll.build/bin/artifacts/
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-artifacts
+        path: src/ucll.build/bin/artifacts/*
+        if-no-files-found: error
+
+    - name: Attest build provenance
+      uses: actions/attest-build-provenance@v3
+      with:
+        subject-path: src/ucll.build/bin/artifacts/*
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          src/ucll.build/bin/artifacts/ucll-osx-arm64.tar.gz
+          src/ucll.build/bin/artifacts/ucll-osx-x64.tar.gz
+          src/ucll.build/bin/artifacts/ucll-linux-arm64.tar.gz
+          src/ucll.build/bin/artifacts/ucll-linux-x64.tar.gz
+          src/ucll.build/bin/artifacts/ucll-win-arm64.zip
+          src/ucll.build/bin/artifacts/ucll-win-x64.zip
+          src/ucll.build/bin/artifacts/SHA256SUMS
+        generate_release_notes: true
+        prerelease: true
+        draft: true
+        make_latest: true

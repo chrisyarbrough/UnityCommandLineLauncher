@@ -52,8 +52,17 @@ using (StreamWriter writer = new(sha256SumsPath))
 Console.WriteLine($"Created {sha256SumsPath}");
 Console.WriteLine();
 
-SignWithGPG(sha256SumsPath);
-File.Delete(sha256SumsPath);
+// Only sign with GPG if not skipped (e.g., in CI environments)
+bool skipGpgSigning = Environment.GetEnvironmentVariable("SKIP_GPG_SIGNING") == "true";
+if (skipGpgSigning)
+{
+	Console.WriteLine("Skipping GPG signing (SKIP_GPG_SIGNING=true)");
+}
+else
+{
+	SignWithGPG(sha256SumsPath);
+	File.Delete(sha256SumsPath);
+}
 
 return 0;
 
