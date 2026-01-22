@@ -95,6 +95,14 @@ app.Configure(config =>
 		.WithExample("uninstall-unused", "--yes")
 		.WithExample("uninstall-unused", "--dry-run");
 
+	config.AddCommand<ResetProjectCommand>("reset-project")
+		.WithDescription("Reset Unity project by deleting cache files and folders")
+		.WithExample("reset-project")
+		.WithExample("reset-project", "--yes")
+		.WithExample("reset-project", "--dry-run")
+		.WithExample("reset-project", "--favorite")
+		.WithExample("reset-project", "searchPath");
+
 	config.AddCommand<UpmGitUrlCommand>("upm-git-url")
 		.WithDescription("Generate a git URL for Unity Package Manager from a Unity project")
 		.WithExample("upm-git-url")
