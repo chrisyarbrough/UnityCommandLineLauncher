@@ -13,17 +13,24 @@ internal class ResetProjectCommand(UnityHub unityHub) : SearchPathCommand<ResetP
 			"Temp",
 			".vs",
 			".idea",
+			".utmp",
 		};
 
 		if (!settings.KeepUserSettings)
 			targetDirs.Add("UserSettings");
 
-		var targetFilesExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		var targetFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 		{
 			".csproj",
 			".sln",
 			".user",
 			".vsconfig",
+		};
+
+		var targetFilePartialNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		{
+			"InitTestScene",
+			"mono_crash",
 		};
 
 		bool shouldReset = settings.Yes || AnsiConsole.Confirm(
@@ -44,8 +51,12 @@ internal class ResetProjectCommand(UnityHub unityHub) : SearchPathCommand<ResetP
 			{
 				string itemName = Path.GetFileName(item);
 
-				if (!targetDirs.Contains(itemName) && !targetFilesExtensions.Contains(Path.GetExtension(itemName)))
+				if (!targetDirs.Contains(itemName) &&
+				    !targetFileExtensions.Contains(Path.GetExtension(itemName)) &&
+					!targetFilePartialNames.Any(p => item.Contains(p)))
+				{
 					continue;
+				}
 
 				if (settings.DryRun)
 				{
