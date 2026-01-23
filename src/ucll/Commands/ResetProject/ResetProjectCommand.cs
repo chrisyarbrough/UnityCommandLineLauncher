@@ -3,23 +3,29 @@ internal class ResetProjectCommand(UnityHub unityHub) : SearchPathCommand<ResetP
 	protected override int ExecuteImpl(ResetProjectSettings settings)
 	{
 		string searchPath = ResolveSearchPath(settings.SearchPath, settings.Favorite);
-		ProjectInfo info = Project.Parse(searchPath);
+		var info = Project.Parse(searchPath);
 
-		var resetTargets = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		var targetDirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 		{
-			"Assets", "Packages", "ProjectSettings",
+			"Library", "obj", "Logs", "Temp", "UserSettings", ".vs", ".idea"
+		};
+
+		if (settings.KeepUserSettings) targetDirs.Remove("UserSettings");
+		
+		var targetFilesExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		{
+			".csproj", ".sln", ".user", ".vsconfig"
 		};
 
 		bool shouldReset = settings.Yes || AnsiConsole.Confirm(
 			"Do you want to reset this project?",
 			defaultValue: false);
 
-		if (!shouldReset)
-		{
-			throw new UserCancelledException("Resetting cancelled.");
-		}
+		if (!shouldReset) throw new UserCancelledException("Resetting cancelled.");
 
 		AnsiConsole.WriteLine();
+
+		int deletedDirs = 0, deletedFiles = 0;	
 
 		try
 		{
@@ -27,7 +33,7 @@ internal class ResetProjectCommand(UnityHub unityHub) : SearchPathCommand<ResetP
 			{
 				string itemName = Path.GetFileName(item);
 
-				if (resetTargets.Contains(itemName)) continue;
+				if (!targetDirs.Contains(itemName) && !targetFilesExtensions.Contains(Path.GetExtension(itemName))) continue;
 
 				if (settings.DryRun)
 				{
@@ -41,7 +47,8 @@ internal class ResetProjectCommand(UnityHub unityHub) : SearchPathCommand<ResetP
 
 						Directory.Delete(item, true);
 
-						WriteSuccess($"Directory {Markup.Escape(item)} deleted successfully.");
+						WriteSuccess($"Directory {Markup.Escape(itemName)} deleted successfully.");
+						deletedDirs++;
 					}
 					else if (File.Exists(item))
 					{
@@ -50,6 +57,7 @@ internal class ResetProjectCommand(UnityHub unityHub) : SearchPathCommand<ResetP
 						File.Delete(item);
 
 						WriteSuccess($"File {Markup.Escape(itemName)} deleted successfully.");
+						deletedFiles++;
 					}
 				}
 			}
@@ -60,6 +68,7 @@ internal class ResetProjectCommand(UnityHub unityHub) : SearchPathCommand<ResetP
 		}
 
 		WriteSuccess("Resetting process completed.");
+		WriteSuccess($"Deleted {deletedDirs} directories and {deletedFiles} files in project root.");
 		return 0;
 	}
 }

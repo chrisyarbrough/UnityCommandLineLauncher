@@ -9,4 +9,8 @@ internal class ResetProjectSettings : MutatingSettings
 	[CommandOption("-f|--favorite|--favorites")]
 	[Description(Descriptions.Favorite)]
 	public bool Favorite { get; init; }
+
+	[CommandOption("--keep-user-settings")]
+	[Description("Keep \"UserSettings\" folder")]
+	public bool KeepUserSettings { get; init; }
 }

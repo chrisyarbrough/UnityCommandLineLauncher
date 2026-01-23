@@ -101,6 +101,7 @@ app.Configure(config =>
 		.WithExample("reset-project", "--yes")
 		.WithExample("reset-project", "--dry-run")
 		.WithExample("reset-project", "--favorite")
+		.WithExample("reset-project", "--keep-user-settings")
 		.WithExample("reset-project", "searchPath");
 
 	config.AddCommand<UpmGitUrlCommand>("upm-git-url")
