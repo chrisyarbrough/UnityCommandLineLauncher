@@ -7,25 +7,36 @@ internal class ResetProjectCommand(UnityHub unityHub) : SearchPathCommand<ResetP
 
 		var targetDirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 		{
-			"Library", "obj", "Logs", "Temp", "UserSettings", ".vs", ".idea"
+			"Library",
+			"obj",
+			"Logs",
+			"Temp",
+			".vs",
+			".idea",
 		};
 
-		if (settings.KeepUserSettings) targetDirs.Remove("UserSettings");
-		
+		if (!settings.KeepUserSettings)
+			targetDirs.Add("UserSettings");
+
 		var targetFilesExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 		{
-			".csproj", ".sln", ".user", ".vsconfig"
+			".csproj",
+			".sln",
+			".user",
+			".vsconfig",
 		};
 
 		bool shouldReset = settings.Yes || AnsiConsole.Confirm(
 			"Do you want to reset this project?",
 			defaultValue: false);
 
-		if (!shouldReset) throw new UserCancelledException("Resetting cancelled.");
+		if (!shouldReset)
+			throw new UserCancelledException("Resetting cancelled.");
 
 		AnsiConsole.WriteLine();
 
-		int deletedDirs = 0, deletedFiles = 0;	
+		int deletedDirs = 0;
+		int deletedFiles = 0;
 
 		try
 		{
@@ -33,7 +44,8 @@ internal class ResetProjectCommand(UnityHub unityHub) : SearchPathCommand<ResetP
 			{
 				string itemName = Path.GetFileName(item);
 
-				if (!targetDirs.Contains(itemName) && !targetFilesExtensions.Contains(Path.GetExtension(itemName))) continue;
+				if (!targetDirs.Contains(itemName) && !targetFilesExtensions.Contains(Path.GetExtension(itemName)))
+					continue;
 
 				if (settings.DryRun)
 				{
