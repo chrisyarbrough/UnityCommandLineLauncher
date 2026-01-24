@@ -24,6 +24,7 @@ A terminal command to open Unity projects quickly from the command line.
 | `editor-modules [version]`     | Lists installed modules for a Unity version.                                |
 | `project-version <path>`       | Gets the Unity version information from a project.                          |
 | `project-path [path]`          | Gets the Unity project root directory from a search path.                   |
+| `reset-project [path]`         | Deletes generated files and directories from a Unity project.               |
 | `projects-using [version]`     | Finds all projects that use a specific Unity version.                       |
 | `version-usage`                | Lists installed Unity versions and indicates which are used.                |
 | `create <directory> [version]` | Creates a new empty Unity project in the directory.                         |
@@ -66,23 +67,25 @@ E.g. for macOS with an M4 Apple processor:
 
 See [Security.md](Security.md) for instructions on how to verify the authenticity of your download.
 
+---
+
 ## Setup
 
-Create an alias in your shell config (.zshrc, .shellrc, etc.):
+It is recommended to create an alias for `ucll` in your shell config (.zshrc, .bashrc, etc.):
 
 ```shell
 echo 'alias unity="~/UnityCommandLineLauncher/src/ucll/bin/Release/osx-arm64/publish/ucll"' >> ~/.zshrc
 ```
 
-> The remainder of the guide assumes you have the alias named `unity` to run the `ucll` tool.
+This makes the tool available everywhere and allows you to pick a name.
 
-Or add the binary location to your PATH variable.
+Or, add the directory that contains the binary to your PATH variable.
 
 ```shell
 export PATH=$PATH:~/UnityCommandLineLauncher/src/ucll/bin/Release/osx-arm64/publish/
 ```
 
-You may need to make the file executable:
+You may need to make the file executable on Unix:
 
 ```shell
 chmod +x ucll
@@ -103,7 +106,7 @@ Install [fzf](https://github.com/junegunn/fzf) 0.67.0 or newer:
 brew install fzf
 ```
 
-With `fzf` installed, the interactive project selection (`unity open`) will use enhanced matching:
+With `fzf` installed, the interactive project selection (`ucll open`) will use enhanced matching:
 
 - **Acronyms**: `cfp` finds "core-frontend-platform"
 - **Typo tolerance**: `sigle-sign` finds "single-sign-on"
@@ -141,7 +144,7 @@ Press CTRL + C to cancel the prompt. Known bug: This will leave the console curs
    ```
    Or simply open a new terminal window.
 
-#### Usage
+#### Completion Usage
 
 Once installed, you can use tab completion:
 
@@ -169,23 +172,23 @@ exec zsh
 Discover available commands and options:
 
 ```shell
-unity --help
+ucll --help
 ```
 
 Show more info about a command:
 
 ```shell
-unity open --help
+ucll open --help
 ```
 
 Forward additional arguments to Unity Hub/Editor by separating them with a `--`:
 
 ```shell
-unity open path/to/project -- -batchmode -quit
+ucll open path/to/project -- -batchmode -quit
 ```
 
 ```shell
-unity install 2022.3.10f1 -- --module webgl
+ucll install 2022.3.10f1 -- --module webgl
 ```
 
 ## Features
@@ -247,8 +250,10 @@ uo ~/repos
 You can use the `project-path` command to cd into a directory (e.g. for updating git in a project) before opening Unity:
 
 ```shell
-cd $(unity project-path)
+cd $(ucll project-path)
 ```
+
+---
 
 ## Design Background
 
@@ -256,21 +261,23 @@ cd $(unity project-path)
 
 - Unity Hub is slow to open and requires manual project management
 - GUI-based workflows are cumbersome for multiple projects
-- Unity Hub CLI has limitations: requires hardcoded paths, needs changeset info for installations, requires architecture
-  detection on macOS
+- Unity Hub CLI has limitations:
+	- requires hardcoded paths
+	- needs changeset info for installations
+	- install command requires architecture detection on macOS
+- Managing many editor versions and projects can be cumbersome because of the missing usage overview
 
 ### Solutions
 
-- Terminal access is faster (global hotkeys, IDE integration, Finder context menu)
-- This tool streamlines the Unity Hub API with a better UX
+- Terminal access is faster (global hotkeys, IDE integration, _Finder_ context menu)
+- The tool improves existing Unity Hub API
+- Additional commands provide convenience functionality
 
-## Development
+---
 
-See the [Developer Readme](src/ucll/DeveloperReadme.md) to see how to build the .NET source.
+## Contributing
 
-## Future & Contributions
+See the [guideline](CONTRIBUTING.md).
 
-I consider the API pre version 1.0.0 experimental. Let's collaborate on defining the overall command structure.
-Once it has settled a bit and we have automated Docker/VM tests, we can publish a stable release version.
+See the [developer readme](src/ucll/DeveloperReadme.md) for instructions on how to build and work with the source.
 
-If the tool receives enough stars/forks, we can publish it to _Homebrew_ and similar package managers.
