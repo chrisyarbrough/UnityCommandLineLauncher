@@ -1,6 +1,11 @@
-Install the `gpg` utility to let the publish process sign release artifacts.
+# Publishing (for Maintainers)
 
-To publish, run this project:
+The GitHub `release.yml` workflow takes care of running this project to produce binaries and then
+signs them before uploading a new release.
+
+To publish locally:
+
+Install the `gpg` utility to let the publish process sign release artifacts with your personal key.
 
 ```shell
 dotnet run
