@@ -34,6 +34,9 @@ internal class UnityHub(PlatformSupport platformSupport)
 		if (appBundlePath == null)
 			throw new UserException($"Unity version {version} is not installed.");
 
+		if (appBundlePath.EndsWith("Unity.exe", StringComparison.OrdinalIgnoreCase))
+			return appBundlePath;
+
 		return Path.Combine(appBundlePath, platformSupport.RelativeEditorPathToExecutable);
 	}
 
@@ -73,6 +76,33 @@ internal class UnityHub(PlatformSupport platformSupport)
 		{
 			return [];
 		}
+	}
+
+	public string GetProjectArgs(string projectPath)
+	{
+		string configDir = platformSupport.UnityHubConfigDirectory;
+		string argsFile = Path.Combine(configDir, "projectsInfo.json");
+
+		try
+		{
+			string json = File.ReadAllText(argsFile);
+			var root = JsonNode.Parse(json);
+			var project = root?[projectPath]?.AsObject()!;
+
+			// If you remove args from project in Unity Hub, this field still will exist but now with empty value,
+			// so we can't guarantee that it has value and we need to check
+			string? cliArgs = project["cliArgs"]?.GetValue<string>();
+
+			if (!string.IsNullOrEmpty(cliArgs))
+				return cliArgs;
+
+			return string.Empty;
+		}
+		catch
+		{
+			return string.Empty;
+		}
+
 	}
 
 	public void InstallEditorChecked(
