@@ -34,6 +34,9 @@ internal class UnityHub(PlatformSupport platformSupport)
 		if (appBundlePath == null)
 			throw new UserException($"Unity version {version} is not installed.");
 
+		if (appBundlePath.EndsWith("Unity.exe", StringComparison.OrdinalIgnoreCase))
+			return appBundlePath;
+
 		return Path.Combine(appBundlePath, platformSupport.RelativeEditorPathToExecutable);
 	}
 
