@@ -44,35 +44,7 @@ If the `version` argument is omitted, an interactive prompt shows all installed 
 
 ## Installation
 
-### NuGet Global Tool
-
-The easiest way to install `ucll` is as a .NET global tool via NuGet:
-
-```shell
-dotnet tool install --global UnityCommandLineLauncher
-```
-
-**Requirements:**
-
-- [.NET 10.0](https://dotnet.microsoft.com/download) or newer
-
-> If you don't want to install .NET just for this tool, you can use a self-contained (standalone) binary, see below.
-
-**Updating:**
-
-```shell
-dotnet tool update --global UnityCommandLineLauncher
-```
-
-**Uninstalling:**
-
-```shell
-dotnet tool uninstall --global UnityCommandLineLauncher
-```
-
-After installation, the `ucll` command will be available globally in your terminal.
-
-### From Source
+### From Source (recommended)
 
 1. Clone the repository.
 2. Checkout a release tag and take note of the signature, e.g. `git tag -v v1.0.0`.
