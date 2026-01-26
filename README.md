@@ -8,7 +8,7 @@ A terminal command to open Unity projects quickly from the command line.
 
 - macOS
 - Windows
-- Linux
+- Linux (TBD)
 
 ## Commands
 
@@ -53,16 +53,19 @@ dotnet tool install --global UnityCommandLineLauncher
 ```
 
 **Requirements:**
+
 - [.NET 10.0](https://dotnet.microsoft.com/download) or newer
 
 > If you don't want to install .NET just for this tool, you can use a self-contained (standalone) binary, see below.
 
 **Updating:**
+
 ```shell
 dotnet tool update --global UnityCommandLineLauncher
 ```
 
 **Uninstalling:**
+
 ```shell
 dotnet tool uninstall --global UnityCommandLineLauncher
 ```

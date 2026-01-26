@@ -34,8 +34,8 @@ internal abstract class PlatformSupport
 	/// <summary>
 	/// Given the path to an editor executable, returns the root directory path of the installation.
 	/// </summary>
-	public string FindInstallationRoot(string editorPath)
-		=> new DirectoryInfo(editorPath.Replace(RelativeEditorPathToExecutable, string.Empty)).Parent!.FullName;
+	public virtual string FindInstallationRoot(string editorPath)
+		=> Path.GetDirectoryName(editorPath)!;
 
 	/// <summary>
 	/// Path to the Unity Hub executable or null if it doesn't exist (or couldn't be found).

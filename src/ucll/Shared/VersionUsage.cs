@@ -36,32 +36,25 @@ internal class VersionUsage
 
 	public string[] GetInstalledModules(string version)
 	{
-		try
-		{
-			string editorPath = unityHub.GetEditorPath(version);
-			string installationRoot = platformSupport.FindInstallationRoot(editorPath);
-			string modulesJsonPath = Path.Combine(installationRoot, "modules.json");
+		string editorPath = unityHub.GetEditorPath(version);
+		string installationRoot = platformSupport.FindInstallationRoot(editorPath);
+		string modulesJsonPath = Path.Combine(installationRoot, "modules.json");
 
-			if (!File.Exists(modulesJsonPath))
-				return [];
-
-			string json = File.ReadAllText(modulesJsonPath);
-
-			using JsonDocument doc = JsonDocument.Parse(json);
-
-			return doc.RootElement
-				.EnumerateArray()
-				.Where(module => module.TryGetProperty("selected", out var selected) && selected.GetBoolean())
-				.Where(module => module.TryGetProperty("visible", out var visible) && visible.GetBoolean())
-				.Where(module => module.TryGetProperty("name", out _))
-				.Select(module => module.GetProperty("name").GetString())
-				.Where(name => name != null)
-				.Cast<string>()
-				.ToArray();
-		}
-		catch
-		{
+		if (!File.Exists(modulesJsonPath))
 			return [];
-		}
+
+		string json = File.ReadAllText(modulesJsonPath);
+
+		using JsonDocument doc = JsonDocument.Parse(json);
+
+		return doc.RootElement
+			.EnumerateArray()
+			.Where(module => module.TryGetProperty("selected", out var selected) && selected.GetBoolean())
+			.Where(module => module.TryGetProperty("visible", out var visible) && visible.GetBoolean())
+			.Where(module => module.TryGetProperty("name", out _))
+			.Select(module => module.GetProperty("name").GetString())
+			.Where(name => name != null)
+			.Cast<string>()
+			.ToArray();
 	}
 }
