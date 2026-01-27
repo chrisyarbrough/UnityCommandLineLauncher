@@ -23,84 +23,81 @@ jobs:
       ARTIFACTS_PATH: src/ucll.build/bin/artifacts/*
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '10.0.x'
+      - name: Setup .NET
+        uses: ./.github/actions/setup-dotnet
 
-    - name: Build ucll.build tool
-      run: dotnet build ${{ env.BUILD_PROJECT }}
+      - name: Build ucll.build tool
+        run: dotnet build ${{ env.BUILD_PROJECT }}
 
-    - name: Run ucll.build to create release artifacts
-      env:
-        SKIP_GPG_SIGNING: 'true'
-      run: dotnet run --project ${{ env.BUILD_PROJECT }} --no-build
+      - name: Run ucll.build to create release artifacts
+        env:
+          SKIP_GPG_SIGNING: 'true'
+        run: dotnet run --project ${{ env.BUILD_PROJECT }} --no-build
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: release-artifacts
-        path: ${{ env.ARTIFACTS_PATH }}
-        if-no-files-found: error
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: ${{ env.ARTIFACTS_PATH }}
+          if-no-files-found: error
 
-    - name: Attest build provenance
-      uses: actions/attest-build-provenance@v3
-      with:
-        subject-path: ${{ env.ARTIFACTS_PATH }}
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: ${{ env.ARTIFACTS_PATH }}
 
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        files: ${{ env.ARTIFACTS_PATH }}
-        generate_release_notes: true
-        prerelease: true
-        draft: true
-        make_latest: true
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ${{ env.ARTIFACTS_PATH }}
+          generate_release_notes: true
+          prerelease: true
+          draft: true
+          make_latest: true
 
   publish-nuget:
     if: startsWith(github.ref, 'refs/tags/')
     needs: build
     runs-on: ubuntu-latest
     permissions:
-      id-token: write  # enable GitHub OIDC token issuance for this job
+      id-token: write
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '10.0.x'
+      - name: Setup .NET
+        uses: ./.github/actions/setup-dotnet
 
-    - name: Pack NuGet package
-      working-directory: src/ucll.build
-      run: |
-        PACK_DIR=bin/pack
-        BUILD_DIR=$PACK_DIR/build
-        dotnet pack ../ucll/ucll.csproj \
-          -p:PackAsTool=true \
-          -p:ToolCommandName=ucll \
-          -p:PackageId=UnityCommandLineLauncher \
-          -p:Authors="Chris Yarbrough" \
-          -p:PackageLicenseExpression=MIT \
-          -p:PackageReadmeFile=README.md \
-          -p:PackageTags="Unity CLI Hub" \
-          -p:RepositoryUrl=https://github.com/chrisyarbrough/UnityCommandLineLauncher \
-          -p:RepositoryType=git \
-          -p:OutputPath=$BUILD_DIR \
-          -p:PublishDir=$BUILD_DIR \
-          --output ../ucll/$PACK_DIR
+      - name: Pack NuGet package
+        working-directory: src/ucll.build
+        run: |
+          PACK_DIR=bin/pack
+          BUILD_DIR=$PACK_DIR/build
+          dotnet pack ../ucll/ucll.csproj \
+            -p:PackAsTool=true \
+            -p:PackageIcon=Icon.png \
+            -p:ToolCommandName=ucll \
+            -p:PackageId=UnityCommandLineLauncher \
+            -p:Authors="Chris Yarbrough" \
+            -p:PackageLicenseExpression=MIT \
+            -p:PackageReadmeFile=README.md \
+            -p:PackageTags="Unity CLI Hub" \
+            -p:RepositoryUrl=https://github.com/chrisyarbrough/UnityCommandLineLauncher \
+            -p:RepositoryType=git \
+            -p:OutputPath=$BUILD_DIR \
+            -p:PublishDir=$BUILD_DIR \
+            --output ../ucll/$PACK_DIR
 
-    - name: NuGet login (OIDC → temp API key)
-      uses: NuGet/login@v1
-      id: login
-      with:
-        user: ${{ secrets.NUGET_USER }}
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
 
-    - name: NuGet push
-      run: dotnet nuget push src/ucll/bin/pack/UnityCommandLineLauncher.*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://apiint.nugettest.org/v3/index.json
+      - name: NuGet push
+        run: dotnet nuget push src/ucll/bin/pack/UnityCommandLineLauncher.*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

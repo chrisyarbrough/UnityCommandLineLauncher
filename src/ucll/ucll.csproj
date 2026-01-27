@@ -40,4 +40,8 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="ucll.Tests" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="Icon.png" Pack="true" PackagePath="" />
+	</ItemGroup>
 </Project>

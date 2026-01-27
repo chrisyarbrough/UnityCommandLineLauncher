@@ -1,0 +1,10 @@
+name: 'Setup .NET'
+description: 'Setup .NET SDK with the project standard version'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
