@@ -99,7 +99,6 @@ internal class UnityHub(PlatformSupport platformSupport)
 		{
 			return string.Empty;
 		}
-
 	}
 
 	public void InstallEditorChecked(
