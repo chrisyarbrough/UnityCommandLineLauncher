@@ -86,8 +86,8 @@ internal class UnityHub(PlatformSupport platformSupport)
 			var root = JsonNode.Parse(json);
 			var project = root?[projectPath]?.AsObject()!;
 
-			// If you remove args from project in Unity Hub, this field still will exist but now with empty value,
-			// so we can't guarantee that it has value and we need to check
+			// The cliArgs field persists even when arguments are removed from a project in Unity Hub,
+			// but will contain an empty value. Validation is required before use.
 			string? cliArgs = project["cliArgs"]?.GetValue<string>();
 
 			if (!string.IsNullOrEmpty(cliArgs))
