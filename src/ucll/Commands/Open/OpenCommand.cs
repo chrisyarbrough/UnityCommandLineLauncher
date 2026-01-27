@@ -6,7 +6,6 @@ internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub)
 		string searchPath = ResolveSearchPath(settings.SearchPath, settings.Favorite);
 
 		ProjectInfo project = Project.Parse(searchPath);
-		
 		string infoLine = string.Empty;
 		if (settings.SearchPath != project.Path)
 			infoLine = "Project:  " + project.Path;
