@@ -12,7 +12,10 @@ internal sealed class WindowsSupport : PlatformSupport
 		return new ProcessStartInfo(applicationPath, $"\"{filePath}\"");
 	}
 
-	public override string RelativeEditorPathToExecutable => @"Editor\Unity.exe";
+	public override string FindInstallationRoot(string editorPath)
+	{
+		return editorPath.Replace(@"Editor\Unity.exe", string.Empty).TrimEnd('\\');
+	}
 
 	public override string UnityHubConfigDirectory =>
 		Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "UnityHub");

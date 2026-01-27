@@ -34,8 +34,7 @@ internal abstract class PlatformSupport
 	/// <summary>
 	/// Given the path to an editor executable, returns the root directory path of the installation.
 	/// </summary>
-	public string FindInstallationRoot(string editorPath)
-		=> new DirectoryInfo(editorPath.Replace(RelativeEditorPathToExecutable, string.Empty)).Parent!.FullName;
+	public abstract string FindInstallationRoot(string editorPath);
 
 	/// <summary>
 	/// Path to the Unity Hub executable or null if it doesn't exist (or couldn't be found).
@@ -69,9 +68,9 @@ internal abstract class PlatformSupport
 	public abstract ProcessStartInfo OpenFileWithApp(string filePath, string applicationPath);
 
 	/// <summary>
-	/// The path from the installation bundle (macOS) or root (Windows) to the executable.
+	/// Converts an installation bundle path (macOS) to a path to the binary, if needed.
 	/// </summary>
-	public abstract string RelativeEditorPathToExecutable { get; }
+	public virtual string GetUnityExecutablePath(string path) => path;
 
 	/// <summary>
 	/// The path to the directory that contains Unity Hub config files.

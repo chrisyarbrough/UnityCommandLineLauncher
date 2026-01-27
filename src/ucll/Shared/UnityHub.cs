@@ -23,18 +23,19 @@ internal class UnityHub(PlatformSupport platformSupport)
 	public string GetEditorPath(string version)
 	{
 		// Fast: try the default install location first.
-		string? executablePath = platformSupport.FindDefaultEditorPath(version);
-		if (executablePath != null)
-			return executablePath;
+		string? editorPathDefault = platformSupport.FindDefaultEditorPath(version);
+		if (editorPathDefault != null)
+			return editorPathDefault;
 
 		// Fallback: query Unity Hub for custom installation locations.
 		var editors = ListInstalledEditors();
-		string? appBundlePath = editors.FirstOrDefault(p => p.Version == version).Path;
+		string? editorPathHub = editors.FirstOrDefault(p => p.Version == version).Path;
 
-		if (appBundlePath == null)
+		if (editorPathHub == null)
 			throw new UserException($"Unity version {version} is not installed.");
 
-		return Path.Combine(appBundlePath, platformSupport.RelativeEditorPathToExecutable);
+		// On macOS, the Unity Hub returns a path to the app bundle (Unity.app), but we need the binary within.
+		return platformSupport.GetUnityExecutablePath(editorPathHub);
 	}
 
 	public IEnumerable<string> GetRecentProjects(bool favoriteOnly = false)

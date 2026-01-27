@@ -1,5 +1,10 @@
 internal sealed class LinuxSupport : PlatformSupport
 {
+	public override string FindInstallationRoot(string editorPath)
+	{
+		throw new NotImplementedException();
+	}
+
 	public override string FormatHubArgs(string args)
 		=> args; // Linux doesn't need the "--" prefix
 
@@ -10,8 +15,6 @@ internal sealed class LinuxSupport : PlatformSupport
 		// On Linux, directly execute the application with the file as argument
 		return new ProcessStartInfo(applicationPath, filePath);
 	}
-
-	public override string RelativeEditorPathToExecutable => "Editor/Unity";
 
 	public override string UnityHubConfigDirectory => Path.Combine(UserHome, ".config/UnityHub");
 

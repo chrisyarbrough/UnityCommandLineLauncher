@@ -8,7 +8,15 @@ internal sealed class MacSupport : PlatformSupport
 		return new ProcessStartInfo("open", $"-a \"{applicationPath}\" \"{filePath}\"");
 	}
 
-	public override string RelativeEditorPathToExecutable => "Contents/MacOS/Unity";
+	public override string FindInstallationRoot(string editorPath)
+	{
+		return editorPath.Replace("/Unity.app/Contents/MacOS/Unity", string.Empty);
+	}
+
+	public override string GetUnityExecutablePath(string path)
+	{
+		return Path.Combine(path, "Contents/MacOS/Unity");
+	}
 
 	public override string UnityHubConfigDirectory => Path.Combine(UserHome, "Library/Application Support/UnityHub");
 
