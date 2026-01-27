@@ -25,15 +25,25 @@ internal class VersionUsageCommand(PlatformSupport platformSupport, UnityHub uni
 			"Used",
 		];
 
+		string[] versions = UnityVersion.SortNewestFirst(versionUsage.Installed.Union(versionUsage.Used)).ToArray();
+
 		Dictionary<string, IEnumerable<string>> modules = new();
 		if (includeModules)
 		{
 			HashSet<string> uniqueModulesNames = [];
-			foreach (string version in UnityVersion.SortNewestFirst(versionUsage.Installed.Union(versionUsage.Used)))
+			foreach (string version in versions)
 			{
-				modules[version] = versionUsage.GetInstalledModules(version);
-				foreach (string module in modules[version])
-					uniqueModulesNames.Add(module);
+				try
+				{
+					modules[version] = versionUsage.GetInstalledModules(version);
+					foreach (string module in modules[version])
+						uniqueModulesNames.Add(module);
+				}
+				catch (Exception)
+				{
+					// When the installation is missing or corrupted.
+					modules[version] = [];
+				}
 			}
 			columnHeaders.AddRange(uniqueModulesNames);
 		}
@@ -41,7 +51,7 @@ internal class VersionUsageCommand(PlatformSupport platformSupport, UnityHub uni
 		foreach (string module in columnHeaders)
 			table.AddColumn($"[bold]{module}[/]");
 
-		foreach (string version in UnityVersion.SortNewestFirst(versionUsage.Installed.Union(versionUsage.Used)))
+		foreach (string version in versions)
 		{
 			bool isInstalled = versionUsage.Installed.Contains(version);
 			bool isUsed = versionUsage.Used.Contains(version);
@@ -78,17 +88,23 @@ internal class VersionUsageCommand(PlatformSupport platformSupport, UnityHub uni
 	{
 		void PrintVersions(string header, IEnumerable<string> versions)
 		{
+			Console.WriteLine();
 			Console.WriteLine(header);
 			foreach (string version in UnityVersion.SortNewestFirst(versions))
 			{
 				if (includeModules)
 				{
-					string[] modules = usage.GetInstalledModules(version).ToArray();
-					if (modules.Length == 0)
-						Console.WriteLine(version);
-
 					const string separator = "  ";
-					Console.WriteLine(version + separator + string.Join(separator, modules));
+					try
+					{
+						string[] modules = usage.GetInstalledModules(version).ToArray();
+						Console.WriteLine(version + separator + string.Join(separator, modules));
+					}
+					catch (Exception)
+					{
+						// When the installation is missing or corrupted.
+						Console.WriteLine(version);
+					}
 				}
 				else
 				{
