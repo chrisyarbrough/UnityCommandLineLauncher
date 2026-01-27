@@ -22,7 +22,6 @@ internal class OpenSettings : MutatingSettings
 	[Description("Open only the code editor without launching Unity")]
 	public bool OnlyCodeEditor { get; init; }
 
-
 	public override ValidationResult Validate()
 	{
 		if (CodeEditor && OnlyCodeEditor)
