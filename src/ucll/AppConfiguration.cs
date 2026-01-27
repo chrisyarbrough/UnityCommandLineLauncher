@@ -22,6 +22,8 @@ internal static class AppConfiguration
 			.WithExample("open")
 			.WithExample("open", "--favorite")
 			.WithExample("open", ".")
+			.WithExample("open", "searchPath", "--no-hub-args", "--", "-batchmode", "-quit")
+			.WithExample("open", "searchPath", "--no-hub-args")
 			.WithExample("open", "searchPath", "--code-editor")
 			.WithExample("open", "searchPath", "--only-code-editor")
 			.WithExample("open", "searchPath", "--", "-batchmode", "-quit");

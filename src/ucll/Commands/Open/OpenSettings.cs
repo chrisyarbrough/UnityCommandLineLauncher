@@ -10,6 +10,10 @@ internal class OpenSettings : MutatingSettings
 	[Description(Descriptions.Favorite)]
 	public bool Favorite { get; init; }
 
+	[CommandOption("--no-hub-args")]
+	[Description("Do not use CLI arguments from Unity Hub")]
+	public bool NoHubArgs { get; init; }
+
 	[CommandOption("-c|--code-editor")]
 	[Description("Open the solution file in the default code editor")]
 	public bool CodeEditor { get; init; }

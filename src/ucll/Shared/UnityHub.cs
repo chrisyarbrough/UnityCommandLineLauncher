@@ -75,6 +75,32 @@ internal class UnityHub(PlatformSupport platformSupport)
 		}
 	}
 
+	public string GetProjectArgs(string projectPath)
+	{
+		string configDir = platformSupport.UnityHubConfigDirectory;
+		string argsFile = Path.Combine(configDir, "projectsInfo.json");
+
+		try
+		{
+			string json = File.ReadAllText(argsFile);
+			var root = JsonNode.Parse(json);
+			var project = root?[projectPath]?.AsObject()!;
+
+			// The cliArgs field persists even when arguments are removed from a project in Unity Hub,
+			// but will contain an empty value. Validation is required before use.
+			string? cliArgs = project["cliArgs"]?.GetValue<string>();
+
+			if (!string.IsNullOrEmpty(cliArgs))
+				return cliArgs;
+
+			return string.Empty;
+		}
+		catch
+		{
+			return string.Empty;
+		}
+	}
+
 	public void InstallEditorChecked(
 		string version,
 		string? changeset,
