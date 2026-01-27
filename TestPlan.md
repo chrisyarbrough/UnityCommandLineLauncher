@@ -72,13 +72,13 @@ This document contains test cases that need to be verified before releasing a ne
 
 ### `editor-modules`
 
-| Test Case                    | Input                                         | Expected Outcome                                      | Pass? |
-|------------------------------|-----------------------------------------------|-------------------------------------------------------|:-----:|
-| Installed Unity version      | `ucll editor-modules`                         | Shows interactive version prompt, lists modules       |  [ ]  |
-| Installed Unity version      | `ucll editor-modules 2022.3.10f1`             | Lists all installed modules for the specified version |  [ ]  |
-| Version with no modules      | `ucll editor-modules 2022.3.10f1` (no mods)   | Shows error about no modules found                    |  [ ]  |
-| Non-installed Unity version  | `ucll editor-modules 2023.1.1f1` (not inst.)  | Shows error                                           |  [ ]  |
-| Invalid Unity version format | `ucll editor-modules invalid`                 | Shows error                                           |  [ ]  |
+| Test Case                    | Input                                        | Expected Outcome                                      | Pass? |
+|------------------------------|----------------------------------------------|-------------------------------------------------------|:-----:|
+| Installed Unity version      | `ucll editor-modules`                        | Shows interactive version prompt, lists modules       |  [ ]  |
+| Installed Unity version      | `ucll editor-modules 2022.3.10f1`            | Lists all installed modules for the specified version |  [ ]  |
+| Version with no modules      | `ucll editor-modules 2022.3.10f1` (no mods)  | Shows error about no modules found                    |  [ ]  |
+| Non-installed Unity version  | `ucll editor-modules 2023.1.1f1` (not inst.) | Shows error                                           |  [ ]  |
+| Invalid Unity version format | `ucll editor-modules invalid`                | Shows error                                           |  [ ]  |
 
 ### `project-version`
 
@@ -105,21 +105,21 @@ This document contains test cases that need to be verified before releasing a ne
 
 ### `reset-project`
 
-| Test Case                        | Input                                             | Expected Outcome                                                    | Pass? |
-|----------------------------------|---------------------------------------------------|---------------------------------------------------------------------|:-----:|
-| Reset project with confirmation  | `ucll reset-project /path/to/project`             | Shows confirmation prompt, then deletes cache files and directories |  [ ]  |
-| Reset project from current dir   | `ucll reset-project .`                            | Deletes cache files and directories from current project            |  [ ]  |
-| Reset project with --yes         | `ucll reset-project /path/to/project --yes`       | Skips confirmation and deletes cache files/directories              |  [ ]  |
-| Reset project with dry-run       | `ucll reset-project /path/to/project --dry-run`   | Shows what would be deleted without deleting                        |  [ ]  |
-| Reset with keep user settings    | `ucll reset-project /path --keep-user-settings`   | Deletes cache files but preserves UserSettings folder               |  [ ]  |
-| Reset interactive selection      | `ucll reset-project` (with recent projects)       | Shows interactive prompt, then resets selected project              |  [ ]  |
-| Reset interactive favorites      | `ucll reset-project --favorite`                   | Shows only favorite projects in selection prompt                    |  [ ]  |
-| Cancel reset confirmation        | `ucll reset-project /path` → select "No"          | Shows cancellation message without deleting                         |  [ ]  |
-| Reset deletes Library folder     | `ucll reset-project /path --yes`                  | Library folder is deleted                                           |  [ ]  |
-| Reset deletes .csproj files      | `ucll reset-project /path --yes`                  | All .csproj files are deleted                                       |  [ ]  |
-| Reset deletes .sln files         | `ucll reset-project /path --yes`                  | All .sln files are deleted                                          |  [ ]  |
-| Reset shows completion summary   | `ucll reset-project /path --yes`                  | Shows summary of deleted directories and files                      |  [ ]  |
-| Invalid directory                | `ucll reset-project /nonexistent/path`            | Shows error                                                         |  [ ]  |
+| Test Case                       | Input                                           | Expected Outcome                                                    | Pass? |
+|---------------------------------|-------------------------------------------------|---------------------------------------------------------------------|:-----:|
+| Reset project with confirmation | `ucll reset-project /path/to/project`           | Shows confirmation prompt, then deletes cache files and directories |  [ ]  |
+| Reset project from current dir  | `ucll reset-project .`                          | Deletes cache files and directories from current project            |  [ ]  |
+| Reset project with --yes        | `ucll reset-project /path/to/project --yes`     | Skips confirmation and deletes cache files/directories              |  [ ]  |
+| Reset project with dry-run      | `ucll reset-project /path/to/project --dry-run` | Shows what would be deleted without deleting                        |  [ ]  |
+| Reset with keep user settings   | `ucll reset-project /path --keep-user-settings` | Deletes cache files but preserves UserSettings folder               |  [ ]  |
+| Reset interactive selection     | `ucll reset-project` (with recent projects)     | Shows interactive prompt, then resets selected project              |  [ ]  |
+| Reset interactive favorites     | `ucll reset-project --favorite`                 | Shows only favorite projects in selection prompt                    |  [ ]  |
+| Cancel reset confirmation       | `ucll reset-project /path` → select "No"        | Shows cancellation message without deleting                         |  [ ]  |
+| Reset deletes Library folder    | `ucll reset-project /path --yes`                | Library folder is deleted                                           |  [ ]  |
+| Reset deletes .csproj files     | `ucll reset-project /path --yes`                | All .csproj files are deleted                                       |  [ ]  |
+| Reset deletes .sln files        | `ucll reset-project /path --yes`                | All .sln files are deleted                                          |  [ ]  |
+| Reset shows completion summary  | `ucll reset-project /path --yes`                | Shows summary of deleted directories and files                      |  [ ]  |
+| Invalid directory               | `ucll reset-project /nonexistent/path`          | Shows error                                                         |  [ ]  |
 
 ### `version-usage`
 
@@ -183,11 +183,11 @@ This document contains test cases that need to be verified before releasing a ne
 
 ### `completion`
 
-| Test Case                     | Input                   | Expected Outcome                                        | Pass? |
-|-------------------------------|-------------------------|---------------------------------------------------------|:-----:|
-| Generate ZSH completion       | `ucll completion`       | Outputs ZSH completion script to stdout                 |  [ ]  |
-| Completion script is valid    | Install and test        | Tab completion works in ZSH after installation          |  [ ]  |
-| Unsupported shell             | `ucll completion bash`  | Shows error or warning about unsupported shell          |  [ ]  |
+| Test Case                  | Input                  | Expected Outcome                               | Pass? |
+|----------------------------|------------------------|------------------------------------------------|:-----:|
+| Generate ZSH completion    | `ucll completion`      | Outputs ZSH completion script to stdout        |  [ ]  |
+| Completion script is valid | Install and test       | Tab completion works in ZSH after installation |  [ ]  |
+| Unsupported shell          | `ucll completion bash` | Shows error or warning about unsupported shell |  [ ]  |
 
 ### General
 

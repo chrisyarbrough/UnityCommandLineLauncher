@@ -53,7 +53,7 @@ internal class ResetProjectCommand(UnityHub unityHub) : SearchPathCommand<ResetP
 
 				if (!targetDirs.Contains(itemName) &&
 				    !targetFileExtensions.Contains(Path.GetExtension(itemName)) &&
-					!targetFilePartialNames.Any(p => item.Contains(p)))
+				    !targetFilePartialNames.Any(p => item.Contains(p)))
 				{
 					continue;
 				}

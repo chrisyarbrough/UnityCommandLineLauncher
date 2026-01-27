@@ -1,4 +1,5 @@
-internal class ProjectsUsingVersionCommand(PlatformSupport platformSupport, UnityHub unityHub) : BaseCommand<VersionSettings>
+internal class ProjectsUsingVersionCommand(PlatformSupport platformSupport, UnityHub unityHub)
+	: BaseCommand<VersionSettings>
 {
 	protected override int ExecuteImpl(VersionSettings settings)
 	{
