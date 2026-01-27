@@ -4,13 +4,13 @@ A terminal command to open Unity projects quickly from the command line.
 
 ![](doc/Screenshot_Open_Path.png)
 
-## Supported Platforms
+# Supported Platforms
 
 - macOS
 - Windows
 - Linux (TBD)
 
-## Commands
+# Commands
 
 | Name                           | Description                                                                 |
 |--------------------------------|-----------------------------------------------------------------------------|
@@ -42,12 +42,38 @@ If the `version` argument is omitted, an interactive prompt shows all installed 
 
 ---
 
-## Installation
+# Installation
 
-### From Source (recommended)
+Get the tool from either of these sources:
+
+1. NuGet
+2. Build from source
+3. Download binary from GitHub
+
+## 1 NuGet Global Tool
+
+The easiest way to install `ucll` is as a .NET global tool via NuGet:
+
+```shell
+dotnet tool install --global UnityCommandLineLauncher
+```
+
+**Requirements:**
+
+- [.NET 10.0](https://dotnet.microsoft.com/download) or newer
+
+> If you don't want to install .NET just for this tool, you can use a self-contained (standalone) binary, see below.
+
+
+After installation, the `ucll` command will be available globally in your terminal.
+
+## 2 From Source
 
 1. Clone the repository.
-2. Checkout a release tag and take note of the signature, e.g. `git tag -v v1.0.0`.
+2. Checkout a release tag and take note of the security signature, e.g.
+   ```shell
+   git tag -v v1.0.0
+   ```
 3. Navigate to the project directory:
    ```shell
    cd src/ucll
@@ -58,9 +84,9 @@ If the `version` argument is omitted, an interactive prompt shows all installed 
    ```
 5. Find the binary in e.g. `src/ucll/bin/osx-arm64/publish/`
 
-### Download Binaries
+## 3 Download Binaries
 
-Or, download a binary from the GitHub _Releases_ page.
+Download a prebuilt `binary from the GitHub _Releases_ page.
 
 E.g. for macOS with an M4 Apple processor:
 `ucll-osx-arm64.tar.gz`
@@ -69,7 +95,7 @@ See [Security.md](Security.md) for instructions on how to verify the authenticit
 
 ---
 
-## Setup
+# Setup
 
 It is recommended to create an alias for `ucll` in your shell config (.zshrc, .bashrc, etc.):
 
@@ -91,14 +117,14 @@ You may need to make the file executable on Unix:
 chmod +x ucll
 ```
 
-### Interaction Selection Prompt
+## Interaction Selection Prompt
 
 Various commands have optional parameters which show a selection prompt:
 
 - Use the arrow keys to select an item and press Enter to confirm
 - Type on the keyboard to start searching.
 
-### Enhanced Fuzzy Search (Optional)
+## Enhanced Fuzzy Search (Optional)
 
 Install [fzf](https://github.com/junegunn/fzf) 0.67.0 or newer:
 
@@ -118,11 +144,11 @@ Press the ESC key to cancel the prompt.
 If `fzf` is not installed, the built-in search will be used as a fallback.
 Press CTRL + C to cancel the prompt. Known bug: This will leave the console cursor hidden.
 
-### Shell Completion (Optional)
+## Shell Completion (Optional)
 
 `ucll` supports generating shell completion scripts to enable tab completion for commands and options.
 
-#### ZSH Setup
+### ZSH Setup
 
 1. **Generate the completion script:**
    ```shell
@@ -144,7 +170,7 @@ Press CTRL + C to cancel the prompt. Known bug: This will leave the console curs
    ```
    Or simply open a new terminal window.
 
-#### Completion Usage
+### Completion Usage
 
 Once installed, you can use tab completion:
 
@@ -152,7 +178,7 @@ Once installed, you can use tab completion:
 - `ucll open <TAB>` - Shows options like `--favorite`, `--code-editor`, `--dry-run`
 - `ucll version-usage <TAB>` - Shows options like `--plaintext`, `--modules`
 
-#### Updating Completions
+### Updating Completions
 
 When you update `ucll` or new commands are added, regenerate the completion script:
 
@@ -161,13 +187,13 @@ ucll completion > ~/.zsh/completions/_ucll
 exec zsh
 ```
 
-### Unity Hub
+## Unity Hub
 
 - Ensure version 3.15.4 or newer is installed (https://unity.com/download)
 
 ---
 
-## Usage
+# Usage
 
 Discover available commands and options:
 
@@ -191,7 +217,7 @@ ucll open path/to/project -- -batchmode -quit
 ucll install 2022.3.10f1 -- --module webgl
 ```
 
-## Features
+# Features
 
 - Opens Unity projects from the terminal (faster than using the Unity Hub GUI)
 - Interactive project selection from Unity Hub's recent projects (optional favorites filter)
@@ -201,7 +227,7 @@ ucll install 2022.3.10f1 -- --module webgl
 - Forwards additional Unity CLI arguments (e.g. `-batchmode -quit`)
 - Auto-detects Unity Hub and Editor installation paths
 
-## Configuration
+# Configuration
 
 > If Unity Hub and the editors are installed in their default location, there should be no configuration needed.
 
@@ -226,7 +252,7 @@ Environment variables are optional but speed up execution for non-default instal
 
 The placeholder `{0}` is part of the path pattern and will be replaced with the Editor version at runtime.
 
-## Tips & Examples
+# Tips & Examples
 
 The command API is intentionally kept simple and (hopefully) logical.
 Save your favorite invocations as aliases to make the most out of this tool:
@@ -255,9 +281,9 @@ cd $(ucll project-path)
 
 ---
 
-## Design Background
+# Design Background
 
-### Problems
+## Problems
 
 - Unity Hub is slow to open and requires manual project management
 - GUI-based workflows are cumbersome for multiple projects
@@ -267,7 +293,7 @@ cd $(ucll project-path)
 	- install command requires architecture detection on macOS
 - Managing many editor versions and projects can be cumbersome because of the missing usage overview
 
-### Solutions
+## Solutions
 
 - Terminal access is faster (global hotkeys, IDE integration, _Finder_ context menu)
 - The tool improves existing Unity Hub API
@@ -275,7 +301,7 @@ cd $(ucll project-path)
 
 ---
 
-## Contributing
+# Contributing
 
 See the [guideline](CONTRIBUTING.md).
 

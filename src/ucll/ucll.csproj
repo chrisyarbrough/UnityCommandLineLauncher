@@ -3,7 +3,7 @@
 		<OutputType>Exe</OutputType>
 		<SelfContained>true</SelfContained>
 		<PublishSingleFile>true</PublishSingleFile>
-		<Version>0.4.0</Version>
+		<Version>0.5.0-rc.1</Version>
 
 		<!--Slim down the bundles executable.-->
 		<PublishTrimmed>true</PublishTrimmed>
