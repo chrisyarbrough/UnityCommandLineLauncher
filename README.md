@@ -2,7 +2,7 @@
 
 A terminal command to open Unity projects quickly from the command line.
 
-![](doc/Screenshot_Open_Path.png)
+![Terminal showing ucll opening a Unity project](doc/Screenshot_Open_Path.png)
 
 # Supported Platforms
 
@@ -139,7 +139,7 @@ With `fzf` installed, the interactive project selection (`ucll open`) will use e
 
 Press the ESC key to cancel the prompt.
 
-![](doc/Screenshot_Open_Search.png)
+![Interactive project selection with fuzzy search filtering](doc/Screenshot_Open_Search.png)
 
 If `fzf` is not installed, the built-in search will be used as a fallback.
 Press CTRL + C to cancel the prompt. Known bug: This will leave the console cursor hidden.

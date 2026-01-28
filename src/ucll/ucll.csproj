@@ -44,5 +44,7 @@
 	<ItemGroup>
 		<None Include="Icon.png" Pack="true" PackagePath="" />
 		<None Include="../../README.md" Pack="true" PackagePath="" />
+		<None Include="../../doc/Screenshot_Open_Path.png" Pack="true" PackagePath="doc\" />
+		<None Include="../../doc/Screenshot_Open_Search.png" Pack="true" PackagePath="doc\" />
 	</ItemGroup>
 </Project>
