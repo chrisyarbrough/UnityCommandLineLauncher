@@ -60,7 +60,7 @@ dotnet tool install --global UnityCommandLineLauncher
 
 **Requirements:**
 
-- [.NET 10.0](https://dotnet.microsoft.com/download) or newer
+- [.NET 10.0](https://dotnet.microsoft.com/download) Runtime or newer
 
 > If you don't want to install .NET just for this tool, you can use a self-contained (standalone) binary, see below.
 
@@ -97,27 +97,33 @@ See [Security.md](Security.md) for instructions on how to verify the authenticit
 
 # Setup
 
-It is recommended to create an alias for `ucll` in your shell config (.zshrc, .bashrc, etc.):
+If you've installed the tool via a package manager, there is no setup required.
+You may still want to create an alias to rename the command to your liking or include default invocation options.
+
+When installing from source or binary, it is recommended to create an alias for `ucll` in your shell config
+(.zshrc, .bashrc, etc.):
 
 ```shell
 echo 'alias unity="~/UnityCommandLineLauncher/src/ucll/bin/Release/osx-arm64/publish/ucll"' >> ~/.zshrc
 ```
 
-This makes the tool available everywhere and allows you to pick a name.
+This makes the tool available everywhere and allows you to choose the main command name.
 
-Or, add the directory that contains the binary to your PATH variable.
+Alternatively, add the directory that contains the binary to your PATH variable:
 
 ```shell
-export PATH=$PATH:~/UnityCommandLineLauncher/src/ucll/bin/Release/osx-arm64/publish/
+export PATH=$PATH:~/UnityCommandLineLauncher/
 ```
 
-You may need to make the file executable on Unix:
+(In this case, the binary would be located at: `/Users/my.user/UnityCommandLineLauncher/ucll`)
+
+On Unix, you may need to make the file executable:
 
 ```shell
 chmod +x ucll
 ```
 
-## Interaction Selection Prompt
+## Interactive Selection Prompt
 
 Various commands have optional parameters which show a selection prompt:
 
