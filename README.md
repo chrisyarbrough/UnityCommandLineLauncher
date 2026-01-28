@@ -1,8 +1,40 @@
 # Unity Command Line Launcher
 
-A terminal command to open Unity projects quickly from the command line.
+A command line utility to open Unity projects quickly.
+
+Builds on top of the Unity (Hub) CLI and adds convenience features for easier usage and makes commands fully compatible
+with CI/CD pipelines.
 
 ![Terminal showing ucll opening a Unity project](doc/Screenshot_Open_Path.png)
+
+# Table of Contents
+
+- [Main Features](#main-features)
+- [Supported Platforms](#supported-platforms)
+- [Commands](#commands)
+- [Installation](#installation)
+	- [1 NuGet Global Tool](#1-nuget-global-tool)
+	- [2 From Source](#2-from-source)
+	- [3 Download Binaries](#3-download-binaries)
+- [Setup](#setup)
+	- [Interactive Selection Prompt](#interactive-selection-prompt)
+	- [Enhanced Fuzzy Search (Optional)](#enhanced-fuzzy-search-optional)
+	- [Shell Completion (Optional)](#shell-completion-optional)
+	- [Unity Hub](#unity-hub)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Tips & Examples](#tips--examples)
+- [Design Background](#design-background)
+- [Contributing](#contributing)
+
+# Main Features
+
+- Opens Unity projects from the terminal (faster than using the Unity Hub GUI)
+- Interactive project selection from Unity Hub's recent projects (optional favorites filter)
+- Installs missing Editor versions via Unity Hub
+- Forwards additional Unity CLI arguments (e.g. `-batchmode -quit`)
+- Helps manage editor installation across many projects (install missing, uninstall unused, etc.)
+- Auto-detects Unity Hub and Editor installation paths and allows customization
 
 # Supported Platforms
 
@@ -222,16 +254,6 @@ ucll open path/to/project -- -batchmode -quit
 ```shell
 ucll install 2022.3.10f1 -- --module webgl
 ```
-
-# Features
-
-- Opens Unity projects from the terminal (faster than using the Unity Hub GUI)
-- Interactive project selection from Unity Hub's recent projects (optional favorites filter)
-- Detects Unity Editor version from projects
-- Installs missing Unity Editor versions via Unity Hub
-- Fetches changeset info from Unity API when missing in ProjectVersion.txt (e.g. legacy projects)
-- Forwards additional Unity CLI arguments (e.g. `-batchmode -quit`)
-- Auto-detects Unity Hub and Editor installation paths
 
 # Configuration
 
