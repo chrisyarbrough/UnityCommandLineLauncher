@@ -38,7 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="ucll.Tests" />
+		<InternalsVisibleTo Include="ucll.tests" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,14 +1,18 @@
-public class OpenCommandTests
+using Microsoft.Extensions.DependencyInjection;
+using Spectre.Console.Cli.Testing;
+using Xunit.Abstractions;
+
+public class OpenCommandTests(ITestOutputHelper output)
 {
 	[Fact]
 	public async Task WaitForFileAsyncFindsExistingFile()
 	{
-		await CreateTempProject(async tempDir =>
+		await TestUtil.WithinTempDirectoryAsync(async tempDir =>
 		{
-			string testFile = Path.Combine(tempDir, "test.sln");
+			string testFile = Path.Combine(tempDir.FullName, "test.sln");
 			await File.WriteAllTextAsync(testFile, "content");
 
-			string result = await OpenCommand.WaitForFileAsync(tempDir, "*.sln");
+			string result = await OpenCommand.WaitForFileAsync(tempDir.FullName, "*.sln");
 
 			Assert.Equal(testFile, result);
 		});
@@ -17,11 +21,11 @@ public class OpenCommandTests
 	[Fact]
 	public async Task WaitForFileAsyncWaitsForNewFile()
 	{
-		await CreateTempProject(async tempDir =>
+		await TestUtil.WithinTempDirectoryAsync(async tempDir =>
 		{
-			string testFile = Path.Combine(tempDir, "delayed.sln");
+			string testFile = Path.Combine(tempDir.FullName, "delayed.sln");
 
-			Task<string> waitTask = OpenCommand.WaitForFileAsync(tempDir, "*.sln");
+			Task<string> waitTask = OpenCommand.WaitForFileAsync(tempDir.FullName, "*.sln");
 
 			// Simulate Unity project generating the solution file.
 			await Task.Delay(100);
@@ -33,18 +37,24 @@ public class OpenCommandTests
 		});
 	}
 
-	private static async Task CreateTempProject(Func<string, Task> action)
+	[Fact]
+	public void Open_DirectPath()
 	{
-		string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-		Directory.CreateDirectory(tempDir);
+		var services = new ServiceCollection();
+		services.AddSingleton(PlatformSupport.Create());
+		services.AddSingleton<UnityHub>();
 
-		try
+		var registrar = new TypeRegistrar(services);
+		var app = new CommandAppTester(registrar);
+		app.Configure(AppConfiguration.Build);
+
+		TestUtil.WithinTempDirectory(tempDir =>
 		{
-			await action.Invoke(tempDir);
-		}
-		finally
-		{
-			Directory.Delete(tempDir, recursive: true);
-		}
+			string projectPath = Path.Combine(tempDir.FullName, "MyTestProject");
+			app.Run("create", projectPath, "6000.0.64f1", "--minimal");
+			var result = app.Run("open", projectPath, "--dry-run");
+			output.WriteLine(result.Output);
+			Assert.Equal(0, result.ExitCode);
+		});
 	}
 }

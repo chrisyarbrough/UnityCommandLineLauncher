@@ -26,4 +26,10 @@ jobs:
       run: dotnet build src/UnityCommandLineLauncher.sln --no-restore
 
     - name: Test
-      run: dotnet test src/UnityCommandLineLauncher.sln --no-build
+      run: dotnet test src/UnityCommandLineLauncher.sln --no-build --collect:"XPlat Code Coverage"
+
+    - name: Upload coverage to Codecov
+      if: matrix.os == 'ubuntu-latest'
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}

@@ -11,8 +11,7 @@ internal abstract class SearchPathCommand<TSettings>(UnityHub unityHub) : BaseCo
 
 		if (!Directory.Exists(searchPath) && !File.Exists(searchPath))
 		{
-			WriteError($"'{searchPath}' does not exist.");
-			Environment.Exit(1);
+			throw new UserException($"'{searchPath}' does not exist.");
 		}
 		return searchPath;
 	}
