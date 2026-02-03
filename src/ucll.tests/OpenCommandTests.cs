@@ -51,10 +51,13 @@ public class OpenCommandTests(ITestOutputHelper output)
 		TestUtil.WithinTempDirectory(tempDir =>
 		{
 			string projectPath = Path.Combine(tempDir.FullName, "MyTestProject");
-			app.Run("create", projectPath, "6000.0.64f1", "--minimal");
-			var result = app.Run("open", projectPath, "--dry-run");
-			output.WriteLine(result.Output);
-			Assert.Equal(0, result.ExitCode);
+			output.WriteLine("Creating project at: " + projectPath);
+			var createResult = app.Run("create", projectPath, "6000.0.64f1", "--minimal");
+			Assert.Equal(0, createResult.ExitCode);
+
+			var openResult = app.Run("open", projectPath, "--dry-run");
+			output.WriteLine(openResult.Output);
+			Assert.Equal(0, openResult.ExitCode);
 		});
 	}
 }
