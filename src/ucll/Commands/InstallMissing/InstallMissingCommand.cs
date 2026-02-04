@@ -40,7 +40,7 @@ internal class InstallMissingCommand(PlatformSupport platformSupport, UnityHub u
 			try
 			{
 				string[] additionalArgs = Context.Remaining.Raw.ToArray();
-				unityHub.InstallEditor(version, changeset: null, settings.MutatingProcess, additionalArgs);
+				unityHub.InstallEditor(version, changeset: null, platformSupport.CreateProcessRunner(settings.DryRun), additionalArgs);
 				WriteSuccess($"Unity {version} installed successfully.");
 			}
 			catch (Exception ex)

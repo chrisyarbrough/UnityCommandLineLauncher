@@ -31,5 +31,6 @@
 		<None Update="TestData\**\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Remove="TestResults\**" />
 	</ItemGroup>
 </Project>

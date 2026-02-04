@@ -1,4 +1,4 @@
-internal class UpmGitUrlCommand(UnityHub unityHub) : SearchPathCommand<UpmGitUrlSettings>(unityHub)
+internal class UpmGitUrlCommand(UnityHub unityHub, PlatformSupport platformSupport) : SearchPathCommand<UpmGitUrlSettings>(unityHub)
 {
 	protected override int ExecuteImpl(UpmGitUrlSettings settings)
 	{
@@ -46,7 +46,7 @@ internal class UpmGitUrlCommand(UnityHub unityHub) : SearchPathCommand<UpmGitUrl
 		return 0;
 	}
 
-	private static string RunGitCommand(string workingDirectory, string arguments)
+	private string RunGitCommand(string workingDirectory, string arguments)
 	{
 		var processInfo = new ProcessStartInfo
 		{
@@ -57,7 +57,7 @@ internal class UpmGitUrlCommand(UnityHub unityHub) : SearchPathCommand<UpmGitUrl
 			RedirectStandardError = true,
 		};
 
-		using var process = ProcessRunner.Default.Run(processInfo) ??
+		using var process = platformSupport.CreateProcessRunner().Run(processInfo) ??
 		                    throw new UserException("Failed to start git process");
 
 		(string output, string error, int exitCode) = process.CaptureOutput();

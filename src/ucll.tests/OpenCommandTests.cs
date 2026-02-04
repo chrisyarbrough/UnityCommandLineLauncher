@@ -53,6 +53,7 @@ public class OpenCommandTests(ITestOutputHelper output)
 			string projectPath = Path.Combine(tempDir.FullName, "MyTestProject");
 			output.WriteLine("Creating project at: " + projectPath);
 			var createResult = app.Run("create", projectPath, "6000.0.64f1", "--minimal");
+			output.WriteLine(createResult.Output);
 			Assert.Equal(0, createResult.ExitCode);
 
 			var openResult = app.Run("open", projectPath, "--dry-run");

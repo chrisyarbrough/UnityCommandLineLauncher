@@ -9,6 +9,4 @@ internal class MutatingSettings : CommandSettings
 	[CommandOption("-y|--yes")]
 	[Description("Skip interactive confirmation prompts and assume yes.")]
 	public bool Yes { get; init; }
-
-	public IProcessRunner MutatingProcess => DryRun ? DryRunProcessRunner.DryRun : ProcessRunner.Default;
 }

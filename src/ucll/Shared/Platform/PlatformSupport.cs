@@ -57,6 +57,19 @@ internal abstract class PlatformSupport
 	/// </summary>
 	public virtual string FormatHubArgs(string args) => $"-- {args}";
 
+	public IProcessRunner CreateProcessRunner(bool dryRun = false)
+	{
+		if (dryRun)
+			return new DryRunProcessRunner(CreateNoOpProcess());
+		else
+			return new ProcessRunner();
+	}
+
+	/// <summary>
+	/// A no-op process that exits immediately with success, used for dry-run mode.
+	/// </summary>
+	protected virtual ProcessStartInfo CreateNoOpProcess() => new("true");
+
 	/// <summary>
 	/// A system process that opens the file with the default app association.
 	/// </summary>

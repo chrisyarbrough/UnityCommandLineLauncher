@@ -168,7 +168,7 @@ internal class UnityHub(PlatformSupport platformSupport)
 			RedirectStandardOutput = true,
 			RedirectStandardError = true,
 		};
-		Process process = ProcessRunner.Default.Run(startInfo);
+		Process process = platformSupport.CreateProcessRunner().Run(startInfo);
 		string output = process.CaptureOutput().output;
 
 		// There's a bug in some older Unity Hub version where the exit code is non-zero, but the output works.
@@ -205,19 +205,17 @@ internal class UnityHub(PlatformSupport platformSupport)
 
 	private static string ConfigurePlatformArgs(string args)
 	{
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+		string? arch = RuntimeInformation.ProcessArchitecture switch
 		{
-			string? arch = RuntimeInformation.ProcessArchitecture switch
-			{
-				Architecture.X64 => "x86_64",
-				Architecture.Arm64 => "arm64",
-				// Unsupported architecture will probably cause the hub installation to fail,
-				// but better we try and let the user discover that and report a bug than abort.
-				_ => null,
-			};
-			if (arch != null)
-				return args + $" --architecture {arch}";
-		}
+			Architecture.X64 => "x86_64",
+			Architecture.Arm64 => "arm64",
+			// Unsupported architecture will probably cause the hub installation to fail,
+			// but better we try and let the user discover that and report a bug than abort.
+			_ => null,
+		};
+		if (arch != null)
+			return args + $" --architecture {arch}";
+
 		return args;
 	}
 

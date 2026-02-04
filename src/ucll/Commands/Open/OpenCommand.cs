@@ -12,9 +12,11 @@ internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub)
 		infoLine += "\nVersion: " + project.VersionAndChangeset;
 		Debug.WriteLine(infoLine);
 
+		IProcessRunner processRunner = platformSupport.CreateProcessRunner(settings.DryRun);
+
 		if (!settings.OnlyCodeEditor)
 		{
-			UnityHub.InstallEditorChecked(project.Version, project.Changeset, settings.MutatingProcess);
+			UnityHub.InstallEditorChecked(project.Version, project.Changeset, processRunner);
 
 			string editorPath = UnityHub.GetEditorPath(project.Version);
 			AnsiConsole.MarkupLine($"[dim]Editor: {editorPath}[/]");
@@ -27,13 +29,13 @@ internal class OpenCommand(PlatformSupport platformSupport, UnityHub unityHub)
 
 			args.AddRange(additionalArgs);
 
-			settings.MutatingProcess.Run(
+			processRunner.Run(
 				new ProcessStartInfo(fileName: editorPath, arguments: ProcessRunner.JoinQuoted(args)));
 		}
 
 		if (settings.CodeEditor || settings.OnlyCodeEditor)
 		{
-			OpenSolutionFile(project.Path, settings.MutatingProcess);
+			OpenSolutionFile(project.Path, processRunner);
 		}
 
 		// Unity doesn't report an exit code if the editor fails to open a project.

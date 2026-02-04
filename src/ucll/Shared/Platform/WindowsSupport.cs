@@ -1,5 +1,7 @@
 internal sealed class WindowsSupport : PlatformSupport
 {
+	protected override ProcessStartInfo CreateNoOpProcess() => new("cmd.exe");
+
 	public override ProcessStartInfo OpenFile(string filePath)
 	{
 		// Use cmd /c start with empty window title

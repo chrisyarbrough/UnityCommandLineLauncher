@@ -1,4 +1,4 @@
-internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
+internal class CreateCommand(UnityHub unityHub, PlatformSupport platformSupport) : BaseCommand<CreateSettings>
 {
 	protected override int ExecuteImpl(CreateSettings settings)
 	{
@@ -26,7 +26,7 @@ internal class CreateCommand(UnityHub unityHub) : BaseCommand<CreateSettings>
 				settings.ProjectPath,
 			};
 
-			var process = settings.MutatingProcess.Run(
+			var process = platformSupport.CreateProcessRunner(settings.DryRun).Run(
 				new ProcessStartInfo(fileName: editorPath, arguments: ProcessRunner.JoinQuoted(args)));
 
 			process.WaitForExit();

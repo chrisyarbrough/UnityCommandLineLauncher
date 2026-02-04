@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 public class ProcessRunnerTests
 {
 	[Theory]
@@ -15,5 +17,16 @@ public class ProcessRunnerTests
 	{
 		string result = ProcessRunner.JoinQuoted([..args]);
 		Assert.Equal(expected, result);
+	}
+
+	[Fact]
+	public void DryRunProcessorCanRunNoOpProcess()
+	{
+		// The executable name should not matter and the dry runner should use a platform-specific no-op process.
+		var platformSupport = PlatformSupport.Create();
+		var processor = platformSupport.CreateProcessRunner(dryRun: true);
+		Process process = processor.Run(new ProcessStartInfo("NonExistingProcess"));
+		process.WaitForExit();
+		Assert.Equal(0, process.ExitCode);
 	}
 }

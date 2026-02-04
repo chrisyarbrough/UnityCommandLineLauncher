@@ -1,4 +1,4 @@
-internal class HubCommand(UnityHub unityHub) : BaseCommand<HubCommand.HubSettings>
+internal class HubCommand(UnityHub unityHub, PlatformSupport platformSupport) : BaseCommand<HubCommand.HubSettings>
 {
 	internal class HubSettings : CommandSettings;
 
@@ -15,7 +15,7 @@ internal class HubCommand(UnityHub unityHub) : BaseCommand<HubCommand.HubSetting
 		startInfo.RedirectStandardOutput = redirect;
 		startInfo.RedirectStandardError = redirect;
 
-		var process = ProcessRunner.Default.Run(startInfo);
+		var process = platformSupport.CreateProcessRunner().Run(startInfo);
 
 		// Block for regular CLI commands.
 		if (isHeadless)

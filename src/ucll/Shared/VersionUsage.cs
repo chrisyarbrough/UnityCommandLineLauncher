@@ -27,7 +27,7 @@ internal class VersionUsage
 	{
 		var startInfo = platformSupport.GetUnityProjectSearchProcess();
 		startInfo.RedirectStandardOutput = true;
-		var process = ProcessRunner.Default.Run(startInfo);
+		var process = platformSupport.CreateProcessRunner().Run(startInfo);
 		process.WaitForExit();
 
 		while (!process.StandardOutput.EndOfStream)

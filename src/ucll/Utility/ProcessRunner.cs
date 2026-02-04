@@ -5,8 +5,6 @@ internal interface IProcessRunner
 
 internal class ProcessRunner : IProcessRunner
 {
-	public static readonly IProcessRunner Default = new ProcessRunner();
-
 	public virtual Process Run(ProcessStartInfo startInfo)
 	{
 		string args = startInfo.Arguments;
@@ -29,14 +27,12 @@ internal class ProcessRunner : IProcessRunner
 	}
 }
 
-internal class DryRunProcessRunner : ProcessRunner
+internal class DryRunProcessRunner(ProcessStartInfo noOp) : ProcessRunner
 {
-	public static readonly IProcessRunner DryRun = new DryRunProcessRunner();
-
 	public override Process Run(ProcessStartInfo startInfo)
 	{
 		AnsiConsole.MarkupLine($"[dim][[DryRun]] {startInfo.FileName} {startInfo.Arguments}[/]");
-		startInfo.FileName = "true";
+		startInfo.FileName = noOp.FileName;
 		return base.Run(startInfo);
 	}
 }
