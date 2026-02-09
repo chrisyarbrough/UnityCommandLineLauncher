@@ -33,6 +33,7 @@ internal class DryRunProcessRunner(ProcessStartInfo noOp) : ProcessRunner
 	{
 		AnsiConsole.MarkupLine($"[dim][[DryRun]] {startInfo.FileName} {startInfo.Arguments}[/]");
 		startInfo.FileName = noOp.FileName;
+		startInfo.Arguments = noOp.Arguments;
 		return base.Run(startInfo);
 	}
 }

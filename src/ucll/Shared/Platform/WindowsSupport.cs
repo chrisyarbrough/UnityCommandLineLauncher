@@ -1,6 +1,6 @@
 internal sealed class WindowsSupport : PlatformSupport
 {
-	protected override ProcessStartInfo CreateNoOpProcess() => new("cmd.exe");
+	protected override ProcessStartInfo CreateNoOpProcess() => new("cmd.exe", "/c exit 0");
 
 	public override ProcessStartInfo OpenFile(string filePath)
 	{
