@@ -38,18 +38,24 @@ public class OpenCommandTests(ITestOutputHelper output) : TestBase
 	}
 
 	[Fact]
-	public void Open_ProjectPath()
+	public void OpenPath_ProjectRoot()
 	{
 		RunOpenCommandTest(projectPath => projectPath);
 	}
 
 	[Fact]
-	public void Open_PathWithinProject()
+	public void OpenPath_WithinProject()
 	{
 		RunOpenCommandTest(projectPath => Path.Combine(projectPath, "Assets"));
 	}
 
-	private void RunOpenCommandTest(Func<string, string> openPathModifier)
+	[Fact]
+	public void OpenPath_ParentOfProject()
+	{
+		RunOpenCommandTest(projectPath => new DirectoryInfo(projectPath).Parent!.FullName);
+	}
+
+	private void RunOpenCommandTest(Func<string, string> modifyPathArgument)
 	{
 		var services = new ServiceCollection();
 		services.AddSingleton(PlatformSupport.Create());
@@ -61,13 +67,13 @@ public class OpenCommandTests(ITestOutputHelper output) : TestBase
 
 		WithinTempDirectory(tempDir =>
 		{
-			string projectPath = Path.Combine(tempDir.FullName, "MyTestProject");
+			string projectPath = Path.Combine(tempDir.FullName, "Container", "TestProject");
 			output.WriteLine("Creating project at: " + projectPath);
 			var createResult = app.Run("create", projectPath, "6000.0.64f1", "--minimal");
 			output.WriteLine(createResult.Output);
 			Assert.Equal(0, createResult.ExitCode);
 
-			var openResult = app.Run("open", openPathModifier(projectPath), "--dry-run");
+			var openResult = app.Run("open", modifyPathArgument(projectPath), "--dry-run");
 			output.WriteLine(openResult.Output);
 			Assert.Equal(0, openResult.ExitCode);
 		});

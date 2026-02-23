@@ -16,16 +16,11 @@ public class TestBase
 
 	protected static void WithinTempDirectory(Action<DirectoryInfo> action)
 	{
-		DirectoryInfo directory = CreateTempDirectory();
-
-		try
+		WithinTempDirectoryAsync(t =>
 		{
-			action.Invoke(directory);
-		}
-		finally
-		{
-			directory.Delete(recursive: true);
-		}
+			action.Invoke(t);
+			return Task.CompletedTask;
+		}).Wait();
 	}
 
 	private static DirectoryInfo CreateTempDirectory()
