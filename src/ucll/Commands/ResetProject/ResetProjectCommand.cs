@@ -1,11 +1,16 @@
 internal class ResetProjectCommand(UnityHub unityHub) : SearchPathCommand<ResetProjectSettings>(unityHub)
 {
+	/// <summary>
+	/// A collection of path components to match against.
+	/// </summary>
+	private class PathComponents() : HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
 	protected override int ExecuteImpl(ResetProjectSettings settings)
 	{
 		string searchPath = ResolveSearchPath(settings.SearchPath, settings.Favorite);
-		var info = Project.Parse(searchPath);
+		var project = Project.Parse(searchPath);
 
-		var targetDirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		var targetDirs = new PathComponents
 		{
 			"Library",
 			"obj",
@@ -19,7 +24,7 @@ internal class ResetProjectCommand(UnityHub unityHub) : SearchPathCommand<ResetP
 		if (!settings.KeepUserSettings)
 			targetDirs.Add("UserSettings");
 
-		var targetFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		var targetFileExtensions = new PathComponents
 		{
 			".csproj",
 			".sln",
@@ -27,71 +32,67 @@ internal class ResetProjectCommand(UnityHub unityHub) : SearchPathCommand<ResetP
 			".vsconfig",
 		};
 
-		var targetFilePartialNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		var targetFilePartialNames = new PathComponents
 		{
 			"InitTestScene",
 			"mono_crash",
 		};
 
-		bool shouldReset = settings.Yes || AnsiConsole.Confirm(
-			"Do you want to reset this project?",
-			defaultValue: false);
-
-		if (!shouldReset)
-			throw new UserCancelledException("Resetting cancelled.");
-
-		AnsiConsole.WriteLine();
+		PromptForConfirmation(settings);
 
 		int deletedDirs = 0;
 		int deletedFiles = 0;
 
-		try
+		Action<string, string> processor;
+
+		if (settings.DryRun)
 		{
-			foreach (string item in Directory.GetFileSystemEntries(info.Path))
+			processor = (_, label) => AnsiConsole.MarkupLine($"[dim]Would delete: {label}[/]");
+		}
+		else
+		{
+			processor = (path, label) =>
 			{
-				string itemName = Path.GetFileName(item);
-
-				if (!targetDirs.Contains(itemName) &&
-				    !targetFileExtensions.Contains(Path.GetExtension(itemName)) &&
-				    !targetFilePartialNames.Any(p => item.Contains(p)))
+				if (Directory.Exists(path))
 				{
-					continue;
+					Directory.Delete(path, true);
+					deletedDirs++;
 				}
-
-				if (settings.DryRun)
+				else if (File.Exists(path))
 				{
-					AnsiConsole.MarkupLine($"[dim]Would delete: {Markup.Escape(itemName)}[/]");
+					File.Delete(path);
+					deletedFiles++;
 				}
-				else
-				{
-					if (Directory.Exists(item))
-					{
-						AnsiConsole.MarkupLine($"[bold]Deleting directory {Markup.Escape(itemName)}...[/]");
-
-						Directory.Delete(item, true);
-
-						WriteSuccess($"Directory {Markup.Escape(itemName)} deleted successfully.");
-						deletedDirs++;
-					}
-					else if (File.Exists(item))
-					{
-						AnsiConsole.MarkupLine($"[bold]Deleting file {Markup.Escape(itemName)}...[/]");
-
-						File.Delete(item);
-
-						WriteSuccess($"File {Markup.Escape(itemName)} deleted successfully.");
-						deletedFiles++;
-					}
-				}
-			}
+				AnsiConsole.WriteLine($"Deleted: {label}");
+			};
 		}
-		catch (Exception ex)
+
+		foreach (string path in Directory.GetFileSystemEntries(project.Path))
 		{
-			WriteError($"Failed to reset this project: {ex.Message}");
+			string entryName = Path.GetFileName(path);
+
+			if (!targetDirs.Contains(entryName) &&
+			    !targetFileExtensions.Contains(Path.GetExtension(entryName)) &&
+			    !targetFilePartialNames.Any(p => path.Contains(p)))
+			{
+				continue;
+			}
+
+			processor.Invoke(path, Markup.Escape(entryName));
 		}
 
-		WriteSuccess("Resetting process completed.");
-		WriteSuccess($"Deleted {deletedDirs} directories and {deletedFiles} files in project root.");
+		WriteSuccess($"Deleted {deletedDirs} directories and {deletedFiles} files the project.");
 		return 0;
+	}
+
+	private static void PromptForConfirmation(ResetProjectSettings settings)
+	{
+		if (settings.Yes)
+			return;
+
+		if (!AnsiConsole.Confirm("Do you want to reset this project?", defaultValue: false))
+		{
+			throw new UserCancelledException("Resetting cancelled.");
+		}
 	}
 }
