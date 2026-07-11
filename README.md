@@ -61,6 +61,7 @@ with CI/CD pipelines.
 | `version-usage`                | Lists installed Unity versions and indicates which are used.                |
 | `create <directory> [version]` | Creates a new empty Unity project in the directory.                         |
 | `upm-git-url [path]`           | Generates a package git URL for Unity Package Manager from a project.       |
+| `logs [path]`                  | Opens Editor, package manager, and player logs for a project.               |
 | `hub`                          | Executes Unity Hub interactively or with additional CLI arguments.          |
 | `completion [shell]`           | Generates shell completion scripts (supports ZSH).                          |
 

@@ -20,6 +20,16 @@ internal sealed class WindowsSupport : PlatformSupport
 	public override string UnityHubConfigDirectory =>
 		Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "UnityHub");
 
+	public override string DefaultEditorLogPath =>
+		Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Unity", "Editor", "Editor.log");
+
+	public override string DefaultUpmLogPath =>
+		Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Unity", "Editor", "upm.log");
+
+	public override string GetPlayerLogPath(string companyName, string productName) =>
+		Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+			"AppData", "LocalLow", companyName, productName, "Player.log");
+
 	public override ProcessStartInfo GetUnityProjectSearchProcess()
 	{
 		// Use Windows Search index via COM (equivalent to mdfind on macOS)

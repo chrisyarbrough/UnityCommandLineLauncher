@@ -77,6 +77,12 @@ internal abstract class PlatformSupport
 	/// </summary>
 	public abstract string UnityHubConfigDirectory { get; }
 
+	public abstract string DefaultEditorLogPath { get; }
+
+	public abstract string DefaultUpmLogPath { get; }
+
+	public abstract string GetPlayerLogPath(string companyName, string productName);
+
 	/// <summary>
 	/// A system process that returns all paths to ProjectSettings/ProjectVersion.txt files on the system.
 	/// </summary>
