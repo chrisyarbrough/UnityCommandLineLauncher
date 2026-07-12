@@ -15,6 +15,33 @@ public class ProgramTests
 		Assert.Equal(expectedVersion, result.Output);
 	}
 
+	[Fact]
+	public void RunAliasIsListedInHelp()
+	{
+		var app = new CommandAppTester();
+		app.Configure(AppConfiguration.Build);
+
+		var result = app.Run("--help");
+
+		Assert.Equal(0, result.ExitCode);
+		Assert.Contains("run", result.Output);
+		Assert.Contains("Open Unity Editor", result.Output);
+	}
+
+	[Fact]
+	public void RunAliasUsesOpenCommandOptions()
+	{
+		var app = new CommandAppTester();
+		app.Configure(AppConfiguration.Build);
+
+		var result = app.Run("run", "--help");
+
+		Assert.Equal(0, result.ExitCode);
+		Assert.Contains("--code-editor", result.Output);
+		Assert.Contains("--only-code-editor", result.Output);
+		Assert.Contains("--no-hub-args", result.Output);
+	}
+
 	private static string FindProjectVersion(string projectFile)
 	{
 		string projectContent = File.ReadAllText(projectFile);
