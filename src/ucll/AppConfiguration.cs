@@ -16,6 +16,7 @@ internal static class AppConfiguration
 		config.AddExample("open", "searchPath", "--code-editor");
 		config.AddExample("open", "searchPath", "--only-code-editor");
 		config.AddExample("open", "searchPath", "--", "-batchmode", "-quit");
+		config.AddExample("run", "searchPath", "--", "-batchmode", "-quit");
 
 		config.AddCommand<OpenCommand>("open")
 			.WithDescription("Open Unity Editor for a project search path or via recent projects prompt")
@@ -27,6 +28,17 @@ internal static class AppConfiguration
 			.WithExample("open", "searchPath", "--code-editor")
 			.WithExample("open", "searchPath", "--only-code-editor")
 			.WithExample("open", "searchPath", "--", "-batchmode", "-quit");
+
+		config.AddCommand<OpenCommand>("run")
+			.WithDescription("Run Unity Editor for a project search path or via recent projects prompt")
+			.WithExample("run")
+			.WithExample("run", "--favorite")
+			.WithExample("run", ".")
+			.WithExample("run", "searchPath", "--no-hub-args", "--", "-batchmode", "-quit")
+			.WithExample("run", "searchPath", "--no-hub-args")
+			.WithExample("run", "searchPath", "--code-editor")
+			.WithExample("run", "searchPath", "--only-code-editor")
+			.WithExample("run", "searchPath", "--", "-batchmode", "-quit");
 
 		config.AddCommand<CreateCommand>("create")
 			.WithDescription("Create a new Unity project")

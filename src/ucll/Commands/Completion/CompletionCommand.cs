@@ -21,6 +21,7 @@ internal class CompletionCommand : BaseCommand<CompletionSettings>
 		           local -a commands
 		           commands=(
 		               'open:Open Unity Editor for a project search path or via recent projects prompt'
+		               'run:Run Unity Editor for a project search path or via recent projects prompt'
 		               'create:Create a new Unity project'
 		               'project-path:Get Unity project root directory from search path or via recent projects prompt'
 		               'editor-revision:Get revision for Unity version'
@@ -47,7 +48,7 @@ internal class CompletionCommand : BaseCommand<CompletionSettings>
 		                   ;;
 		               args)
 		                   case $words[1] in
-		                       open)
+		                       open|run)
 		                           _arguments \
 		                               '(-f --favorite --favorites)'{-f,--favorite,--favorites}'[Use favorite projects only]' \
 		                               '(-c --code-editor)'{-c,--code-editor}'[Open the solution file in the default code editor]' \

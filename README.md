@@ -51,6 +51,7 @@ Since the inception of this community project, Unity Technologies have released 
 | Name                           | Description                                                                 |
 |--------------------------------|-----------------------------------------------------------------------------|
 | `open [path]`                  | Opens the Unity editor by searching for a project within path.              |
+| `run [path]`                   | Alias for `open`, useful for headless/batchmode scripts.                    |
 | `open`                         | Shows a selection prompt of recent or favorite projects from the Unity Hub. |
 | `install [version]`            | Installs the Editor by version, fetching the revision, if necessary.        |
 | `install-missing`              | Installs all Unity versions used by projects but not installed.             |
@@ -253,6 +254,13 @@ Forward additional arguments to Unity Hub/Editor by separating them with a `--`:
 
 ```shell
 ucll open path/to/project -- -batchmode -quit
+```
+
+For build pipelines or other headless invocations, `run` is an alias for
+`open` with the same options and forwarded Unity arguments:
+
+```shell
+ucll run path/to/project -- -batchmode -quit
 ```
 
 ```shell
