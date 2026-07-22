@@ -7,6 +7,10 @@ with CI/CD pipelines.
 
 ![Terminal showing ucll opening a Unity project](doc/Screenshot_Open_Path.png)
 
+# Unity CLI
+
+Since the inception of this community project, Unity Technologies have released an official Unity CLI which also extends the Unity Hub features in a similar way to this project. You may still find our community project valuable, since it offers a few more specialized commands and customization options. Compare features here: https://docs.unity.com/en-us/unity-cli/unity-cli
+
 # Table of Contents
 
 - [Main Features](#main-features)
