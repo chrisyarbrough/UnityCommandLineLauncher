@@ -20,6 +20,13 @@ internal sealed class MacSupport : PlatformSupport
 
 	public override string UnityHubConfigDirectory => Path.Combine(UserHome, "Library/Application Support/UnityHub");
 
+	public override string DefaultEditorLogPath => Path.Combine(UserHome, "Library/Logs/Unity/Editor.log");
+
+	public override string DefaultUpmLogPath => Path.Combine(UserHome, "Library/Logs/Unity/upm.log");
+
+	public override string GetPlayerLogPath(string companyName, string productName) =>
+		Path.Combine(UserHome, "Library/Logs", companyName, productName, "Player.log");
+
 	public override ProcessStartInfo GetUnityProjectSearchProcess()
 	{
 		// Automatically indexed Spotlight search.

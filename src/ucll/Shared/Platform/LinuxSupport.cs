@@ -18,6 +18,13 @@ internal sealed class LinuxSupport : PlatformSupport
 
 	public override string UnityHubConfigDirectory => Path.Combine(UserHome, ".config/UnityHub");
 
+	public override string DefaultEditorLogPath => Path.Combine(UserHome, ".config/unity3d/Editor.log");
+
+	public override string DefaultUpmLogPath => Path.Combine(UserHome, ".config/unity3d/upm.log");
+
+	public override string GetPlayerLogPath(string companyName, string productName) =>
+		Path.Combine(UserHome, ".config/unity3d", companyName, productName, "Player.log");
+
 	public override ProcessStartInfo GetUnityProjectSearchProcess()
 	{
 		// Presumably requires manual database update (at least on macOS it's not up-to-date by default).

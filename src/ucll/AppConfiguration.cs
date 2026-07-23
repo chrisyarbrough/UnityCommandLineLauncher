@@ -109,6 +109,13 @@ internal static class AppConfiguration
 			.WithExample("upm-git-url", "--favorite")
 			.WithExample("upm-git-url", "searchPath");
 
+		config.AddCommand<LogsCommand>("logs")
+			.WithDescription("Open Unity Editor, package manager, and player logs for a project")
+			.WithExample("logs")
+			.WithExample("logs", "searchPath")
+			.WithExample("logs", "searchPath", "--type", "editor")
+			.WithExample("logs", "searchPath", "--path-only");
+
 		config.AddCommand<HubCommand>("hub")
 			.WithDescription("Execute Unity Hub interactively or with additional CLI arguments")
 			.WithExample("hub")
